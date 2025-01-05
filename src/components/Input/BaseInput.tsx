@@ -4,15 +4,23 @@ interface BaseInputProps extends InputHTMLAttributes<HTMLInputElement> {
   isRequired?: boolean;
   withLabel?: string;
   validation?: (value: string) => { result: boolean; message: string | null };
+  onValidationResult?: (result: boolean) => void;
 }
 
 const BaseInput = (props: BaseInputProps) => {
-  const { withLabel, isRequired = true, validation, ...rest } = props;
+  const {
+    withLabel,
+    isRequired = true,
+    validation,
+    onValidationResult,
+    ...rest
+  } = props;
   const [error, setError] = useState<string | null>();
   const handleBlurInput = (e: FocusEvent<HTMLInputElement>) => {
     if (!validation) return;
     const { result, message } = validation(e.target.value);
-    if (!result) setError(message);
+    setError(result ? null : message);
+    onValidationResult?.(result);
   };
   return (
     <div>
