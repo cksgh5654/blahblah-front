@@ -4,6 +4,7 @@ import App from "./App.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import MainPage from "./pages/MainPage.tsx";
 import SignupPage from "./pages/SignupPage.tsx";
+import EmailOtpPage from "./pages/EmailOtpPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
       {
         path: "/signup",
         element: <SignupPage />,
+      },
+      {
+        path: "/signup/otp/verify",
+        element: <EmailOtpPage />,
       },
     ],
   },
