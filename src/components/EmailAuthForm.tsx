@@ -1,4 +1,7 @@
 import { ChangeEvent, useState } from "react";
+import BaseInput from "./Input/BaseInput";
+import BaseButton from "./Button/BaseButton";
+import { EmailValidation, PasswordValidation } from "../utils/validation";
 const DEFAULT_EMAIL_FORM_DATA = {
   email: "",
   password: "",
@@ -16,30 +19,40 @@ const EmailAuthForm = ({ type, onSubmit }: EmailAuthFormProps) => {
     DEFAULT_EMAIL_FORM_DATA
   );
 
-  const btnText =
-    type === "signin" ? "이메일로 로그인하기" : "이메일로 가입하기";
-
   const handleChangeForm = (e: ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
         onSubmit(formData);
       }}
+      className="flex flex-col gap-y-4"
     >
-      <label htmlFor="email">이메일</label>
-      <input type="email" id="email" name="email" onChange={handleChangeForm} />
-      <label htmlFor="password">패스워드</label>
-      <input
+      <BaseInput
+        withLabel="이메일"
+        placeholder="이메일을 입력해주세요"
+        type="email"
+        id="email"
+        name="email"
+        onChange={handleChangeForm}
+        validation={EmailValidation}
+      />
+      <BaseInput
+        withLabel="패스워드"
+        placeholder="비밀번호를 입력해주세요"
         type="password"
         id="password"
         name="password"
         onChange={handleChangeForm}
+        validation={PasswordValidation}
       />
-      <button>{btnText}</button>
+      <BaseButton className="bg-violet-800/70">
+        {type === "signin" ? "로그인" : "이메일로 가입하기"}
+      </BaseButton>
     </form>
   );
 };
