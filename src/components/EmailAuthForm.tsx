@@ -15,6 +15,7 @@ interface EmailAuthFormProps {
   onSubmit: (data: EmailFormDataType) => void;
 }
 const EmailAuthForm = ({ type, onSubmit }: EmailAuthFormProps) => {
+  const [isValidForm, setIsValidForm] = useState<boolean>();
   const [formData, setFormData] = useState<EmailFormDataType>(
     DEFAULT_EMAIL_FORM_DATA
   );
@@ -24,10 +25,15 @@ const EmailAuthForm = ({ type, onSubmit }: EmailAuthFormProps) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleValidationChange = (result: boolean) => {
+    setIsValidForm(result);
+  };
+
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
+        if (!isValidForm) return;
         onSubmit(formData);
       }}
       className="flex flex-col gap-y-4"
@@ -40,6 +46,7 @@ const EmailAuthForm = ({ type, onSubmit }: EmailAuthFormProps) => {
         name="email"
         onChange={handleChangeForm}
         validation={EmailValidation}
+        onValidationResult={handleValidationChange}
       />
       <BaseInput
         withLabel="패스워드"
