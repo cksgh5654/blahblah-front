@@ -23,3 +23,10 @@ export const PasswordValidation = (password: string) => {
       : "패스워드는 8자이상, 영문 대소문자와 숫자를 포함해야 합니다.",
   };
 };
+
+export const otpValidation = (otp: string) => {
+  if (otp.length < 6) {
+    return { result: false, message: "otp 번호는 6자리입니다." };
+  }
+  return { result: true, message: null };
+};

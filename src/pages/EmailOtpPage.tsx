@@ -1,17 +1,29 @@
-import { FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { sendOtp } from "../apis/auth.api";
 import { useNavigate } from "react-router-dom";
 import MainLogo from "../components/Icons/MainLogo";
 import BaseInput from "../components/Input/BaseInput";
 import BaseButton from "../components/Button/BaseButton";
+import { otpValidation } from "../utils/validation";
 
 const EmailOtpPage = () => {
   const navigate = useNavigate();
-  const [otp, setOtp] = useState<string>();
+  const [otp, setOtp] = useState<string>("");
+  const [isValidForm, setIsValidForm] = useState<boolean>();
+
+  const handleChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!isNaN(Number(e.target.value))) {
+      setOtp(e.target.value);
+    }
+  };
+
+  const handleValidationResult = (result: boolean) => {
+    setIsValidForm(result);
+  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!otp) return;
+    if (!otp || !isValidForm) return;
     sendOtp(otp) //
       .then(() => navigate("/"));
   };
@@ -24,8 +36,11 @@ const EmailOtpPage = () => {
         <MainLogo />
         <BaseInput
           withLabel="OTP 번호"
-          onChange={(e) => setOtp(e.target.value)}
+          onChange={handleChangeInput}
+          value={otp}
           maxLength={6}
+          validation={otpValidation}
+          onValidationResult={handleValidationResult}
         />
         <BaseButton>이메일 인증 하기</BaseButton>
       </form>
