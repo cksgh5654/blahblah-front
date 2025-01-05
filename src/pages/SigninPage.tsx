@@ -38,6 +38,12 @@ const SigninPage = () => {
         >
           회원가입 하기
         </button>
+        <button
+          className="text-center text-sm font-bold text-gray-500"
+          onClick={() => navigate("/signup/otp/verify")}
+        >
+          비밀번호 재설정 하기
+        </button>
       </div>
     </div>
   );
