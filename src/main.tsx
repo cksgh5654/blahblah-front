@@ -7,6 +7,7 @@ import SignupPage from "./pages/SignupPage.tsx";
 import EmailOtpPage from "./pages/EmailOtpPage.tsx";
 import SigninPage from "./pages/SigninPage.tsx";
 import PasswordResetPage from "./pages/PasswordResetPage.tsx";
+import CreateBoardPage from "./pages/CreateBoardPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
       {
         path: "/password-reset/otp",
         element: <PasswordResetPage />,
+      },
+      {
+        path: "/create",
+        element: <CreateBoardPage />,
       },
     ],
   },
