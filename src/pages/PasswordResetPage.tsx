@@ -4,12 +4,21 @@ import {
   requestPasswordResetOtp,
 } from "../apis/auth.api";
 import { useNavigate } from "react-router-dom";
+import BaseInput from "../components/Input/BaseInput";
+import {
+  EmailValidation,
+  otpValidation,
+  PasswordValidation,
+} from "../utils/validation";
+import BaseButton from "../components/Button/BaseButton";
+import Logo from "../components/Icons/Logo";
 
 const PasswordResetPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [otp, setOtp] = useState<string>("");
+
   const handleOtpSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!email.length) return;
@@ -23,42 +32,63 @@ const PasswordResetPage = () => {
       .then(() => navigate("/signin"));
   };
   const status = useMemo(() => window.location.hash, [window.location.hash]);
-  if (status === "#verify") {
-    return (
-      <div>
-        <form onSubmit={handleOtpVerifySubmit}>
-          <input type="text" readOnly value={email} />
-          <input
-            type="text"
-            value={otp}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setOtp(e.target.value)
-            }
-          />
-          <input
-            type="text"
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setPassword(e.target.value)
-            }
-            value={password}
-          />
-          <button>비밀번호 재설정 하기</button>
-        </form>
-      </div>
-    );
-  }
+
   return (
-    <div>
-      <form onSubmit={handleOtpSubmit}>
-        <input
-          type="email"
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setEmail(e.target.value)
-          }
-          value={email}
-        />
-        <button>비밀번호 재설정 OTP요청</button>
-      </form>
+    <div
+      className="w-screen flex justify-center items-center"
+      style={{ height: "calc(-68.5px + 100vh)" }}
+    >
+      <div className="w-96">
+        <Logo className="py-16" />
+        {status === "" && (
+          <form onSubmit={handleOtpSubmit} className="flex flex-col gap-y-4">
+            <BaseInput
+              type="email"
+              withLabel="이메일"
+              placeholder="이메일을 입력해주세요."
+              validation={EmailValidation}
+              value={email}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setEmail(e.target.value)
+              }
+            />
+            <BaseButton>비밀번호 재설정 OTP요청</BaseButton>
+          </form>
+        )}
+        {status === "#verify" && (
+          <form
+            onSubmit={handleOtpVerifySubmit}
+            className="flex flex-col gap-y-4"
+          >
+            <BaseInput
+              withLabel="요청 이메일"
+              type="text"
+              readOnly
+              value={email}
+              className="text-center font-semibold border-none"
+            />
+            <BaseInput
+              type="text"
+              value={otp}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setOtp(e.target.value)
+              }
+              withLabel="otp 번호"
+              validation={otpValidation}
+            />
+            <BaseInput
+              type="text"
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setPassword(e.target.value)
+              }
+              value={password}
+              withLabel="새로운 비밀번호"
+              validation={PasswordValidation}
+            />
+            <BaseButton>비밀번호 재설정 하기</BaseButton>
+          </form>
+        )}
+      </div>
     </div>
   );
 };
