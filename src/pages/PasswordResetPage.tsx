@@ -18,18 +18,24 @@ const PasswordResetPage = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [otp, setOtp] = useState<string>("");
+  const [isValidForm, setIsValidForm] = useState<boolean>();
 
   const handleOtpSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!email.length) return;
+    if (!email.length || !isValidForm) return;
     requestPasswordResetOtp(email) //
       .then(() => navigate("#verify"));
   };
 
   const handleOtpVerifySubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!otp || !password || !isValidForm) return;
     requestOtpVerifyForResetPassword({ password, otp }) //
       .then(() => navigate("/signin"));
+  };
+
+  const handleValidationResult = (result: boolean) => {
+    setIsValidForm(result);
   };
   const status = useMemo(() => window.location.hash, [window.location.hash]);
 
@@ -51,6 +57,7 @@ const PasswordResetPage = () => {
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setEmail(e.target.value)
               }
+              onValidationResult={handleValidationResult}
             />
             <BaseButton>비밀번호 재설정 OTP요청</BaseButton>
           </form>
@@ -75,15 +82,17 @@ const PasswordResetPage = () => {
               }
               withLabel="otp 번호"
               validation={otpValidation}
+              onValidationResult={handleValidationResult}
             />
             <BaseInput
-              type="text"
+              type="password"
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setPassword(e.target.value)
               }
               value={password}
               withLabel="새로운 비밀번호"
               validation={PasswordValidation}
+              onValidationResult={handleValidationResult}
             />
             <BaseButton>비밀번호 재설정 하기</BaseButton>
           </form>
