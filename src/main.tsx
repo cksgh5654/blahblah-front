@@ -8,6 +8,7 @@ import EmailOtpPage from "./pages/EmailOtpPage.tsx";
 import SigninPage from "./pages/SigninPage.tsx";
 import PasswordResetPage from "./pages/PasswordResetPage.tsx";
 import CreateBoardPage from "./pages/CreateBoardPage.tsx";
+import ProfilePage from "./pages/ProfilePage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
       {
         path: "/create",
         element: <CreateBoardPage />,
+      },
+      {
+        path: "/:email",
+        element: <ProfilePage />,
       },
     ],
   },
