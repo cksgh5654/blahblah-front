@@ -4,7 +4,7 @@ import EmailAuthForm, { EmailFormDataType } from "../components/EmailAuthForm";
 import GoogleOauthButton from "../components/Button/GoogleOauthButton";
 import { useMemo } from "react";
 import BaseButton from "../components/Button/BaseButton";
-import MainLogo from "../components/Icons/MainLogo";
+import Logo from "../components/Icons/Logo";
 
 const SigninPage = () => {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const SigninPage = () => {
       style={{ height: "calc(-52px + 100vh)" }}
     >
       <div className="w-96 flex flex-col gap-y-4">
-        <MainLogo />
+        <Logo className="py-16" />
         {method === "#email" && (
           <EmailAuthForm type="signin" onSubmit={handleEmailSignin} />
         )}

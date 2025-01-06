@@ -1,10 +1,10 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { sendOtp } from "../apis/auth.api";
 import { useNavigate } from "react-router-dom";
-import MainLogo from "../components/Icons/MainLogo";
 import BaseInput from "../components/Input/BaseInput";
 import BaseButton from "../components/Button/BaseButton";
 import { otpValidation } from "../utils/validation";
+import Logo from "../components/Icons/Logo";
 
 const EmailOtpPage = () => {
   const navigate = useNavigate();
@@ -33,7 +33,7 @@ const EmailOtpPage = () => {
       style={{ height: "calc(-52px + 100vh)" }}
     >
       <form onSubmit={handleSubmit} className="w-96 flex flex-col gap-y-4">
-        <MainLogo />
+        <Logo className="py-16" />
         <BaseInput
           withLabel="OTP 번호"
           onChange={handleChangeInput}
