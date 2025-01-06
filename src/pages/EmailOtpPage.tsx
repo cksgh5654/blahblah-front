@@ -30,7 +30,7 @@ const EmailOtpPage = () => {
   return (
     <div
       className="w-screen flex justify-center items-center"
-      style={{ height: "calc(-52px + 100vh)" }}
+      style={{ height: "calc(-68.5px + 100vh)" }}
     >
       <form onSubmit={handleSubmit} className="w-96 flex flex-col gap-y-4">
         <Logo className="py-16" />

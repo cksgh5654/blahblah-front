@@ -14,7 +14,7 @@ const SignupPage = () => {
     <>
       <div
         className="w-screen flex justify-center items-center"
-        style={{ height: "calc(-52px + 100vh)" }}
+        style={{ height: "calc(-68.5px + 100vh)" }}
       >
         <div className="w-96 flex flex-col gap-y-4">
           <Logo className="py-16" />
