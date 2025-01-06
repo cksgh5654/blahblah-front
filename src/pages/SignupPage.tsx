@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import EmailAuthForm, { EmailFormDataType } from "../components/EmailAuthForm";
 import { requestSignupOtp } from "../apis/auth.api";
 import GoogleOauthButton from "../components/Button/GoogleOauthButton";
-import MainLogo from "../components/Icons/MainLogo";
+import Logo from "../components/Icons/Logo";
 
 const SignupPage = () => {
   const navigate = useNavigate();
@@ -14,10 +14,10 @@ const SignupPage = () => {
     <>
       <div
         className="w-screen flex justify-center items-center"
-        style={{ height: "calc(-52px + 100vh)" }}
+        style={{ height: "calc(-68.5px + 100vh)" }}
       >
         <div className="w-96 flex flex-col gap-y-4">
-          <MainLogo />
+          <Logo className="py-16" />
           <EmailAuthForm type="signup" onSubmit={handleEmailSignup} />
           <Seperator />
           <GoogleOauthButton

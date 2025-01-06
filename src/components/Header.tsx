@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import Logo from "./Icons/Logo";
 import { useEffect, useState } from "react";
-import defaultImg from "./Icons/profileImg.svg";
+import defaultImg from "../../public/profileImg.svg";
 import MagnifyingGlass from "./Icons/MagnifyingGlass";
 
 const Header = () => {

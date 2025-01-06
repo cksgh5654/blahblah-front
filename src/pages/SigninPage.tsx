@@ -4,7 +4,7 @@ import EmailAuthForm, { EmailFormDataType } from "../components/EmailAuthForm";
 import GoogleOauthButton from "../components/Button/GoogleOauthButton";
 import { useMemo } from "react";
 import BaseButton from "../components/Button/BaseButton";
-import MainLogo from "../components/Icons/MainLogo";
+import Logo from "../components/Icons/Logo";
 
 const SigninPage = () => {
   const navigate = useNavigate();
@@ -16,10 +16,10 @@ const SigninPage = () => {
   return (
     <div
       className="w-screen flex justify-center items-center"
-      style={{ height: "calc(-52px + 100vh)" }}
+      style={{ height: "calc(-68.5px + 100vh)" }}
     >
       <div className="w-96 flex flex-col gap-y-4">
-        <MainLogo />
+        <Logo className="py-16" />
         {method === "#email" && (
           <EmailAuthForm type="signin" onSubmit={handleEmailSignin} />
         )}
@@ -40,7 +40,7 @@ const SigninPage = () => {
         </button>
         <button
           className="text-center text-sm font-bold text-gray-500"
-          onClick={() => navigate("/signup/otp/verify")}
+          onClick={() => navigate("/password-reset/otp")}
         >
           비밀번호 재설정 하기
         </button>

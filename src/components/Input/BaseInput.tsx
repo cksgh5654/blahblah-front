@@ -6,7 +6,8 @@ interface BaseInputProps extends InputHTMLAttributes<HTMLInputElement> {
   validation?: (value: string) => { result: boolean; message: string | null };
   onValidationResult?: (result: boolean) => void;
 }
-
+const baseStyle =
+  "w-full p-2 text-sm border border-[#DFDFDF] rounded-lg outline-none";
 const BaseInput = (props: BaseInputProps) => {
   const {
     withLabel,
@@ -22,6 +23,10 @@ const BaseInput = (props: BaseInputProps) => {
     setError(result ? null : message);
     onValidationResult?.(result);
   };
+  const inputStyle = rest.className
+    ? `${baseStyle} ${rest.className}`
+    : `${baseStyle}`;
+
   return (
     <div>
       <div className="flex flex-col gap-y-2">
@@ -31,11 +36,7 @@ const BaseInput = (props: BaseInputProps) => {
             {isRequired && <span className="text-violet-800">*</span>}
           </label>
         )}
-        <input
-          {...rest}
-          onBlur={handleBlurInput}
-          className="w-full p-2 text-sm border border-[#DFDFDF] rounded-lg outline-none"
-        />
+        <input {...rest} onBlur={handleBlurInput} className={inputStyle} />
       </div>
       {error && <span className="text-red-600 text-xs">{error}</span>}
     </div>
