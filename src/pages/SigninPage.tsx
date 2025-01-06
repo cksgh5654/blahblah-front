@@ -40,7 +40,7 @@ const SigninPage = () => {
         </button>
         <button
           className="text-center text-sm font-bold text-gray-500"
-          onClick={() => navigate("/signup/otp/verify")}
+          onClick={() => navigate("/password-reset/otp")}
         >
           비밀번호 재설정 하기
         </button>
