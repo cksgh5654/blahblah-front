@@ -44,3 +44,39 @@ export const signinWithEmail = async (data: EmailFormDataType) => {
     }
   }
 };
+
+export const requestPasswordResetOtp = async (email: string) => {
+  try {
+    const response = await baseInstance.post("/auth/password-reset/otp", {
+      email,
+    });
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+  }
+};
+
+export const requestOtpVerifyForResetPassword = async (data: {
+  otp: string;
+  password: string;
+}) => {
+  try {
+    const response = await baseInstance.post(
+      "/auth/password-reset/otp/verify",
+      data
+    );
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+  }
+};

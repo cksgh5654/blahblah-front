@@ -6,6 +6,7 @@ import MainPage from "./pages/MainPage.tsx";
 import SignupPage from "./pages/SignupPage.tsx";
 import EmailOtpPage from "./pages/EmailOtpPage.tsx";
 import SigninPage from "./pages/SigninPage.tsx";
+import PasswordResetPage from "./pages/PasswordResetPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
       {
         path: "/signup/otp/verify",
         element: <EmailOtpPage />,
+      },
+      {
+        path: "/password-reset/otp",
+        element: <PasswordResetPage />,
       },
     ],
   },
