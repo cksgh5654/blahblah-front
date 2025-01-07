@@ -11,11 +11,7 @@
   },
   "dependencies": {
     "axios": "^1.7.9",
-<<<<<<< HEAD
-    "blahblah-front-common-ui-kit": "^0.0.6",
-=======
-    "blahblah-front-common-ui-kit": "^0.0.8",
->>>>>>> 03171c0 (chore: blahblah-front-common-ui-kit lib install)
+    "blahblah-front-common-ui-kit": "^0.0.9",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.1"
