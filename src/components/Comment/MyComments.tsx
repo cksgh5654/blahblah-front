@@ -7,7 +7,7 @@ const MyComments = () => {
         <div>
           <AspectRatio className="w-12 flex-shrink-0 self-start">
             <AspectRatio.Image
-              src="/public/favicon.svg.svg"
+              src="/public/favicon.svg"
               alt="board-image"
               className="w-full h-full object-contain"
             />
