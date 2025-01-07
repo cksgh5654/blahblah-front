@@ -3,15 +3,19 @@ import Logo from "./Icons/Logo";
 import { useEffect, useState } from "react";
 import defaultImg from "../../public/profileImg.svg";
 import MagnifyingGlass from "./Icons/MagnifyingGlass";
-
+type Profile = {
+  email: string;
+  nickname: string;
+  image: string;
+};
 const Header = () => {
+  const navigate = useNavigate();
+  const [profile, setProfile] = useState<Profile>();
   const [AvatarImage, setAvatarImage] = useState("");
-
   useEffect(() => {
     setAvatarImage(defaultImg);
   }, []);
 
-  const navigate = useNavigate();
   return (
     <header className="sticky top-0 bg-white flex justify-center border-b border-slate-300">
       <div className="flex justify-between px-8 py-4 gap-6 w-[1280px]">
