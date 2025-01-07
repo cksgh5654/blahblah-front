@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import Logo from "./Icons/Logo";
 import { useEffect, useState } from "react";
-import defaultImg from "../../public/profileImg.svg";
 import MagnifyingGlass from "./Icons/MagnifyingGlass";
+import { getMyProfile } from "../apis/user.api";
+import BaseButton from "./Button/BaseButton";
+import Avatar from "./Avatar";
 type Profile = {
   email: string;
   nickname: string;
@@ -11,9 +13,9 @@ type Profile = {
 const Header = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile>();
-  const [AvatarImage, setAvatarImage] = useState("");
   useEffect(() => {
-    setAvatarImage(defaultImg);
+    getMyProfile() //
+      .then(setProfile);
   }, []);
 
   return (
@@ -32,22 +34,29 @@ const Header = () => {
             <MagnifyingGlass height="30px" />
           </button>
         </div>
-        <div className="flex justify-center items-center gap-2">
-          <button
-            className={
-              "flex justify-between items-center text-slate-400 text-sm text-nowrap"
-            }
-          >
-            로그아웃
-          </button>
-          <button className="flex w-8 h-8" onClick={() => navigate("/profile")}>
-            <img
-              className="object-cover w-full h-full rounded-full cursor-pointer"
-              src={AvatarImage}
-              alt="Profile image"
+      </div>
+      <div className="flex justify-center items-center gap-2">
+        {profile ? (
+          <>
+            <button className="flex justify-between items-center text-slate-400 text-sm text-nowrap">
+              로그아웃
+            </button>
+            <Avatar
+              url={profile.image}
+              size="small"
+              onClick={() => navigate(`/@${profile.nickname}`)}
             />
-          </button>
-        </div>
+          </>
+        ) : (
+          <>
+            <BaseButton
+              className="flex justify-between items-center text-slate-400 text-sm text-nowrap"
+              onClick={() => navigate("/signin")}
+            >
+              로그인 하러가기
+            </BaseButton>
+          </>
+        )}
       </div>
     </header>
   );
