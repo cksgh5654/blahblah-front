@@ -16,7 +16,7 @@ const Header = () => {
     <header className="sticky top-0 bg-white flex justify-center border-b border-slate-300">
       <div className="flex justify-between px-8 py-4 gap-6 w-[1280px]">
         <button onClick={() => navigate("/")}>
-          <Logo height="30px" />
+          <Logo height="28px" />
         </button>
         <div className="flex w-full h-10 relative">
           <input
