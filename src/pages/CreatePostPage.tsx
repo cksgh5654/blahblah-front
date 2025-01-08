@@ -5,7 +5,9 @@ import { ChangeEvent, useState, useMemo, useRef, useEffect } from 'react';
 import BaseInput from '../components/Input/BaseInput';
 import BaseButton from '../components/Button/BaseButton';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { imageUpload } from '../config/aws.config';
+import { baseInstance } from '../apis/axios.config';
+import { PostTitleValidation } from '../utils/validation';
 
 Quill.register('modules/ImageResize', ImageResize);
 
@@ -13,6 +15,7 @@ const CreatePostPage = () => {
   const navigator = useNavigate();
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
+  const [isVaild, setIsVaild] = useState<boolean>(false);
   const QuillRef = useRef<ReactQuillNew>(null);
 
   const triggerHandler = () => {
@@ -21,7 +24,6 @@ const CreatePostPage = () => {
     input.setAttribute('accept', 'image/*');
     input.setAttribute('multiple', 'multiple');
     input.addEventListener('change', imageHandler);
-    input.classList.add('ql-image');
     input.click();
   };
 
@@ -29,7 +31,6 @@ const CreatePostPage = () => {
     const changeEvent = e as unknown as ChangeEvent<HTMLInputElement>;
 
     const files = changeEvent.target.files;
-    console.log(files);
     if (!files) {
       return;
     }
@@ -47,21 +48,9 @@ const CreatePostPage = () => {
     try {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        const formData = new FormData();
-        formData.append('image', file);
-
-        const response = await axios.post('multer api', formData, {
-          headers: {
-            'Content-type': 'multipart/form-data',
-          },
-        });
-
-        if (response.data.success) {
-          const imageURL = response.data.success;
-
-          editor.insertEmbed(range.index, 'image', imageURL);
-          editor.setSelection(range.index + 1);
-        }
+        const imageURL = await imageUpload(file);
+        editor.insertEmbed(range.index, 'image', imageURL);
+        editor.setSelection(range.index + 1);
       }
     } catch (err) {
       console.log('사진 업로드 실패', err);
@@ -97,7 +86,7 @@ const CreatePostPage = () => {
     []
   );
 
-  const handleTitleInput = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleTitleInput = async (e: ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
 
@@ -105,29 +94,38 @@ const CreatePostPage = () => {
     setContent(value);
   };
 
-  const boardSubmit = async () => {
-    if (!title) {
-      alert('제목을 입력해주세요.');
-      return;
-    }
+  const handleValidationChange = (result: boolean) => {
+    setIsVaild(result);
+  };
 
+  const boardSubmit = async () => {
     if (!content) {
       alert('내용을 입력해주세요.');
       return;
     }
 
-    // const postData = {
-    //   boardId,
-    //   userId,
-    //   title,
-    //   content,
-    // };
+    if (!isVaild) {
+      return;
+    }
 
-    // try {
-    //   const createPost = await axios.post('게시글 생성 api', postData);
-    // } catch (err) {
-    //   console.error(`[] : ${err}`);
-    // }
+    const postData = {
+      board: '1',
+      title,
+      content,
+    };
+
+    try {
+      const response = await baseInstance.post('/post/create', postData);
+
+      if (response.data.isError) {
+        throw new Error(response.data.message);
+      }
+
+      alert(response.data.message);
+      navigator('/');
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   useEffect(() => {
@@ -145,6 +143,8 @@ const CreatePostPage = () => {
             onChange={handleTitleInput}
             value={title}
             maxLength={30}
+            validation={PostTitleValidation}
+            onValidationResult={handleValidationChange}
           />
         </div>
 
@@ -160,7 +160,7 @@ const CreatePostPage = () => {
           />
         </div>
 
-        <div className="flex gap-10 pt-20">
+        <div className="flex justify-end gap-10 pt-20">
           <BaseButton onClick={() => navigator('/')}>목록으로</BaseButton>
           <BaseButton onClick={boardSubmit}>등록하기</BaseButton>
         </div>
