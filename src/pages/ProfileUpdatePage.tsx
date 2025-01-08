@@ -43,18 +43,19 @@ const ProfileUpdatePage = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (imageFile) {
-      imageUpload(imageFile) //
-        .then((response) => {
-          if (response) setFormData((prev) => ({ ...prev, image: response }));
-        });
-    }
+    try {
+      let updatedFormData = { ...formData };
+      if (imageFile) {
+        const url = await imageUpload(imageFile);
+        updatedFormData = { ...formData, image: url };
+      }
 
-    updateMyProfile(formData) //
-      .then(() => {
-        navigate(`/@${formData.nickname}`);
-        updateUser(formData);
-      });
+      await updateMyProfile(updatedFormData);
+      updateUser(updatedFormData);
+      navigate(`/@${updatedFormData.nickname}`);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
