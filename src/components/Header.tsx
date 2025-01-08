@@ -5,6 +5,7 @@ import MagnifyingGlass from "./Icons/MagnifyingGlass";
 import { getMyProfile } from "../apis/user.api";
 import BaseButton from "./Button/BaseButton";
 import Avatar from "./Avatar";
+import { signout } from "../apis/auth.api";
 type Profile = {
   email: string;
   nickname: string;
@@ -13,6 +14,14 @@ type Profile = {
 const Header = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile>();
+
+  const handleClickSignout = () => {
+    signout() //
+      .then(() => {
+        window.location.href = "/signin";
+      });
+  };
+
   useEffect(() => {
     getMyProfile() //
       .then(setProfile);
@@ -38,7 +47,10 @@ const Header = () => {
       <div className="flex justify-center items-center gap-2">
         {profile ? (
           <>
-            <button className="flex justify-between items-center text-slate-400 text-sm text-nowrap">
+            <button
+              className="flex justify-between items-center text-slate-400 text-sm text-nowrap"
+              onClick={handleClickSignout}
+            >
               로그아웃
             </button>
             <Avatar

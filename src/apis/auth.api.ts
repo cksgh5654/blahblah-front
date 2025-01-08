@@ -80,3 +80,17 @@ export const requestOtpVerifyForResetPassword = async (data: {
     }
   }
 };
+
+export const signout = async () => {
+  try {
+    const response = await baseInstance.post("/auth/signout");
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+  }
+};
