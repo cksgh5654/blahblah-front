@@ -10,7 +10,7 @@ import {
   useState,
 } from "react";
 import { getMyProfile, updateMyProfile } from "../apis/user.api";
-import { imageUpload, multipleImageUpload } from "../config/aws.config";
+import { imageUpload } from "../config/aws.config";
 import { Profile } from "../types/user.type";
 import { useNavigate } from "react-router-dom";
 
@@ -20,6 +20,7 @@ const DEFAULT_PROFILE_DATA = {
   image: "",
   createdAt: "",
 };
+
 const ProfileUpdatePage = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -49,18 +50,14 @@ const ProfileUpdatePage = () => {
     e.preventDefault();
     console.log("submit");
     if (imageFile) {
-      // imageUpload(imageFile) //
-      //   .then((response) => {
-      //     if (response)
-      //       setFormData((prev) => ({ ...prev, image: response.Location }));
-      //   });
-      multipleImageUpload([imageFile, imageFile, imageFile]).then((response) =>
-        console.log(response)
-      );
+      imageUpload(imageFile) //
+        .then((response) => {
+          if (response) setFormData((prev) => ({ ...prev, image: response }));
+        });
     }
 
-    // updateMyProfile(formData) //
-    //   .then(() => navigate(`/@${formData.nickname}`));
+    updateMyProfile(formData) //
+      .then(() => navigate(`/@${formData.nickname}`));
   };
 
   useEffect(() => {
@@ -70,38 +67,54 @@ const ProfileUpdatePage = () => {
         setFormData(response);
       });
   }, []);
+
   return (
-    <form onSubmit={handleSubmit}>
-      <Avatar size="large" url={formData.image} />
-      <BaseInput
-        type="file"
-        className="hidden"
-        onChange={handleChangeFileInput}
-        ref={fileInputRef}
-      />
-      <BaseButton
-        type="button"
-        onClick={() => fileInputRef.current?.click()}
-        className="w-fit"
+    <div className="w-screen flex justify-center items-center">
+      <form
+        onSubmit={handleSubmit}
+        className="w-[768px] py-10 flex flex-col gap-y-8"
       >
-        이미지 업로드
-      </BaseButton>
-      <BaseInput
-        withLabel="가입된 이메일"
-        isRequired={false}
-        readOnly
-        value={formData.email}
-      />
-      <BaseInput
-        withLabel="닉네임"
-        value={formData.nickname}
-        onChange={handleChangeInput}
-        name="nickname"
-      />
-      <BaseButton className="w-fit" disabled={!isEdited}>
-        프로필 수정
-      </BaseButton>
-    </form>
+        <div className="flex gap-x-4">
+          <Avatar
+            size="xlarge"
+            url={formData.image}
+            onClick={() => fileInputRef.current?.click()}
+          />
+          <div className="flex flex-col justify-center gap-y-2">
+            <BaseInput
+              type="file"
+              className="hidden"
+              withLabel="프로필 사진"
+              onChange={handleChangeFileInput}
+              ref={fileInputRef}
+            />
+            <BaseButton
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="text-xs"
+            >
+              이미지 업로드
+            </BaseButton>
+          </div>
+        </div>
+        <BaseInput
+          withLabel="가입된 이메일"
+          isRequired={false}
+          readOnly
+          value={formData.email}
+          className="border-none font-bold"
+        />
+        <BaseInput
+          withLabel="닉네임"
+          value={formData.nickname}
+          onChange={handleChangeInput}
+          name="nickname"
+        />
+        <BaseButton className="w-fit" disabled={!isEdited}>
+          프로필 저장 하기
+        </BaseButton>
+      </form>
+    </div>
   );
 };
 
