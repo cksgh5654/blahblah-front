@@ -11,7 +11,9 @@ import { PostTitleValidation } from '../utils/validation';
 
 Quill.register('modules/ImageResize', ImageResize);
 
-const CreatePostPage = () => {
+// const dummycontent = `<p>더미 데이터 생성용 1</p><p><br></p><p><img src="https://elice-project-blahblah.s3.ap-northeast-2.amazonaws.com/images/1736322113955-add_meeing.png" style="" width="271"></p><p><br></p><p>더미 데이터 생성용 2</p><p><br></p><p><img src="https://elice-project-blahblah.s3.ap-northeast-2.amazonaws.com/images/1736322142650-reserve_meeting.png" style="" width="268"></p><p><br></p><p><br></p><p>더미 데이터 생성용 3</p><p><br></p><p><img src="https://elice-project-blahblah.s3.ap-northeast-2.amazonaws.com/images/1736322156081-default_image.png" style="cursor: nesw-resize;" width="261"></p>`;
+
+const UpdatePostPage = () => {
   const navigator = useNavigate();
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
@@ -164,11 +166,11 @@ const CreatePostPage = () => {
 
         <div className="flex justify-end gap-10 mt-20">
           <BaseButton onClick={() => navigator('/')}>목록으로</BaseButton>
-          <BaseButton onClick={boardSubmit}>등록하기</BaseButton>
+          <BaseButton onClick={boardSubmit}>수정하기</BaseButton>
         </div>
       </div>
     </div>
   );
 };
 
-export default CreatePostPage;
+export default UpdatePostPage;
