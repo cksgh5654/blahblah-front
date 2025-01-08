@@ -15,9 +15,9 @@ const Avatar = ({ url, size = "medium", className, onClick }: AvatarProps) => {
       <div className={baseStyle} onClick={onClick}>
         {url ? (
           <img
-            src="/public/google-icon.svg"
+            src={url}
             alt="user-image"
-            className="w-full h-full object-contain"
+            className="w-full h-full object-cover rounded-full"
           />
         ) : (
           <DefaultUserIcon />
@@ -30,7 +30,7 @@ const Avatar = ({ url, size = "medium", className, onClick }: AvatarProps) => {
 export default Avatar;
 
 const getBaseStyle = (size: AvatarSize, className?: string) => {
-  let baseStyle = "cursor-pointer ";
+  let baseStyle = "cursor-pointer rounded-full ";
   switch (size) {
     case "small": {
       baseStyle += "w-8 h-8";
