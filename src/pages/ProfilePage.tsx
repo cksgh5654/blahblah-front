@@ -17,18 +17,19 @@ interface User {
 const ProfilePage = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User>();
-  const { email: nickname } = useParams();
+  const { email } = useParams();
 
   const TabsDefaultValue = useMemo(
     () => window.location.hash,
     [window.location.hash]
   );
+
   useEffect(() => {
-    if (!nickname) return;
+    if (!email) return;
     navigate("#myposts");
-    getUserInfo(nickname) //
+    getUserInfo(email) //
       .then(setUser);
-  }, [nickname]);
+  }, [email]);
 
   return (
     <div
@@ -48,7 +49,7 @@ const ProfilePage = () => {
             </div>
             <BaseButton
               className="w-fit h-fit self-center"
-              onClick={() => navigate(`/@${user?.nickname}/profile`)}
+              onClick={() => navigate(`/${user?.email}/profile`)}
             >
               프로필 수정
             </BaseButton>
