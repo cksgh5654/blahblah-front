@@ -2,6 +2,7 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import CreatePostPage from "./pages/CreatePostPage.tsx";
 import MainPage from "./pages/MainPage.tsx";
 import SignupPage from "./pages/SignupPage.tsx";
 import EmailOtpPage from "./pages/EmailOtpPage.tsx";
@@ -13,28 +14,32 @@ import ProfileUpdatePage from "./pages/ProfileUpdatePage.tsx";
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <App />,
     children: [
       {
-        path: "/",
+        path: '/',
         element: <MainPage />,
       },
       {
-        path: "/signup",
+        path: '/signup',
         element: <SignupPage />,
       },
       {
-        path: "/signin",
+        path: '/signin',
         element: <SigninPage />,
       },
       {
-        path: "/signup/otp/verify",
+        path: '/signup/otp/verify',
         element: <EmailOtpPage />,
       },
       {
-        path: "/password-reset/otp",
+        path: '/password-reset/otp',
         element: <PasswordResetPage />,
+      },
+      {
+        path: '/createboard',
+        element: <CreatePostPage />,
       },
       {
         path: "/create",
@@ -52,6 +57,6 @@ const router = createBrowserRouter([
   },
 ]);
 
-createRoot(document.getElementById("root")!).render(
+createRoot(document.getElementById('root')!).render(
   <RouterProvider router={router} />
 );
