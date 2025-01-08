@@ -6,6 +6,7 @@ import { Tabs } from "blahblah-front-common-ui-kit";
 import BaseButton from "../components/Button/BaseButton";
 import MyPosts from "../components/Post/MyPosts";
 import MyComments from "../components/Comment/MyComments";
+import { useUserContext } from "../context/userContext";
 
 interface User {
   email: string;
@@ -17,7 +18,12 @@ interface User {
 const ProfilePage = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User>();
+  const { user: singinedUser } = useUserContext();
   const { email } = useParams();
+  const isSigninedUser = useMemo(
+    () => user?.email === singinedUser.email,
+    [user, singinedUser]
+  );
 
   const TabsDefaultValue = useMemo(
     () => window.location.hash,
@@ -47,12 +53,14 @@ const ProfilePage = () => {
                 가입한 날짜 : <span>{user?.createdAt.split("T")[0]}</span>
               </p>
             </div>
-            <BaseButton
-              className="w-fit h-fit self-center"
-              onClick={() => navigate(`/${user?.email}/profile`)}
-            >
-              프로필 수정
-            </BaseButton>
+            {isSigninedUser && (
+              <BaseButton
+                className="w-fit h-fit self-center"
+                onClick={() => navigate(`/${user?.email}/profile`)}
+              >
+                프로필 수정
+              </BaseButton>
+            )}
           </div>
           <div>
             <Tabs.Root defaultValue="#myposts">
@@ -65,7 +73,9 @@ const ProfilePage = () => {
                     "border-b-2 border-violet-800 pb-2"
                   } flex justify-center items-center px-4`}
                 >
-                  <p className="text-center">내 게시물 보기</p>
+                  <p className="text-center">
+                    {isSigninedUser ? "내 게시물 보기" : "게시물 보기"}
+                  </p>
                 </Tabs.Trigger>
                 <Tabs.Trigger
                   value="#mycomments"
@@ -75,7 +85,7 @@ const ProfilePage = () => {
                     "border-b-2 border-violet-800 pb-2"
                   } flex justify-center items-center px-4`}
                 >
-                  <p>내 댓글 보기</p>
+                  <p>{isSigninedUser ? "내 댓글 보기" : "댓글 보기"}</p>
                 </Tabs.Trigger>
               </Tabs.List>
               <Tabs.Content value="#myposts">
