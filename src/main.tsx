@@ -9,6 +9,7 @@ import SigninPage from "./pages/SigninPage.tsx";
 import PasswordResetPage from "./pages/PasswordResetPage.tsx";
 import CreateBoardPage from "./pages/CreateBoardPage.tsx";
 import ProfilePage from "./pages/ProfilePage.tsx";
+import ProfileUpdatePage from "./pages/ProfileUpdatePage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
       {
         path: "/:email",
         element: <ProfilePage />,
+      },
+      {
+        path: "/:email/profile",
+        element: <ProfileUpdatePage />,
       },
     ],
   },

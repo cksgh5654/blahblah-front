@@ -1,3 +1,4 @@
+import { ProfileFormData } from "../types/form.type";
 import { baseInstance } from "./axios.config";
 
 export const getMyProfile = async () => {
@@ -23,6 +24,20 @@ export const getUserInfo = async (nickname: string) => {
       throw new Error(response.data.message);
     }
     return response.data.user;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+  }
+};
+
+export const updateMyProfile = async (data: ProfileFormData) => {
+  try {
+    const response = await baseInstance.put(`/user/me`, data);
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
   } catch (error) {
     if (error instanceof Error) {
       throw error;
