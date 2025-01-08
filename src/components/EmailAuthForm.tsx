@@ -24,7 +24,6 @@ const EmailAuthForm = ({ type, onSubmit }: EmailAuthFormProps) => {
     const { value, name } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleValidationChange = (result: boolean) => {
     setIsValidForm(result);
   };

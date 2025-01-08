@@ -11,34 +11,35 @@ import PasswordResetPage from "./pages/PasswordResetPage.tsx";
 import CreateBoardPage from "./pages/CreateBoardPage.tsx";
 import ProfilePage from "./pages/ProfilePage.tsx";
 import ProfileUpdatePage from "./pages/ProfileUpdatePage.tsx";
+import UserProvider from "./context/userContext.tsx";
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <App />,
     children: [
       {
-        path: '/',
+        path: "/",
         element: <MainPage />,
       },
       {
-        path: '/signup',
+        path: "/signup",
         element: <SignupPage />,
       },
       {
-        path: '/signin',
+        path: "/signin",
         element: <SigninPage />,
       },
       {
-        path: '/signup/otp/verify',
+        path: "/signup/otp/verify",
         element: <EmailOtpPage />,
       },
       {
-        path: '/password-reset/otp',
+        path: "/password-reset/otp",
         element: <PasswordResetPage />,
       },
       {
-        path: '/createboard',
+        path: "/createboard",
         element: <CreatePostPage />,
       },
       {
@@ -57,6 +58,8 @@ const router = createBrowserRouter([
   },
 ]);
 
-createRoot(document.getElementById('root')!).render(
-  <RouterProvider router={router} />
+createRoot(document.getElementById("root")!).render(
+  <UserProvider>
+    <RouterProvider router={router} />
+  </UserProvider>
 );

@@ -9,24 +9,20 @@ import {
   useRef,
   useState,
 } from "react";
-import { getMyProfile, updateMyProfile } from "../apis/user.api";
+import { updateMyProfile } from "../apis/user.api";
 import { imageUpload } from "../config/aws.config";
 import { Profile } from "../types/user.type";
 import { useNavigate } from "react-router-dom";
-
-const DEFAULT_PROFILE_DATA = {
-  email: "",
-  nickname: "",
-  image: "",
-  createdAt: "",
-};
+import { useUserContext } from "../context/userContext";
 
 const ProfileUpdatePage = () => {
   const navigate = useNavigate();
+  const { user } = useUserContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [original, setOriginal] = useState<Profile>(DEFAULT_PROFILE_DATA);
-  const [formData, setFormData] = useState<Profile>(DEFAULT_PROFILE_DATA);
+  const [original, setOriginal] = useState<Profile>(user);
+  const [formData, setFormData] = useState<Profile>(user);
   const [imageFile, setImageFile] = useState<File>();
+  const { updateUser } = useUserContext();
   const isEdited = useMemo(
     () => JSON.stringify(original) !== JSON.stringify(formData),
     [formData]
@@ -38,7 +34,6 @@ const ProfileUpdatePage = () => {
     const previewImage = URL.createObjectURL(file);
     setFormData((prev) => ({ ...prev, image: previewImage }));
     setImageFile(file);
-    console.log(e.target.files[0]);
   };
 
   const handleChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
@@ -48,7 +43,6 @@ const ProfileUpdatePage = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("submit");
     if (imageFile) {
       imageUpload(imageFile) //
         .then((response) => {
@@ -57,16 +51,16 @@ const ProfileUpdatePage = () => {
     }
 
     updateMyProfile(formData) //
-      .then(() => navigate(`/@${formData.nickname}`));
+      .then(() => {
+        navigate(`/@${formData.nickname}`);
+        updateUser(formData);
+      });
   };
 
   useEffect(() => {
-    getMyProfile() //
-      .then((response) => {
-        setOriginal(response);
-        setFormData(response);
-      });
-  }, []);
+    setOriginal(user);
+    setFormData(user);
+  }, [user]);
 
   return (
     <div className="w-screen flex justify-center items-center">

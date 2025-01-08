@@ -1,31 +1,21 @@
 import { useNavigate } from "react-router-dom";
 import Logo from "./Icons/Logo";
-import { useEffect, useState } from "react";
 import MagnifyingGlass from "./Icons/MagnifyingGlass";
-import { getMyProfile } from "../apis/user.api";
 import BaseButton from "./Button/BaseButton";
 import Avatar from "./Avatar";
 import { signout } from "../apis/auth.api";
-type Profile = {
-  email: string;
-  nickname: string;
-  image: string;
-};
+import { useUserContext } from "../context/userContext";
+
 const Header = () => {
   const navigate = useNavigate();
-  const [profile, setProfile] = useState<Profile>();
-
+  const isSignined = localStorage.getItem("signinStatus");
+  const { user } = useUserContext();
   const handleClickSignout = () => {
     signout() //
       .then(() => {
         window.location.href = "/signin";
       });
   };
-
-  useEffect(() => {
-    getMyProfile() //
-      .then(setProfile);
-  }, []);
 
   return (
     <header className="sticky top-0 bg-white flex justify-center border-b border-slate-300">
@@ -45,7 +35,7 @@ const Header = () => {
         </div>
       </div>
       <div className="flex justify-center items-center gap-2">
-        {profile ? (
+        {isSignined && JSON.parse(isSignined) ? (
           <>
             <button
               className="flex justify-between items-center text-slate-400 text-sm text-nowrap"
@@ -54,9 +44,9 @@ const Header = () => {
               로그아웃
             </button>
             <Avatar
-              url={profile.image}
+              url={user.image}
               size="small"
-              onClick={() => navigate(`/@${profile.nickname}`)}
+              onClick={() => navigate(`/@${user.nickname}`)}
             />
           </>
         ) : (
