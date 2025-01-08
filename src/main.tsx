@@ -7,7 +7,7 @@ import SignupPage from './pages/SignupPage.tsx';
 import EmailOtpPage from './pages/EmailOtpPage.tsx';
 import SigninPage from './pages/SigninPage.tsx';
 import PasswordResetPage from './pages/PasswordResetPage.tsx';
-import CreateBoardPage from './pages/CreateBoardPage.tsx';
+import CreatePostPage from './pages/CreatePostPage.tsx';
 
 const router = createBrowserRouter([
   {
@@ -35,8 +35,8 @@ const router = createBrowserRouter([
         element: <PasswordResetPage />,
       },
       {
-        path: '/createBoard',
-        element: <CreateBoardPage />,
+        path: '/createboard',
+        element: <CreatePostPage />,
       },
     ],
   },

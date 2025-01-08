@@ -1,15 +1,13 @@
-import ReactQuillNew from 'react-quill-new';
+import ReactQuillNew, { Quill } from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
-import { ChangeEvent, useState, useMemo, useRef } from 'react';
+import { ImageResize } from 'quill-image-resize-module-ts';
+import { ChangeEvent, useState, useMemo, useRef, useEffect } from 'react';
 import BaseInput from '../components/Input/BaseInput';
 import BaseButton from '../components/Button/BaseButton';
 import { useNavigate } from 'react-router-dom';
-// import axios from 'axios';
+import axios from 'axios';
 
-const srcRegex = /<img[^>]*src\s*=\s*["']?([^"'>]+)["']?[^>]*>/g;
-
-const srcArray: string[] = []; // src
-const urlArray: string[] = []; // url
+Quill.register('modules/ImageResize', ImageResize);
 
 const CreatePostPage = () => {
   const navigator = useNavigate();
@@ -17,10 +15,61 @@ const CreatePostPage = () => {
   const [content, setContent] = useState<string>('');
   const QuillRef = useRef<ReactQuillNew>(null);
 
+  const triggerHandler = () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.setAttribute('multiple', 'multiple');
+    input.addEventListener('change', imageHandler);
+    input.classList.add('ql-image');
+    input.click();
+  };
+
+  const imageHandler = async (e: Event) => {
+    const changeEvent = e as unknown as ChangeEvent<HTMLInputElement>;
+
+    const files = changeEvent.target.files;
+    console.log(files);
+    if (!files) {
+      return;
+    }
+
+    if (!QuillRef.current) {
+      return;
+    }
+    const editor = QuillRef.current.getEditor();
+    const range = editor.getSelection();
+
+    if (!range) {
+      return;
+    }
+
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const formData = new FormData();
+        formData.append('image', file);
+
+        const response = await axios.post('multer api', formData, {
+          headers: {
+            'Content-type': 'multipart/form-data',
+          },
+        });
+
+        if (response.data.success) {
+          const imageURL = response.data.success;
+
+          editor.insertEmbed(range.index, 'image', imageURL);
+          editor.setSelection(range.index + 1);
+        }
+      }
+    } catch (err) {
+      console.log('사진 업로드 실패', err);
+    }
+  };
+
   const modules = useMemo(
     () => ({
-      ImageActions: {},
-      ImageFormats: {},
       toolbar: {
         container: [
           [{ font: [] }],
@@ -37,6 +86,12 @@ const CreatePostPage = () => {
             { background: [] },
           ],
         ],
+        handlers: {
+          image: triggerHandler,
+        },
+      },
+      ImageResize: {
+        modules: ['Resize'],
       },
     }),
     []
@@ -61,66 +116,11 @@ const CreatePostPage = () => {
       return;
     }
 
-    let match;
-    let index = 0;
-    let endContent = content;
-    const formData = new FormData();
-
-    while ((match = srcRegex.exec(content)) !== null) {
-      let result = match[1];
-      srcArray.push(result);
-
-      const byteString = atob(result.split(',')[1]);
-      const ab = new ArrayBuffer(byteString.length);
-      const ia = new Uint8Array(ab);
-
-      for (let i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-      }
-
-      const blob = new Blob([ia], {
-        type: 'image/jpeg',
-      });
-
-      const imagefile = new File([blob], `image-${index}.jpg`);
-      formData.append('file[]', imagefile);
-      index++;
-    }
-
-    try {
-      // const response = await axios.post('S3 api', formData, {
-      //   headers: {
-      //     'Content-type': 'multipart/form-data',
-      //   },
-      // });
-      // if (response.data.success) {
-      //   urlArray.push(response.data.urls);
-      // }
-
-      const urls = ['1.jpg', '2.jpg', '3.jpg'];
-      urlArray.push(...urls);
-    } catch (err) {
-      console.error(`[getImageUrls] : ${err}`);
-    }
-
-    if (srcArray.length > 0) {
-      for (let i = 0; i < srcArray.length; i++) {
-        let replace = endContent.replace(srcArray[i], urlArray[i]);
-        endContent = replace;
-      }
-    } else {
-      endContent = content;
-    }
-
-    console.log(urlArray);
-    console.log(endContent);
-
     // const postData = {
     //   boardId,
     //   userId,
     //   title,
-    //   content: endContent,
-    //   imgList: urlArray,
+    //   content,
     // };
 
     // try {
@@ -129,6 +129,10 @@ const CreatePostPage = () => {
     //   console.error(`[] : ${err}`);
     // }
   };
+
+  useEffect(() => {
+    if (!QuillRef.current) return;
+  }, []);
 
   return (
     <div className="w-screen flex justify-center items-center py-20">
