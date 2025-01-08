@@ -52,7 +52,7 @@ const ProfileUpdatePage = () => {
 
       await updateMyProfile(updatedFormData);
       updateUser(updatedFormData);
-      navigate(`/@${updatedFormData.nickname}`);
+      navigate(`/${updatedFormData.email}`);
     } catch (error) {
       console.log(error);
     }

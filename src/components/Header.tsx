@@ -46,7 +46,7 @@ const Header = () => {
             <Avatar
               url={user.image}
               size="small"
-              onClick={() => navigate(`/@${user.nickname}`)}
+              onClick={() => navigate(`/${user.email}`)}
             />
           </>
         ) : (
