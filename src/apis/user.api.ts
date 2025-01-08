@@ -33,7 +33,6 @@ export const getUserInfo = async (nickname: string) => {
 
 export const updateMyProfile = async (data: ProfileFormData) => {
   try {
-    console.log({ data });
     const response = await baseInstance.put(`/user/me`, data);
     if (response.data.isError) {
       throw new Error(response.data.message);
