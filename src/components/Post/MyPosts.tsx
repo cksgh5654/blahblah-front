@@ -8,7 +8,7 @@ const MyPosts = () => {
           <div className="flex gap-x-2">
             <AspectRatio className="w-12 flex-shrink-0 self-start">
               <AspectRatio.Image
-                src="/public/favicon.svg"
+                src="/favicon.svg"
                 alt="board-image"
                 className="w-full h-full object-contain"
               />
@@ -32,7 +32,7 @@ const MyPosts = () => {
           <div className="flex gap-x-2">
             <AspectRatio className="w-12 flex-shrink-0 self-start">
               <AspectRatio.Image
-                src="/public/favicon.svg"
+                src="/favicon.svg"
                 alt="board-image"
                 className="w-full h-full object-contain"
               />
