@@ -14,3 +14,31 @@ export const fetchBoardInCategories = async (name: string) => {
     }
   }
 };
+
+export const getBoardBySigninUserId = async () => {
+  try {
+    const response = await baseInstance.get(`/board/managerId`);
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response.data.board;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+  }
+};
+
+export const getBoardById = async (boardId: string) => {
+  try {
+    const response = await baseInstance.get(`/board/boardId/${boardId}`);
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response.data.board;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+  }
+};

@@ -7,6 +7,7 @@ import BaseButton from "../components/Button/BaseButton";
 import MyPosts from "../components/Post/MyPosts";
 import MyComments from "../components/Comment/MyComments";
 import { useUserContext } from "../context/userContext";
+import ProfileBoard from "../components/ProfileBoard";
 
 interface User {
   email: string;
@@ -24,7 +25,6 @@ const ProfilePage = () => {
     () => user?.email === singinedUser.email,
     [user, singinedUser]
   );
-
   const TabsDefaultValue = useMemo(
     () => window.location.hash,
     [window.location.hash]
@@ -87,12 +87,27 @@ const ProfilePage = () => {
                 >
                   <p>{isSigninedUser ? "내 댓글 보기" : "댓글 보기"}</p>
                 </Tabs.Trigger>
+                {isSigninedUser && (
+                  <Tabs.Trigger
+                    value="#myboard"
+                    onClick={() => navigate("#myboard")}
+                    className={`${
+                      TabsDefaultValue === "#myboard" &&
+                      "border-b-2 border-violet-800 pb-2"
+                    } flex justify-center items-center px-4`}
+                  >
+                    <p>내가 개설한 게시판 보기</p>
+                  </Tabs.Trigger>
+                )}
               </Tabs.List>
               <Tabs.Content value="#myposts">
                 <MyPosts />
               </Tabs.Content>
               <Tabs.Content value="#mycomments">
                 <MyComments />
+              </Tabs.Content>
+              <Tabs.Content value="#myboard">
+                {isSigninedUser && <ProfileBoard />}
               </Tabs.Content>
             </Tabs.Root>
           </div>
