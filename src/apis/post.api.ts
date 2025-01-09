@@ -1,11 +1,5 @@
 import { baseInstance } from './axios.config';
 
-type postDataTypes = {
-  boardId: string;
-  title: string;
-  content: string;
-};
-
 export const getPostData = async (postId: string) => {
   try {
     const response = await baseInstance.get(`/post/detail/${postId}`);
@@ -13,84 +7,62 @@ export const getPostData = async (postId: string) => {
     if (response.data.isError) {
       throw new Error(response.data.message);
     }
-
     return response.data;
   } catch (err) {
     console.error(err);
   }
 };
 
-export const handlePostCreate = async (
-  postData: postDataTypes,
-  isVaild: boolean
+export const createPost = async (
+  boardId: string,
+  title: string,
+  content: string
 ) => {
-  if (!postData.content) {
-    alert('내용을 입력해주세요.');
-    return;
-  }
-
-  if (!isVaild) {
-    return;
-  }
-
   try {
-    const response = await baseInstance.post('/post/create', postData);
+    const response = await baseInstance.post('/post/create', {
+      boardId,
+      title,
+      content,
+    });
 
     if (response.data.isError) {
       throw new Error(response.data.message);
     }
-
     return response.data;
-
-    alert(response.data.message);
   } catch (err) {
     console.error(err);
   }
 };
 
-export const handlePostUpdate = async (
-  postData: postDataTypes,
-  isVaild: boolean,
+export const updatePost = async (
+  title: string,
+  content: string,
   postId: string
 ) => {
-  if (!postData.content) {
-    alert('내용을 입력해주세요.');
-    return;
-  }
-
-  if (!isVaild) {
-    return;
-  }
-
   try {
-    const response = await baseInstance.post(
-      `/post/update/${postId}`,
-      postData
-    );
+    const response = await baseInstance.post(`/post/update/${postId}`, {
+      title,
+      content,
+    });
 
     if (response.data.isError) {
       throw new Error(response.data.message);
     }
-
     return response.data;
-
-    alert(response.data.message);
   } catch (err) {
     console.error(err);
   }
 };
 
-export const handlePostDelete = async (postId: string) => {
+export const deletePost = async (postId: string) => {
   if (window.confirm('게시글을 삭제하시겠습니까?')) {
     try {
-      const response = await baseInstance.delete(`/post/delete/${postId}`);
+      const response = await baseInstance.get(`/post/delete/${postId}`);
 
       if (response.data.isError) {
         throw new Error(response.data.message);
       }
-
       return response.data;
-      alert(response.data.message);
     } catch (err) {
       console.error(err);
     }
