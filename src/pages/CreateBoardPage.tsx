@@ -3,16 +3,19 @@ import CameraIcon from "../components/Icons/CameraIcon";
 import BaseButton from "../components/Button/BaseButton";
 import axios from "axios";
 import TrashIcon from "../components/Icons/TrashIcon";
+import { imageUpload } from "../config/aws.config";
+import { fetchCategories } from "../apis/category.api";
 
-const addressRegex = /^[A-Za-z0-9_]*$/;
+const urlRegex = /^[A-Za-z0-9_]*$/;
 
 interface boardInfo {
   name: string;
   description: string;
-  img: string;
-  address: string;
+  image: string;
+  url: string;
   category: string;
-  manager: string;
+  memberCount: number;
+  postCount: number;
 }
 
 interface Category {
@@ -22,9 +25,9 @@ interface Category {
 
 const CreateBoardPage = () => {
   const [descriptionCount, setDescriptionCount] = useState(0);
-  const [addressCount, setAddressCount] = useState(0);
+  const [urlCount, setUrlCount] = useState(0);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [imgUrl, setImgUrl] = useState<FileList | null>(null);
+  const [img, setImg] = useState<File | null>(null);
   const [isCheckedPrivacyPolicy, setIsCheckedPrivacyPolicy] = useState(false);
   const [isCheckedOperatingPrinciples, setIsCheckedOperatingPrinciples] =
     useState(false);
@@ -32,23 +35,28 @@ const CreateBoardPage = () => {
   const [boardInfo, setBoardInfo] = useState<boardInfo>({
     name: "",
     description: "",
-    img: "",
-    address: "",
+    image: "",
+    url: "",
     category: "",
-    manager: "",
+    memberCount: 0,
+    postCount: 0,
   });
 
-  const fetchCategories = async () => {
+  const fetchCategoryOption = async () => {
     try {
-      const response = await axios.get("/api/board/create/category");
-      setCategories(response.data.categories);
+      const categorieOption = await fetchCategories();
+      setCategories(categorieOption);
+      setBoardInfo((prev) => ({
+        ...prev,
+        category: categorieOption[0]?.name || "",
+      }));
     } catch (error) {
-      console.error("카테고리 가져오기 실패", error);
+      console.error("카테고리 가져오기 실패:", error);
     }
   };
 
   useEffect(() => {
-    fetchCategories();
+    fetchCategoryOption();
   }, []);
 
   const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
@@ -58,13 +66,15 @@ const CreateBoardPage = () => {
     }));
   };
 
-  const handleChangeImg = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    setImgUrl(e.target.files);
+  const handleChangeImg = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImg(file);
+    }
   };
 
   const handleDelete = () => {
-    setImgUrl(null);
+    setImg(null);
   };
 
   const handleChangeDescription = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -75,14 +85,14 @@ const CreateBoardPage = () => {
     }));
   };
 
-  const handleChangeAddress = (e: ChangeEvent<HTMLInputElement>) => {
-    setAddressCount(e.target.value.length);
-    if (!addressRegex.test(e.target.value)) {
+  const handleChangeUrl = (e: ChangeEvent<HTMLInputElement>) => {
+    setUrlCount(e.target.value.length);
+    if (!urlRegex.test(e.target.value)) {
       e.target.value = e.target.value.replace(/[^A-Za-z0-9_]/g, "");
     }
     setBoardInfo((prev) => ({
       ...prev,
-      address: e.target.value,
+      url: e.target.value,
     }));
   };
 
@@ -91,6 +101,20 @@ const CreateBoardPage = () => {
       ...prev,
       category: e.target.value,
     }));
+  };
+
+  const FileUpload = async (file: File) => {
+    try {
+      const image = await imageUpload(file);
+      setBoardInfo((prev) => ({
+        ...prev,
+        image,
+      }));
+      console.log("Uploaded image URL:", image);
+      console.log("boardInfo:", boardInfo);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    }
   };
 
   const handleClickSubmit = async () => {
@@ -102,17 +126,22 @@ const CreateBoardPage = () => {
       alert("게시판 운영원칙에 동의해주세요");
       setIsLoading(false);
     } else {
+      if (img) {
+        await FileUpload(img);
+      }
       try {
-        const response = await axios.post("/api/board/submit");
+        const response = await axios.post("/api/board/submit", boardInfo);
         if (response.status === 201) {
-          alert("게시판 신청이 완료 되었습니다.");
-        } else {
-          alert("게시판 신청이 실패했습니다.");
+          alert(response.data.message);
         }
       } catch (err) {
-        console.error(err);
+        console.log("handleClickSubmit 오류", err);
+        if (axios.isAxiosError(err)) {
+          alert(err.response?.data.message);
+        }
       } finally {
         setIsLoading(false);
+        console.log(boardInfo);
       }
     }
   };
@@ -129,13 +158,13 @@ const CreateBoardPage = () => {
           className="border-b-2 w-full h-10 border-slate-300 text-2xl focus:outline-none focus:border-violet-800 placeholder:text-2xl placeholder:text-slate-300"
         />
         <section className="grid grid-cols-[1fr_2fr] gap-6">
-          {imgUrl ? (
+          {img ? (
             <div onClick={handleDelete} className="relative">
               <div className="absolute inset-0 flex items-center justify-center bg-rose-200 bg-opacity-70 opacity-0 rounded-md hover:opacity-100 transition-opacity">
                 <TrashIcon width={"40px"} className="text-red-900" />
               </div>
               <img
-                src={URL.createObjectURL(imgUrl[0])}
+                src={URL.createObjectURL(img)}
                 className="h-52 w-full object-cover border rounded-md border-slate-200 transition-opacity hover:opacity-25"
               />
             </div>
@@ -176,15 +205,16 @@ const CreateBoardPage = () => {
         </section>
         <hr className="border-slate-300" />
         <section className="flex items-center w-full">
-          <label htmlFor="address" className="pl-4 pr-8 text-nowrap text-lg">
+          <label htmlFor="url" className="pl-4 pr-8 text-nowrap text-lg">
             주소
           </label>
           <div className="flex flex-col gap-2 w-full">
             <div className="flex items-center w-full">
               <p className="pr-2">http://localhost:5173/board/</p>
               <input
-                onChange={handleChangeAddress}
+                onChange={handleChangeUrl}
                 type="text"
+                id="url"
                 className="w-full px-2 py-3 text-sm border border-slate-300 rounded-lg outline-violet-800"
                 placeholder="나머지 주소를 입력해주세요."
                 maxLength={20}
@@ -195,7 +225,7 @@ const CreateBoardPage = () => {
                 주소는 생성 이후 수정이 불가능합니다. &#40;알파벳, 숫자,
                 언더바만 입력 가능&#41;
               </p>
-              <p className="text-sm text-slate-500">{addressCount}/20</p>
+              <p className="text-sm text-slate-500">{urlCount}/20</p>
             </div>
           </div>
         </section>
@@ -208,11 +238,8 @@ const CreateBoardPage = () => {
             onChange={handleChangeCategory}
             className="w-full px-2 py-3 text-sm border border-slate-300 rounded-lg outline-violet-800"
           >
-            <option value={"placeholder"} disabled hidden selected>
-              카테고리를 선택해주세요
-            </option>
             {categories.map((item) => (
-              <option key={item._id} value={item._id}>
+              <option key={item._id} value={item.name}>
                 {item.name}
               </option>
             ))}
