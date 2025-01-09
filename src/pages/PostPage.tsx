@@ -4,21 +4,36 @@ import { ImageResize } from 'quill-image-resize-module-ts';
 import { ChangeEvent, useState, useMemo, useRef, useEffect } from 'react';
 import BaseInput from '../components/Input/BaseInput';
 import BaseButton from '../components/Button/BaseButton';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { imageUpload } from '../config/aws.config';
-import { baseInstance } from '../apis/axios.config';
 import { PostTitleValidation } from '../utils/validation';
+import {
+  getPostData,
+  handlePostCreate,
+  handlePostDelete,
+  handlePostUpdate,
+} from '../apis/post.api';
 
 Quill.register('modules/ImageResize', ImageResize);
 
-// const dummycontent = `<p>더미 데이터 생성용 1</p><p><br></p><p><img src="https://elice-project-blahblah.s3.ap-northeast-2.amazonaws.com/images/1736322113955-add_meeing.png" style="" width="271"></p><p><br></p><p>더미 데이터 생성용 2</p><p><br></p><p><img src="https://elice-project-blahblah.s3.ap-northeast-2.amazonaws.com/images/1736322142650-reserve_meeting.png" style="" width="268"></p><p><br></p><p><br></p><p>더미 데이터 생성용 3</p><p><br></p><p><img src="https://elice-project-blahblah.s3.ap-northeast-2.amazonaws.com/images/1736322156081-default_image.png" style="cursor: nesw-resize;" width="261"></p>`;
-
-const UpdatePostPage = () => {
+const PostPage = () => {
   const navigator = useNavigate();
+
+  const {
+    boardId = '677e83b45e306601cbb21bb1',
+    postId = '677e9d96f28c4c6603555b14',
+  } = useParams();
+
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const [isVaild, setIsVaild] = useState<boolean>(false);
   const QuillRef = useRef<ReactQuillNew>(null);
+
+  const postData = {
+    boardId,
+    title,
+    content,
+  };
 
   const triggerHandler = () => {
     const input = document.createElement('input');
@@ -100,46 +115,25 @@ const UpdatePostPage = () => {
     setIsVaild(result);
   };
 
-  const boardSubmit = async () => {
-    if (!content) {
-      alert('내용을 입력해주세요.');
-      return;
-    }
-
-    console.log(content);
-
-    if (!isVaild) {
-      return;
-    }
-
-    const postData = {
-      board: '1',
-      title,
-      content,
-    };
-
-    try {
-      const response = await baseInstance.post('/post/create', postData);
-
-      if (response.data.isError) {
-        throw new Error(response.data.message);
-      }
-
-      alert(response.data.message);
-      navigator('/');
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   useEffect(() => {
     if (!QuillRef.current) return;
-  }, []);
+
+    if (postId) {
+      getPostData(postId).then((data) => {
+        const post = data.post;
+        setTitle(post.title || '');
+        setContent(post.content || '');
+      });
+      return;
+    }
+  }, [postId]);
 
   return (
     <div className="w-screen flex justify-center items-center py-20">
       <div className="max-w-3xl">
-        <h1 className="text-center text-2xl font-bold pb-12">게시글 작성</h1>
+        <h1 className="text-center text-2xl font-bold pb-12">
+          {postId ? '게시글 수정' : '게시글 작성'}
+        </h1>
 
         <div className="py-5">
           <BaseInput
@@ -164,13 +158,32 @@ const UpdatePostPage = () => {
           />
         </div>
 
-        <div className="flex justify-end gap-10 mt-20">
-          <BaseButton onClick={() => navigator('/')}>목록으로</BaseButton>
-          <BaseButton onClick={boardSubmit}>수정하기</BaseButton>
-        </div>
+        {postId ? (
+          <div className="flex gap-10 mt-20 justify-between">
+            <BaseButton onClick={() => navigator('/')}>목록으로</BaseButton>
+
+            <div className="flex gap-10">
+              <BaseButton
+                onClick={() => handlePostUpdate(postData, isVaild, postId)}
+              >
+                수정하기
+              </BaseButton>
+              <BaseButton onClick={() => handlePostDelete(postId)}>
+                삭제하기
+              </BaseButton>
+            </div>
+          </div>
+        ) : (
+          <div className="flex justify-end gap-10 mt-20">
+            <BaseButton onClick={() => navigator('/')}>목록으로</BaseButton>
+            <BaseButton onClick={() => handlePostCreate(postData, isVaild)}>
+              등록하기
+            </BaseButton>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-export default UpdatePostPage;
+export default PostPage;

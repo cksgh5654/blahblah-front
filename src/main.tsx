@@ -3,7 +3,7 @@ import './index.css';
 import App from './App.tsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import CreatePostPage from './pages/CreatePostPage.tsx';
+import PostPage from './pages/PostPage.tsx';
 import MainPage from './pages/MainPage.tsx';
 import SignupPage from './pages/SignupPage.tsx';
 import EmailOtpPage from './pages/EmailOtpPage.tsx';
@@ -12,7 +12,6 @@ import PasswordResetPage from './pages/PasswordResetPage.tsx';
 import CreateBoardPage from './pages/CreateBoardPage.tsx';
 import ProfilePage from './pages/ProfilePage.tsx';
 import ProfileUpdatePage from './pages/ProfileUpdatePage.tsx';
-import UpdatePostPage from './pages/UpdatePostPage.tsx';
 
 const router = createBrowserRouter([
   {
@@ -40,12 +39,12 @@ const router = createBrowserRouter([
         element: <PasswordResetPage />,
       },
       {
-        path: '/createpost',
-        element: <CreatePostPage />,
+        path: '/post/create/:boardId',
+        element: <PostPage />,
       },
       {
-        path: '/updatepost',
-        element: <UpdatePostPage />,
+        path: '/post/detail/:postId',
+        element: <PostPage />,
       },
       {
         path: '/create',
