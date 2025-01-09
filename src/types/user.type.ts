@@ -1,5 +1,11 @@
 export type Profile = Omit<User, "_id">;
 
+export interface BoardUser {
+  baordId: string;
+  user: User;
+  joinedStatus: boolean;
+}
+
 export interface User {
   email: string;
   nickname: string;

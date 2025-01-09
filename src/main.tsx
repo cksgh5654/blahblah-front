@@ -12,6 +12,7 @@ import CreateBoardPage from "./pages/CreateBoardPage.tsx";
 import ProfilePage from "./pages/ProfilePage.tsx";
 import ProfileUpdatePage from "./pages/ProfileUpdatePage.tsx";
 import UserProvider from "./context/userContext.tsx";
+import BoardDashBoardPage from "./pages/BoardDashBoardPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
       {
         path: "/:email/profile",
         element: <ProfileUpdatePage />,
+      },
+      {
+        path: "/board/dashboard/:boardId",
+        element: <BoardDashBoardPage />,
       },
     ],
   },
