@@ -2,7 +2,6 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import CreatePostPage from "./pages/CreatePostPage.tsx";
 import MainPage from "./pages/MainPage.tsx";
 import SignupPage from "./pages/SignupPage.tsx";
 import EmailOtpPage from "./pages/EmailOtpPage.tsx";
@@ -13,6 +12,7 @@ import ProfilePage from "./pages/ProfilePage.tsx";
 import ProfileUpdatePage from "./pages/ProfileUpdatePage.tsx";
 import UserProvider from "./context/userContext.tsx";
 import BoardDashBoardPage from "./pages/BoardDashBoardPage.tsx";
+import PostPage from "./pages/PostPage.tsx";
 
 const router = createBrowserRouter([
   {
