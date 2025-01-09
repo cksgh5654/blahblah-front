@@ -12,6 +12,7 @@ import PasswordResetPage from './pages/PasswordResetPage.tsx';
 import CreateBoardPage from './pages/CreateBoardPage.tsx';
 import ProfilePage from './pages/ProfilePage.tsx';
 import ProfileUpdatePage from './pages/ProfileUpdatePage.tsx';
+import UserProvider from './context/userContext.tsx';
 
 const router = createBrowserRouter([
   {
@@ -63,5 +64,7 @@ const router = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById('root')!).render(
-  <RouterProvider router={router} />
+  <UserProvider>
+    <RouterProvider router={router} />
+  </UserProvider>
 );

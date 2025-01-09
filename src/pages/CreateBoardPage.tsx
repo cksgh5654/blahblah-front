@@ -1,27 +1,126 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import CameraIcon from "../components/Icons/CameraIcon";
 import BaseButton from "../components/Button/BaseButton";
+import axios from "axios";
+import TrashIcon from "../components/Icons/TrashIcon";
 
 const addressRegex = /^[A-Za-z0-9_]*$/;
+
+interface boardInfo {
+  name: string;
+  description: string;
+  img: string;
+  address: string;
+  category: string;
+  manager: string;
+}
+
+interface Category {
+  _id: string;
+  name: string;
+}
 
 const CreateBoardPage = () => {
   const [descriptionCount, setDescriptionCount] = useState(0);
   const [addressCount, setAddressCount] = useState(0);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [imgUrl, setImgUrl] = useState<FileList | null>(null);
+  const [isCheckedPrivacyPolicy, setIsCheckedPrivacyPolicy] = useState(false);
+  const [isCheckedOperatingPrinciples, setIsCheckedOperatingPrinciples] =
+    useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [boardInfo, setBoardInfo] = useState<boardInfo>({
+    name: "",
+    description: "",
+    img: "",
+    address: "",
+    category: "",
+    manager: "",
+  });
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get("/api/board/create/category");
+      setCategories(response.data.categories);
+    } catch (error) {
+      console.error("카테고리 가져오기 실패", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
+    setBoardInfo((prev) => ({
+      ...prev,
+      name: e.target.value,
+    }));
+  };
+
+  const handleChangeImg = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    setImgUrl(e.target.files);
+  };
+
+  const handleDelete = () => {
+    setImgUrl(null);
+  };
 
   const handleChangeDescription = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setDescriptionCount(e.target.value.length);
+    setBoardInfo((prev) => ({
+      ...prev,
+      description: e.target.value,
+    }));
   };
+
   const handleChangeAddress = (e: ChangeEvent<HTMLInputElement>) => {
     setAddressCount(e.target.value.length);
     if (!addressRegex.test(e.target.value)) {
       e.target.value = e.target.value.replace(/[^A-Za-z0-9_]/g, "");
     }
+    setBoardInfo((prev) => ({
+      ...prev,
+      address: e.target.value,
+    }));
   };
-  const handleChangeCategory = (e: ChangeEvent<HTMLSelectElement>) => {};
+
+  const handleChangeCategory = (e: ChangeEvent<HTMLSelectElement>) => {
+    setBoardInfo((prev) => ({
+      ...prev,
+      category: e.target.value,
+    }));
+  };
+
+  const handleClickSubmit = async () => {
+    setIsLoading(true);
+    if (!isCheckedPrivacyPolicy) {
+      alert("게시판 개인정보보호정책에 동의해주세요");
+      setIsLoading(false);
+    } else if (!isCheckedOperatingPrinciples) {
+      alert("게시판 운영원칙에 동의해주세요");
+      setIsLoading(false);
+    } else {
+      try {
+        const response = await axios.post("/api/board/submit");
+        if (response.status === 201) {
+          alert("게시판 신청이 완료 되었습니다.");
+        } else {
+          alert("게시판 신청이 실패했습니다.");
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
   return (
     <div className="flex justify-center">
       <main className="w-[1280px] px-8 py-16 flex gap-6 flex-col">
         <input
+          onChange={handleChangeName}
           type="text"
           placeholder="게시판 이름을 입력해주세요."
           name="name"
@@ -30,23 +129,35 @@ const CreateBoardPage = () => {
           className="border-b-2 w-full h-10 border-slate-300 text-2xl focus:outline-none focus:border-violet-800 placeholder:text-2xl placeholder:text-slate-300"
         />
         <section className="grid grid-cols-[1fr_2fr] gap-6">
-          <div className="flex h-52 justify-center items-center rounded-md bg-slate-100">
-            <label
-              htmlFor="img"
-              className=" py-2 px-4 mb-2 rounded-md cursor-pointer text-slate-500 duration-300 hover:text-indigo-700"
-            >
-              <CameraIcon />
-              대표 사진 추가
-            </label>
-            <input
-              type="file"
-              name="img"
-              id="img"
-              className="hidden"
-              multiple
-              accept="image/*"
-            />
-          </div>
+          {imgUrl ? (
+            <div onClick={handleDelete} className="relative">
+              <div className="absolute inset-0 flex items-center justify-center bg-rose-200 bg-opacity-70 opacity-0 rounded-md hover:opacity-100 transition-opacity">
+                <TrashIcon width={"40px"} className="text-red-900" />
+              </div>
+              <img
+                src={URL.createObjectURL(imgUrl[0])}
+                className="h-52 w-full object-cover border rounded-md border-slate-200 transition-opacity hover:opacity-25"
+              />
+            </div>
+          ) : (
+            <div className="flex h-52 justify-center items-center rounded-md bg-slate-100">
+              <label
+                htmlFor="img"
+                className=" py-2 px-4 mb-2 rounded-md cursor-pointer text-slate-500 duration-300 hover:text-indigo-700"
+              >
+                <CameraIcon />
+                대표 사진 추가
+              </label>
+              <input
+                onChange={handleChangeImg}
+                type="file"
+                name="img"
+                id="img"
+                className="hidden"
+                accept="image/*"
+              />
+            </div>
+          )}
           <div>
             <div className="flex justify-between pb-1">
               <label htmlFor="description" className="text-lg">
@@ -59,7 +170,7 @@ const CreateBoardPage = () => {
               placeholder="게시판 설명을 입력해주세요."
               id=" description"
               maxLength={200}
-              className="w-full h-[calc(100%-28px)] px-2 py-3 text-sm border border-slate-300 rounded-lg outline-violet-800"
+              className="w-full h-[calc(100%-32px)] px-2 py-3 text-sm border border-slate-300 rounded-lg outline-violet-800"
             />
           </div>
         </section>
@@ -81,8 +192,8 @@ const CreateBoardPage = () => {
             </div>
             <div className="flex justify-between">
               <p className="text-sm text-red-400">
-                주소는 수정이 불가능합니다. &#40;알파벳, 숫자, 언더바만 입력
-                가능&#41;
+                주소는 생성 이후 수정이 불가능합니다. &#40;알파벳, 숫자,
+                언더바만 입력 가능&#41;
               </p>
               <p className="text-sm text-slate-500">{addressCount}/20</p>
             </div>
@@ -97,15 +208,14 @@ const CreateBoardPage = () => {
             onChange={handleChangeCategory}
             className="w-full px-2 py-3 text-sm border border-slate-300 rounded-lg outline-violet-800"
           >
-            <option
-              value={"placeholder"}
-              disabled
-              hidden
-              selected
-              className="text-yellow-500"
-            >
+            <option value={"placeholder"} disabled hidden selected>
               카테고리를 선택해주세요
             </option>
+            {categories.map((item) => (
+              <option key={item._id} value={item._id}>
+                {item.name}
+              </option>
+            ))}
           </select>
         </section>
         <hr className="border-slate-300" />
@@ -113,11 +223,12 @@ const CreateBoardPage = () => {
           <div className="flex flex-col gap-2">
             <div className="flex gap-2">
               <input
+                onChange={(e) => setIsCheckedPrivacyPolicy(e.target.checked)}
                 type="checkbox"
-                id="privacy Policy"
+                id="privacy-policy"
                 className="cursor-pointer"
               />
-              <label htmlFor="privacy Policy" className="cursor-pointer">
+              <label htmlFor="privacy-policy" className="cursor-pointer">
                 게시판 개인정보보호정책에 동의합니다.
               </label>
             </div>
@@ -205,11 +316,14 @@ const CreateBoardPage = () => {
           <div className="flex flex-col gap-2">
             <div className="flex gap-2">
               <input
+                onChange={(e) =>
+                  setIsCheckedOperatingPrinciples(e.target.checked)
+                }
                 type="checkbox"
-                id="operating principles"
+                id="operating-principles"
                 className="cursor-pointer"
               />
-              <label htmlFor="operating principles" className="cursor-pointer">
+              <label htmlFor="operating-principles" className="cursor-pointer">
                 게시판 운영원칙에 동의합니다.
               </label>
             </div>
@@ -427,7 +541,9 @@ const CreateBoardPage = () => {
           </li>
           <li>갤러리 개설은 총 6개까지 가능합니다.</li>
         </ul>
-        <BaseButton>게시판 개설 신청</BaseButton>
+        <BaseButton onClick={handleClickSubmit} disabled={isLoading}>
+          {isLoading ? "신청중입니다..." : "게시판 개설 신청"}
+        </BaseButton>
       </main>
     </div>
   );

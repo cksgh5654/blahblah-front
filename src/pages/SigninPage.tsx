@@ -5,12 +5,18 @@ import GoogleOauthButton from "../components/Button/GoogleOauthButton";
 import { useMemo } from "react";
 import BaseButton from "../components/Button/BaseButton";
 import Logo from "../components/Icons/Logo";
+import { useUserContext } from "../context/userContext";
 
 const SigninPage = () => {
   const navigate = useNavigate();
+  const { updateUser } = useUserContext();
   const handleEmailSignin = (formData: EmailFormDataType) => {
     signinWithEmail(formData) //
-      .then(() => navigate("/"));
+      .then((user) => {
+        updateUser(user);
+        navigate("/");
+        localStorage.signinStatus = true;
+      });
   };
   const method = useMemo(() => window.location.hash, [window.location.hash]);
   return (

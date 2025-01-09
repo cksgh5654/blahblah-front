@@ -37,7 +37,7 @@ export const signinWithEmail = async (data: EmailFormDataType) => {
     if (response.data.isError) {
       throw new Error(response.data.message);
     }
-    return response.data;
+    return response.data.user;
   } catch (error) {
     if (error instanceof Error) {
       throw error;
@@ -74,6 +74,34 @@ export const requestOtpVerifyForResetPassword = async (data: {
       throw new Error(response.data.message);
     }
     return response.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+  }
+};
+
+export const signout = async () => {
+  try {
+    const response = await baseInstance.post("/auth/signout");
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+  }
+};
+
+export const getSigninStatus = async () => {
+  try {
+    const response = await baseInstance.get("/auth/signin-status");
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response.data.data;
   } catch (error) {
     if (error instanceof Error) {
       throw error;

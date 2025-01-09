@@ -15,11 +15,9 @@ export const getMyProfile = async () => {
   }
 };
 
-export const getUserInfo = async (nickname: string) => {
+export const getUserInfo = async (email: string) => {
   try {
-    const response = await baseInstance.get(
-      `/user/profile?nickname=${nickname}`
-    );
+    const response = await baseInstance.get(`/user/profile?email=${email}`);
     if (response.data.isError) {
       throw new Error(response.data.message);
     }

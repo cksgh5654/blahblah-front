@@ -9,23 +9,20 @@ import {
   useRef,
   useState,
 } from "react";
-import { getMyProfile, updateMyProfile } from "../apis/user.api";
-import { imageUpload, multipleImageUpload } from "../config/aws.config";
+import { updateMyProfile } from "../apis/user.api";
+import { imageUpload } from "../config/aws.config";
 import { Profile } from "../types/user.type";
 import { useNavigate } from "react-router-dom";
+import { useUserContext } from "../context/userContext";
 
-const DEFAULT_PROFILE_DATA = {
-  email: "",
-  nickname: "",
-  image: "",
-  createdAt: "",
-};
 const ProfileUpdatePage = () => {
   const navigate = useNavigate();
+  const { user } = useUserContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [original, setOriginal] = useState<Profile>(DEFAULT_PROFILE_DATA);
-  const [formData, setFormData] = useState<Profile>(DEFAULT_PROFILE_DATA);
+  const [original, setOriginal] = useState<Profile>(user);
+  const [formData, setFormData] = useState<Profile>(user);
   const [imageFile, setImageFile] = useState<File>();
+  const { updateUser } = useUserContext();
   const isEdited = useMemo(
     () => JSON.stringify(original) !== JSON.stringify(formData),
     [formData]
@@ -37,7 +34,6 @@ const ProfileUpdatePage = () => {
     const previewImage = URL.createObjectURL(file);
     setFormData((prev) => ({ ...prev, image: previewImage }));
     setImageFile(file);
-    console.log(e.target.files[0]);
   };
 
   const handleChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
@@ -47,61 +43,73 @@ const ProfileUpdatePage = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("submit");
-    if (imageFile) {
-      // imageUpload(imageFile) //
-      //   .then((response) => {
-      //     if (response)
-      //       setFormData((prev) => ({ ...prev, image: response.Location }));
-      //   });
-      multipleImageUpload([imageFile, imageFile, imageFile]).then((response) =>
-        console.log(response)
-      );
-    }
+    try {
+      let updatedFormData = { ...formData };
+      if (imageFile) {
+        const url = await imageUpload(imageFile);
+        updatedFormData = { ...formData, image: url };
+      }
 
-    // updateMyProfile(formData) //
-    //   .then(() => navigate(`/@${formData.nickname}`));
+      await updateMyProfile(updatedFormData);
+      updateUser(updatedFormData);
+      navigate(`/${updatedFormData.email}`);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
-    getMyProfile() //
-      .then((response) => {
-        setOriginal(response);
-        setFormData(response);
-      });
-  }, []);
+    setOriginal(user);
+    setFormData(user);
+  }, [user]);
+
   return (
-    <form onSubmit={handleSubmit}>
-      <Avatar size="large" url={formData.image} />
-      <BaseInput
-        type="file"
-        className="hidden"
-        onChange={handleChangeFileInput}
-        ref={fileInputRef}
-      />
-      <BaseButton
-        type="button"
-        onClick={() => fileInputRef.current?.click()}
-        className="w-fit"
+    <div className="w-screen flex justify-center items-center">
+      <form
+        onSubmit={handleSubmit}
+        className="w-[768px] py-10 flex flex-col gap-y-8"
       >
-        이미지 업로드
-      </BaseButton>
-      <BaseInput
-        withLabel="가입된 이메일"
-        isRequired={false}
-        readOnly
-        value={formData.email}
-      />
-      <BaseInput
-        withLabel="닉네임"
-        value={formData.nickname}
-        onChange={handleChangeInput}
-        name="nickname"
-      />
-      <BaseButton className="w-fit" disabled={!isEdited}>
-        프로필 수정
-      </BaseButton>
-    </form>
+        <div className="flex gap-x-4">
+          <Avatar
+            size="xlarge"
+            url={formData.image}
+            onClick={() => fileInputRef.current?.click()}
+          />
+          <div className="flex flex-col justify-center gap-y-2">
+            <BaseInput
+              type="file"
+              className="hidden"
+              withLabel="프로필 사진"
+              onChange={handleChangeFileInput}
+              ref={fileInputRef}
+            />
+            <BaseButton
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="text-xs"
+            >
+              이미지 업로드
+            </BaseButton>
+          </div>
+        </div>
+        <BaseInput
+          withLabel="가입된 이메일"
+          isRequired={false}
+          readOnly
+          value={formData.email}
+          className="border-none font-bold"
+        />
+        <BaseInput
+          withLabel="닉네임"
+          value={formData.nickname}
+          onChange={handleChangeInput}
+          name="nickname"
+        />
+        <BaseButton className="w-fit" disabled={!isEdited}>
+          프로필 저장 하기
+        </BaseButton>
+      </form>
+    </div>
   );
 };
 
