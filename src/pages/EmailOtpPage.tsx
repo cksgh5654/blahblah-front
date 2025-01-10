@@ -8,7 +8,7 @@ import BaseButton from "@components/Button/BaseButton";
 
 const EmailOtpPage = () => {
   const navigate = useNavigate();
-  const [otp, setOtp] = useState<string>("");
+  const [otp, setOtp] = useState("");
   const [isValidForm, setIsValidForm] = useState<boolean>();
 
   const handleChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
