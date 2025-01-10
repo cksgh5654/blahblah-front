@@ -69,7 +69,7 @@ const BoardDashBoardPage = () => {
               <BoardUsers boardId={boardId} />
             </Tabs.Content>
             <Tabs.Content value="#posts">
-              <BoardPosts />
+              <BoardPosts boardId={boardId} />
             </Tabs.Content>
             <Tabs.Content value="#notification">
               <WriteBoardNotification />
