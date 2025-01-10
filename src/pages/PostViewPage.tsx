@@ -1,9 +1,11 @@
 import { AspectRatio, Textarea } from 'blahblah-front-common-ui-kit';
 import userIcon from '../../public/default-user-icon.svg';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { deletePost, getPostData } from '../apis/post.api';
 import { useNavigate, useParams } from 'react-router-dom';
 import DOMPurify from 'dompurify';
+import BaseButton from '../components/Button/BaseButton';
+import { getCommentData } from '../apis/comment.api';
 
 type defaultPostType = {
   title: string;
@@ -18,6 +20,11 @@ const PostViewPage = () => {
   const { postId = '677e9d96f28c4c6603555b14' } = useParams();
 
   const [postData, setPostData] = useState<defaultPostType>();
+  const [comment, setComment] = useState<string>('');
+
+  const handleCommentInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setComment(e.target.value);
+  };
 
   const handlePostDelete = (postId: string) => {
     if (!postId) {
@@ -26,6 +33,19 @@ const PostViewPage = () => {
     }
 
     deletePost(postId).then((data) => {
+      if (!data.isError) {
+        alert(data.message);
+      }
+    });
+  };
+
+  const handleCommentCreate = (postId: string) => {
+    if (!postId) {
+      alert('존재하지 않는 게시글입니다.');
+      return;
+    }
+
+    getCommentData(postId, comment).then((data) => {
       if (!data.isError) {
         alert(data.message);
       }
@@ -58,11 +78,11 @@ const PostViewPage = () => {
       <div className="p-5">
         <div className="bg-white px-10 py-5">
           <div className="flex justify-between">
-            <p className="max-768:text-sm max-768:truncate sm:text-lg md:text-xl font-bold">
+            <p className="max-768:text-sm max-768:truncate sm:text-lg md:text-xl font-bold overflow-auto">
               {postData ? postData.title : '제목'}
             </p>
 
-            <div className="flex gap-2">
+            <div className="flex gap-2 px-2">
               <button
                 className="text-sm text-green-500 text-nowrap"
                 onClick={() => navigator(`/post/detail/${postId}`)}
@@ -92,7 +112,7 @@ const PostViewPage = () => {
               <p className="max-768:text-sm max-768:truncate md:text-lg overflow-auto">
                 {postData ? postData.nickname : '닉네임'}
               </p>
-              <p className="max-768:text-sm max-768:truncate md:text-lg text-slate-300">
+              <p className="max-768:text-sm max-768:truncate text-nowrap md:text-lg text-slate-300 overflow-auto">
                 {postData ? postData.createdAt.split('T')[0] : '2024-12-31'}
               </p>
             </div>
@@ -119,9 +139,22 @@ const PostViewPage = () => {
             <Textarea
               placeholder="댓글을 작성해주세요"
               className="p-2 resize-y w-full rounded-md border"
+              name="comment"
+              value={comment}
+              onChange={handleCommentInput}
             />
+            <div className="flex justify-end">
+              <BaseButton
+                className="text-sm "
+                onClick={() => handleCommentCreate(postId)}
+              >
+                댓글 등록
+              </BaseButton>
+            </div>
           </div>
         </div>
+
+        <p className="h-[2px] w-full bg-slate-200 mt-5" />
       </div>
     </div>
   );
