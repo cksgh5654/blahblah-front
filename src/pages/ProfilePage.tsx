@@ -6,14 +6,13 @@ import BaseButton from "@components/Button/BaseButton";
 import MyPosts from "@components/Post/MyPosts";
 import MyComments from "@components/Comment/MyComments";
 import ProfileBoard from "@components/ProfileBoard";
-import ProfilePosts from "@components/Post/ProfilePosts";
-import ProfileComments from "@components/Comment/ProfileComments";
 import { User } from "~types/user.type";
 import { useUserContext } from "@context/userContext";
 import { getUserInfo } from "@apis/user.api";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [user, setUser] = useState<User>();
   const { user: singinedUser } = useUserContext();
   const { email } = useParams();
@@ -22,13 +21,12 @@ const ProfilePage = () => {
     [user, singinedUser]
   );
   const TabsDefaultValue = useMemo(
-    () => window.location.hash,
-    [window.location.hash]
+    () => searchParams.get("selectedTab") || "myposts",
+    [searchParams]
   );
 
   useEffect(() => {
     if (!email) return;
-    navigate("#myposts");
     getUserInfo(email) //
       .then(setUser);
   }, [email]);
@@ -63,9 +61,9 @@ const ProfilePage = () => {
               <Tabs.List className="w-fit flex text-sm font-semibold cursor-pointer">
                 <Tabs.Trigger
                   value="#myposts"
-                  onClick={() => navigate("#myposts")}
+                  onClick={() => setSearchParams({ selectedTab: "myposts" })}
                   className={`${
-                    TabsDefaultValue === "#myposts" &&
+                    TabsDefaultValue === "myposts" &&
                     "border-b-2 border-violet-800 pb-2"
                   } flex justify-center items-center px-4`}
                 >
@@ -75,9 +73,9 @@ const ProfilePage = () => {
                 </Tabs.Trigger>
                 <Tabs.Trigger
                   value="#mycomments"
-                  onClick={() => navigate("#mycomments")}
+                  onClick={() => setSearchParams({ selectedTab: "mycomments" })}
                   className={`${
-                    TabsDefaultValue === "#mycomments" &&
+                    TabsDefaultValue === "mycomments" &&
                     "border-b-2 border-violet-800 pb-2"
                   } flex justify-center items-center px-4`}
                 >
@@ -86,9 +84,9 @@ const ProfilePage = () => {
                 {isSigninedUser && (
                   <Tabs.Trigger
                     value="#myboard"
-                    onClick={() => navigate("#myboard")}
+                    onClick={() => setSearchParams({ selectedTab: "myboard" })}
                     className={`${
-                      TabsDefaultValue === "#myboard" &&
+                      TabsDefaultValue === "myboard" &&
                       "border-b-2 border-violet-800 pb-2"
                     } flex justify-center items-center px-4`}
                   >
