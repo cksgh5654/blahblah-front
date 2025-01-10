@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { getBoardById } from "../apis/board.api";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { Board } from "../types/board.type";
 import { AspectRatio, Tabs } from "blahblah-front-common-ui-kit";
 import BoardUsers from "../components/BoardUsers";
@@ -8,19 +8,19 @@ import BoardPosts from "../components/Post/BoardPosts";
 import WriteBoardNotification from "../components/WriteBoardNotification";
 
 const BoardDashBoardPage = () => {
-  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [board, setBoard] = useState<Board>();
   const { boardId } = useParams();
-  const selectedTabs = useMemo(
-    () => window.location.hash,
-    [window.location.hash]
+  const selectedTab = useMemo(
+    () => searchParams.get("selectedTab") || "USERS",
+    [searchParams]
   );
+
   useEffect(() => {
     if (!boardId) return;
     getBoardById(boardId) //
       .then(setBoard);
   }, []);
-
   return (
     <div className="w-screen flex justify-center">
       <div className="w-[1280px] flex">
@@ -44,35 +44,35 @@ const BoardDashBoardPage = () => {
           <p></p>
         </div>
         <div>
-          <Tabs.Root defaultValue={selectedTabs}>
+          <Tabs.Root defaultValue={selectedTab}>
             <Tabs.List className="flex gap-x-4">
               <Tabs.Trigger
-                value="#users"
-                onClick={() => navigate(`?page=1&limit=10#users`)}
+                value="USERS"
+                onClick={() => setSearchParams({ selectedTab: "USERS" })}
               >
                 회원 관리
               </Tabs.Trigger>
               <Tabs.Trigger
-                value="#posts"
-                onClick={() => navigate("?page=1&limit=10#posts")}
+                value="POSTS"
+                onClick={() => setSearchParams({ selectedTab: "POSTS" })}
               >
                 게시글 내역
               </Tabs.Trigger>
               <Tabs.Trigger
-                value="#notification"
-                onClick={() => navigate("#notification")}
+                value="NOTIFICATION"
+                onClick={() => setSearchParams({ selectedTab: "NOTIFICATION" })}
               >
                 공지 작성
               </Tabs.Trigger>
             </Tabs.List>
-            <Tabs.Content value="#users">
+            <Tabs.Content value="USERS">
               <BoardUsers boardId={boardId} />
             </Tabs.Content>
-            <Tabs.Content value="#posts">
+            <Tabs.Content value="POSTS">
               <BoardPosts boardId={boardId} />
             </Tabs.Content>
-            <Tabs.Content value="#notification">
-              <WriteBoardNotification />
+            <Tabs.Content value="NOTIFICATION">
+              <WriteBoardNotification boardId={boardId} />
             </Tabs.Content>
           </Tabs.Root>
         </div>

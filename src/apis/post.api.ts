@@ -16,13 +16,15 @@ export const getPostData = async (postId: string) => {
 export const createPost = async (
   boardId: string,
   title: string,
-  content: string
+  content: string,
+  type?: "notification"
 ) => {
   try {
     const response = await baseInstance.post("/post/create", {
       boardId,
       title,
       content,
+      type,
     });
 
     if (response.data.isError) {

@@ -1,28 +1,28 @@
-import ReactQuillNew from 'react-quill-new';
-import { ChangeEvent, useState, useRef, useEffect } from 'react';
-import BaseInput from '../components/Input/BaseInput';
-import BaseButton from '../components/Button/BaseButton';
-import { useNavigate, useParams } from 'react-router-dom';
-import { PostTitleValidation } from '../utils/validation';
+import ReactQuillNew from "react-quill-new";
+import { ChangeEvent, useState, useRef, useEffect } from "react";
+import BaseInput from "../components/Input/BaseInput";
+import BaseButton from "../components/Button/BaseButton";
+import { useNavigate, useParams } from "react-router-dom";
+import { PostTitleValidation } from "../utils/validation";
 import {
   getPostData,
   createPost,
   updatePost,
   deletePost,
-} from '../apis/post.api';
-import Editor from '../components/Editor/Editor';
+} from "../apis/post.api";
+import Editor from "../components/Editor/Editor";
 
 const PostPage = () => {
   const navigator = useNavigate();
 
   const {
-    boardId = '677e83b45e306601cbb21bb1',
+    boardId = "677e83b45e306601cbb21bb1",
     postId,
     // postId = '677e9d96f28c4c6603555b14',
   } = useParams();
 
-  const [title, setTitle] = useState<string>('');
-  const [content, setContent] = useState<string>('');
+  const [title, setTitle] = useState<string>("");
+  const [content, setContent] = useState<string>("");
   const [isVaild, setIsVaild] = useState<boolean>(false);
   const QuillRef = useRef<ReactQuillNew>(null);
 
@@ -36,7 +36,7 @@ const PostPage = () => {
 
   const handlePostCreate = () => {
     if (!boardId) {
-      alert('존재하지 않는 게시판입니다.');
+      alert("존재하지 않는 게시판입니다.");
       return;
     }
 
@@ -45,7 +45,7 @@ const PostPage = () => {
     }
 
     if (!content) {
-      alert('내용을 입력해주세요.');
+      alert("내용을 입력해주세요.");
       return;
     }
 
@@ -54,11 +54,12 @@ const PostPage = () => {
         alert(data.message);
       }
     });
+    navigator("/");
   };
 
   const handlePostUpdate = (postId: string) => {
     if (!postId) {
-      alert('존재하지 않는 게시글입니다.');
+      alert("존재하지 않는 게시글입니다.");
       return;
     }
 
@@ -67,7 +68,7 @@ const PostPage = () => {
     }
 
     if (!content) {
-      alert('내용을 입력해주세요.');
+      alert("내용을 입력해주세요.");
       return;
     }
     updatePost(title, content, postId).then((data) => {
@@ -79,7 +80,7 @@ const PostPage = () => {
 
   const handlePostDelete = (postId: string) => {
     if (!postId) {
-      alert('존재하지 않는 게시글입니다.');
+      alert("존재하지 않는 게시글입니다.");
       return;
     }
 
@@ -96,8 +97,8 @@ const PostPage = () => {
     if (postId) {
       getPostData(postId).then((data) => {
         const post = data.post;
-        setTitle(post.title || '');
-        setContent(post.content || '');
+        setTitle(post.title || "");
+        setContent(post.content || "");
 
         if (post.title && post.content) {
           setIsVaild(true);
@@ -111,7 +112,7 @@ const PostPage = () => {
     <div className="w-screen flex justify-center items-center py-20">
       <div className="max-w-3xl">
         <h1 className="text-center text-2xl font-bold pb-12">
-          {postId ? '게시글 수정' : '게시글 작성'}
+          {postId ? "게시글 수정" : "게시글 작성"}
         </h1>
 
         <div className="py-5">
@@ -135,7 +136,7 @@ const PostPage = () => {
 
         {postId ? (
           <div className="flex gap-10 mt-20 justify-between">
-            <BaseButton onClick={() => navigator('/')}>목록으로</BaseButton>
+            <BaseButton onClick={() => navigator("/")}>목록으로</BaseButton>
 
             <div className="flex gap-10">
               <BaseButton onClick={() => handlePostUpdate(postId)}>
@@ -148,7 +149,7 @@ const PostPage = () => {
           </div>
         ) : (
           <div className="flex justify-end gap-10 mt-20">
-            <BaseButton onClick={() => navigator('/')}>목록으로</BaseButton>
+            <BaseButton onClick={() => navigator("/")}>목록으로</BaseButton>
             <BaseButton onClick={handlePostCreate}>등록하기</BaseButton>
           </div>
         )}
