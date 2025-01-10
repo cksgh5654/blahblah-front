@@ -5,6 +5,7 @@ import { useSearchParams } from "react-router-dom";
 import { Tabs } from "blahblah-front-common-ui-kit";
 import BaseInput from "./Input/BaseInput";
 import Editor from "./Editor/Editor";
+import BaseButton from "./Button/BaseButton";
 
 interface WriteBoardNotificationProps {
   boardId?: string;
@@ -30,32 +31,35 @@ const WriteBoardNotification = ({ boardId }: WriteBoardNotificationProps) => {
       .then(() => setSearchParams({ selectedTab: "USERS" }));
   };
   return (
-    <div>
-      <form>
-        <div className="py-5">
-          <BaseInput
-            withLabel="공지사항 제목 (30자 이내)"
-            onChange={handleChangeTitle}
-            value={title}
-            maxLength={30}
-            validation={PostTitleValidation}
-            onValidationResult={handleValidationResult}
-          />
-        </div>
-        <div className="mt-5">
-          <Editor
-            QuillRef={QuillRef}
-            content={content}
-            setContent={setContent}
-          />
-        </div>
-        <div className="flex justify-end gap-10 mt-20">
-          <Tabs.Trigger value="USERS" onClick={handleSubmit}>
-            공지등록하기
-          </Tabs.Trigger>
-        </div>
-      </form>
-    </div>
+    <form className="bg-gray-50 rounded-lg shadow-md px-4 pt-4 pb-28 h-fit relative">
+      <div>
+        <BaseInput
+          withLabel="공지사항 제목 (30자 이내)"
+          onChange={handleChangeTitle}
+          value={title}
+          maxLength={30}
+          validation={PostTitleValidation}
+          onValidationResult={handleValidationResult}
+        />
+      </div>
+      <div className="mt-5">
+        <Editor
+          QuillRef={QuillRef}
+          content={content}
+          setContent={setContent}
+          height="500px"
+        />
+      </div>
+      <BaseButton className="absolute bottom-3 left-1/2 transform -translate-x-1/2">
+        <Tabs.Trigger
+          value="USERS"
+          onClick={handleSubmit}
+          className="list-none cursor-pointer"
+        >
+          공지등록하기
+        </Tabs.Trigger>
+      </BaseButton>
+    </form>
   );
 };
 
