@@ -1,24 +1,13 @@
-import { Outlet } from "react-router-dom";
 import "./App.css";
-import Header from "./components/Header";
-import { useEffect } from "react";
-import { useUserContext } from "./context/userContext";
-import { getSigninStatus } from "./apis/auth.api";
+import UserProvider from "./context/userContext";
+import RouteProvider from "./components/Routes/RouteProvider";
 
 function App() {
-  const { updateUser } = useUserContext();
-  useEffect(() => {
-    getSigninStatus() //
-      .then(({ user, signinStatus }) => {
-        updateUser(user);
-        localStorage.signinStatus = signinStatus;
-      });
-  }, []);
-
   return (
     <>
-      <Header />
-      <Outlet />
+      <UserProvider>
+        <RouteProvider />
+      </UserProvider>
     </>
   );
 }
