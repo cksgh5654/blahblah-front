@@ -1,8 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import BaseButton from "../components/Button/BaseButton";
-import Write from "../components/Icons/Write";
 import { useEffect, useRef, useState } from "react";
-import ChevronIcon from "../components/Icons/ChevronIcon";
 
 import entertainments from "../categoryImg/entertainments.svg";
 import game from "../categoryImg/game.svg";
@@ -25,6 +22,9 @@ import etc from "../categoryImg/etc.svg";
 import PlusIcon from "../components/Icons/PlusIcon";
 import Card from "../components/Card/Card";
 import { fetchBoardInCategories } from "../apis/board.api";
+import BaseButton from "@components/Button/BaseButton";
+import Write from "@components/Icons/Write";
+import ChevronIcon from "@components/Icons/ChevronIcon";
 
 const categoryData = [
   { id: 0, img: entertainments, name: "연예" },

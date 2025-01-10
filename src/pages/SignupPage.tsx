@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import EmailAuthForm, { EmailFormDataType } from "../components/EmailAuthForm";
 import { requestSignupOtp } from "../apis/auth.api";
-import GoogleOauthButton from "../components/Button/GoogleOauthButton";
-import Logo from "../components/Icons/Logo";
+import GoogleOauthButton from "@components/Button/GoogleOauthButton";
+import Logo from "@components/Icons/Logo";
+import EmailAuthForm, { EmailFormDataType } from "@components/EmailAuthForm";
 
 const SignupPage = () => {
   const navigate = useNavigate();

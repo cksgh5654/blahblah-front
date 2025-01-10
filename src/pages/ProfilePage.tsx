@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { getUserInfo } from "../apis/user.api";
 import { useNavigate, useParams } from "react-router-dom";
-import Avatar from "../components/Avatar";
 import { Tabs } from "blahblah-front-common-ui-kit";
-import BaseButton from "../components/Button/BaseButton";
-import MyPosts from "../components/Post/MyPosts";
-import MyComments from "../components/Comment/MyComments";
 import { useUserContext } from "../context/userContext";
-import ProfileBoard from "../components/ProfileBoard";
+import Avatar from "@components/Avatar";
+import BaseButton from "@components/Button/BaseButton";
+import MyPosts from "@components/Post/MyPosts";
+import MyComments from "@components/Comment/MyComments";
+import ProfileBoard from "@components/ProfileBoard";
 
 interface User {
   email: string;

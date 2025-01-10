@@ -1,6 +1,3 @@
-import BaseButton from "../components/Button/BaseButton";
-import BaseInput from "../components/Input/BaseInput";
-import Avatar from "../components/Avatar";
 import {
   ChangeEvent,
   FormEvent,
@@ -14,6 +11,9 @@ import { imageUpload } from "../config/aws.config";
 import { Profile } from "../types/user.type";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/userContext";
+import Avatar from "@components/Avatar";
+import BaseInput from "@components/Input/BaseInput";
+import BaseButton from "@components/Button/BaseButton";
 
 const ProfileUpdatePage = () => {
   const navigate = useNavigate();

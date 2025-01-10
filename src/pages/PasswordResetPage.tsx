@@ -4,14 +4,14 @@ import {
   requestPasswordResetOtp,
 } from "../apis/auth.api";
 import { useNavigate } from "react-router-dom";
-import BaseInput from "../components/Input/BaseInput";
 import {
   EmailValidation,
   otpValidation,
   PasswordValidation,
 } from "../utils/validation";
-import BaseButton from "../components/Button/BaseButton";
-import Logo from "../components/Icons/Logo";
+import Logo from "@components/Icons/Logo";
+import BaseInput from "@components/Input/BaseInput";
+import BaseButton from "@components/Button/BaseButton";
 
 const PasswordResetPage = () => {
   const navigate = useNavigate();

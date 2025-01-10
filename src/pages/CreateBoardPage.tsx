@@ -1,10 +1,10 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import CameraIcon from "../components/Icons/CameraIcon";
-import BaseButton from "../components/Button/BaseButton";
 import axios from "axios";
-import TrashIcon from "../components/Icons/TrashIcon";
 import { imageUpload } from "../config/aws.config";
 import { fetchCategories } from "../apis/category.api";
+import CameraIcon from "@components/Icons/CameraIcon";
+import TrashIcon from "@components/Icons/TrashIcon";
+import BaseButton from "@components/Button/BaseButton";
 
 const urlRegex = /^[A-Za-z0-9_]*$/;
 

@@ -1,7 +1,5 @@
 import ReactQuillNew from "react-quill-new";
 import { ChangeEvent, useState, useRef, useEffect } from "react";
-import BaseInput from "../components/Input/BaseInput";
-import BaseButton from "../components/Button/BaseButton";
 import { useNavigate, useParams } from "react-router-dom";
 import { PostTitleValidation } from "../utils/validation";
 import {
@@ -10,7 +8,9 @@ import {
   updatePost,
   deletePost,
 } from "../apis/post.api";
-import Editor from "../components/Editor/Editor";
+import BaseInput from "@components/Input/BaseInput";
+import Editor from "@components/Editor/Editor";
+import BaseButton from "@components/Button/BaseButton";
 
 const PostPage = () => {
   const navigator = useNavigate();

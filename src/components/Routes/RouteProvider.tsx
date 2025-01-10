@@ -1,20 +1,22 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import MainPage from "../../pages/MainPage";
-import SignupPage from "../../pages/SignupPage";
-import SigninPage from "../../pages/SigninPage";
-import EmailOtpPage from "../../pages/EmailOtpPage";
-import PasswordResetPage from "../../pages/PasswordResetPage";
-import PostPage from "../../pages/PostPage";
-import CreateBoardPage from "../../pages/CreateBoardPage";
-import ProfilePage from "../../pages/ProfilePage";
-import ProfileUpdatePage from "../../pages/ProfileUpdatePage";
-import BoardDashBoardPage from "../../pages/BoardDashBoardPage";
-import BaseLayout from "../BaseLayout";
 import { useUserContext } from "../../context/userContext";
 import { useEffect } from "react";
 import { getSigninStatus } from "../../apis/auth.api";
+import BaseLayout from "@components/BaseLayout";
+import {
+  MainPage,
+  SignupPage,
+  SigninPage,
+  EmailOtpPage,
+  PasswordResetPage,
+  PostPage,
+  CreateBoardPage,
+  ProfilePage,
+  ProfileUpdatePage,
+  BoardDashBoardPage,
+} from "@pages/index";
 
-export const router = createBrowserRouter([
+const router = createBrowserRouter([
   {
     path: "/",
     element: <BaseLayout />,
@@ -76,11 +78,8 @@ const RouteProvider = () => {
         localStorage.signinStatus = signinStatus;
       });
   }, []);
-  return (
-    <>
-      <RouterProvider router={router} />
-    </>
-  );
+
+  return <RouterProvider router={router} />;
 };
 
 export default RouteProvider;
