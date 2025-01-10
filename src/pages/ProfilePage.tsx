@@ -3,12 +3,12 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Tabs } from "blahblah-front-common-ui-kit";
 import Avatar from "@components/Avatar";
 import BaseButton from "@components/Button/BaseButton";
-import MyComments from "@components/Comment/MyComments";
 import ProfileBoard from "@components/ProfileBoard";
 import { User } from "~types/user.type";
 import { useUserContext } from "@context/userContext";
 import { getUserInfo } from "@apis/user.api";
 import ProfilePosts from "@components/Post/ProfilePosts";
+import ProfileComments from "@components/Comment/ProfileComments";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -99,7 +99,7 @@ const ProfilePage = () => {
                 <ProfilePosts profileUser={profileUser} />
               </Tabs.Content>
               <Tabs.Content value="comments">
-                <MyComments />
+                <ProfileComments />
               </Tabs.Content>
               <Tabs.Content value="board">
                 {isSigninedUser && <ProfileBoard />}
