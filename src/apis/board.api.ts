@@ -43,13 +43,19 @@ export const getBoardById = async (boardId: string) => {
   }
 };
 
-export const getBoardPosts = async (boardId: string) => {
+export const getBoardPosts = async (
+  boardId: string,
+  page: string,
+  limit: string
+) => {
   try {
-    const response = await baseInstance.get(`/board/${boardId}/posts`);
+    const response = await baseInstance.get(
+      `/board/${boardId}/posts?page=${page}&limit=${limit}`
+    );
     if (response.data.isError) {
       throw new Error(response.data.message);
     }
-    return response.data.posts;
+    return response.data.data;
   } catch (error) {
     throw error;
   }
