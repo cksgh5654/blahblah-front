@@ -1,13 +1,9 @@
-import {
-  createContext,
-  FC,
-  PropsWithChildren,
-  useContext,
-  useState,
-} from "react";
+import { createContext, useContext, useState } from "react";
 import { User } from "../types/user.type";
 
-interface UserProviderProps extends PropsWithChildren {}
+interface UserProviderProps {
+  children: React.ReactNode;
+}
 interface UserContextProps {
   user: User;
   updateUser: (data: Partial<User>) => void;
@@ -33,7 +29,7 @@ const DEFAULT_USER = {
   _id: "",
 };
 
-const UserProvider: FC<UserProviderProps> = ({ children }) => {
+const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<User>(DEFAULT_USER);
   const updateUser = (data: Partial<User>) => {
     setUser((prev) => ({ ...prev, ...data }));
