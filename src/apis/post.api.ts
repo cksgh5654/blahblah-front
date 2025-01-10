@@ -60,7 +60,6 @@ export const deletePost = async (postId: string) => {
   if (window.confirm("게시글을 삭제하시겠습니까?")) {
     try {
       const response = await baseInstance.get(`/post/delete/${postId}`);
-
       if (response.data.isError) {
         throw new Error(response.data.message);
       }
@@ -68,5 +67,17 @@ export const deletePost = async (postId: string) => {
     } catch (err) {
       console.error(err);
     }
+  }
+};
+
+export const getPostsByUserId = async (userId: string) => {
+  try {
+    const response = await baseInstance.get(`/post/user/${userId}`);
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response.data.data;
+  } catch (error) {
+    throw error;
   }
 };

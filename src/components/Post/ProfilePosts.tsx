@@ -1,10 +1,26 @@
 import { AspectRatio } from "blahblah-front-common-ui-kit";
 import { useEffect, useState } from "react";
 import { useUserContext } from "../../context/userContext";
-import { getPostsByUserId } from "../../apis/post.api";
 import { User } from "~types/user.type";
+import { getPostsByUserId } from "@apis/post.api";
 
-const MyPosts = () => {
+interface MyPostsProps {
+  profileUser?: User;
+}
+
+const ProfilePosts = ({ profileUser }: MyPostsProps) => {
+  const [posts, setPosts] = useState();
+  const [pageInfo, setPageInfo] = useState();
+  const { user: signinedUser } = useUserContext();
+  useEffect(() => {
+    if (!profileUser || !signinedUser) return;
+    getPostsByUserId(profileUser ? profileUser._id : signinedUser._id) //
+      .then(({ posts, pageInfo }) => {
+        setPosts(posts);
+        setPageInfo(pageInfo);
+      });
+  }, [profileUser]);
+  console.log({ pageInfo, posts });
   return (
     <>
       <ul className="py-4">
@@ -61,4 +77,4 @@ const MyPosts = () => {
   );
 };
 
-export default MyPosts;
+export default ProfilePosts;
