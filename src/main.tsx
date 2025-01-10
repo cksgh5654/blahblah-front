@@ -13,6 +13,7 @@ import CreateBoardPage from './pages/CreateBoardPage.tsx';
 import ProfilePage from './pages/ProfilePage.tsx';
 import ProfileUpdatePage from './pages/ProfileUpdatePage.tsx';
 import UserProvider from './context/userContext.tsx';
+import PostViewPage from './pages/PostViewPage.tsx';
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
       {
         path: '/post/detail/:postId',
         element: <PostPage />,
+      },
+      {
+        path: '/post/view/:postId',
+        element: <PostViewPage />,
       },
       {
         path: '/create',

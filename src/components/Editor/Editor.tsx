@@ -8,9 +8,7 @@ import {
   RefObject,
   Dispatch,
   SetStateAction,
-  useEffect,
 } from 'react';
-import './styles/Editor.module.css';
 
 Quill.register('modules/ImageResize', ImageResize);
 
