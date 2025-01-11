@@ -71,9 +71,11 @@ export const deletePost = async (postId: string) => {
   }
 };
 
-export const getPostsByUserId = async (userId: string) => {
+export const getPostsByUserId = async (userId: string, page: string) => {
   try {
-    const response = await baseInstance.get(`/post/user/${userId}`);
+    const response = await baseInstance.get(
+      `/post/user/${userId}?page=${page}`
+    );
     if (response.data.isError) {
       throw new Error(response.data.message);
     }
