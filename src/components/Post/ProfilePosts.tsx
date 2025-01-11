@@ -4,11 +4,11 @@ import { useUserContext } from "../../context/userContext";
 import { User } from "~types/user.type";
 import { getPostsByUserId } from "@apis/post.api";
 
-interface MyPostsProps {
+interface ProfilePostsProps {
   profileUser?: User;
 }
 
-const ProfilePosts = ({ profileUser }: MyPostsProps) => {
+const ProfilePosts = ({ profileUser }: ProfilePostsProps) => {
   const [posts, setPosts] = useState();
   const [pageInfo, setPageInfo] = useState();
   const { user: signinedUser } = useUserContext();
