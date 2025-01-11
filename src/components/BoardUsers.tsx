@@ -10,6 +10,7 @@ import {
   kickBoardUser,
   updateBoardUserJoinedStatus,
 } from "@apis/boardUser.api";
+import { toast } from "react-toastify";
 
 interface BoardUsersProps {
   boardId?: string;
@@ -37,22 +38,26 @@ const BoardUsers = ({ boardId, selectedTab }: BoardUsersProps) => {
     if (!boardId) return;
     kickBoardUser(boardId, userId) //
       .then(() => {
+        toast.success("유저를 추방하였습니다.");
         const newUsers = users?.filter(({ user }) => user._id !== userId);
         setUsers(newUsers);
-      });
+      })
+      .catch(() => toast.error("유저 정보를 업데이트 하지 못했습니다."));
   };
 
   const handleUserRegistration = (status: boolean, userId: string) => {
     if (!boardId) return;
     updateBoardUserJoinedStatus(status, boardId, userId) //
       .then(() => {
+        toast.success(`유저를 ${status ? "승인" : "미승인"} 하였습니다.`);
         const newUsers = status
           ? users?.map((user) =>
               user.user._id === userId ? { ...user, joinedStatus: true } : user
             )
           : users?.filter(({ user }) => user._id !== userId);
         setUsers(newUsers);
-      });
+      })
+      .catch(() => toast.error("유저 정보를 업데이트 하지 못했습니다."));
   };
 
   useEffect(() => {

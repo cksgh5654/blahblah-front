@@ -5,6 +5,7 @@ import Avatar from "@components/Avatar";
 import { Post } from "~types/post.type";
 import { deletePost } from "@apis/post.api";
 import { getBoardPosts } from "@apis/board.api";
+import { toast } from "react-toastify";
 interface BoardPostsProps {
   boardId?: string;
   selectedTab: string;
@@ -27,9 +28,12 @@ const BoardPosts = ({ boardId, selectedTab }: BoardPostsProps) => {
   const handleClickDeletePost = (postId: string) => {
     deletePost(postId) //
       .then(() => {
+        toast.success("게시물을 삭제 하였습니다.");
         const updatedPosts = posts?.filter((post) => post._id !== postId);
         setPosts(updatedPosts);
-      });
+      })
+
+      .catch(() => toast.error("게시물을 삭제에 실패하였습니다."));
   };
 
   const handleChangePage = (index: number) => {

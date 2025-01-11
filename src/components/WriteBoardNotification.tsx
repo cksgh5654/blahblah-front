@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Tabs } from "blahblah-front-common-ui-kit";
 import BaseInput from "./Input/BaseInput";
@@ -6,6 +6,7 @@ import Editor from "./Editor/Editor";
 import BaseButton from "./Button/BaseButton";
 import { createPost } from "@apis/post.api";
 import { PostTitleValidation } from "@utils/validation";
+import { toast } from "react-toastify";
 
 interface WriteBoardNotificationProps {
   boardId?: string;
@@ -28,10 +29,14 @@ const WriteBoardNotification = ({ boardId }: WriteBoardNotificationProps) => {
   const handleSubmit = () => {
     if (!boardId || !isValidForm) return;
     createPost(boardId, title, content, "notification") //
-      .then(() => setSearchParams({ selectedTab: "USERS" }));
+      .then(() => {
+        toast.success("공지를 올렸습니다.");
+        setSearchParams({ selectedTab: "USERS" });
+      })
+      .catch(() => toast.error("게시물 작성에 실패하였습니다."));
   };
   return (
-    <form className="bg-gray-50 rounded-lg shadow-md px-4 pt-4 pb-28 h-fit relative">
+    <div className="bg-gray-50 rounded-lg shadow-md px-4 pt-4 pb-28 h-fit relative">
       <div>
         <BaseInput
           withLabel="공지사항 제목 (30자 이내)"
@@ -59,7 +64,7 @@ const WriteBoardNotification = ({ boardId }: WriteBoardNotificationProps) => {
           공지등록하기
         </Tabs.Trigger>
       </BaseButton>
-    </form>
+    </div>
   );
 };
 
