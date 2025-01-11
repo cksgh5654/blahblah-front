@@ -8,7 +8,9 @@ const SignupPage = () => {
   const navigate = useNavigate();
   const handleEmailSignup = async (formData: EmailFormDataType) => {
     requestSignupOtp(formData) //
-      .then(() => navigate("/signup/otp/verify"));
+      .then(() => {
+        navigate("/signup/otp/verify");
+      });
   };
   return (
     <>

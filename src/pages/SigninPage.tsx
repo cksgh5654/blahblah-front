@@ -14,8 +14,8 @@ const SigninPage = () => {
     signinWithEmail(formData) //
       .then((user) => {
         updateUser(user);
-        navigate("/");
         localStorage.signinStatus = true;
+        navigate("/");
       });
   };
   const method = useMemo(() => window.location.hash, [window.location.hash]);
