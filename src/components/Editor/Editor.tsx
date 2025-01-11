@@ -1,7 +1,7 @@
 import ReactQuillNew, { Quill } from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { ImageResize } from 'quill-image-resize-module-ts';
-import { imageUpload } from '../../config/aws.config';
+import { imageUpload } from '@config/aws.config';
 import {
   useMemo,
   ChangeEvent,
@@ -16,10 +16,11 @@ interface EditorProps {
   QuillRef: RefObject<ReactQuillNew>;
   content: string;
   setContent: Dispatch<SetStateAction<string>>;
+  height?: string;
 }
 
 const Editor = (props: EditorProps) => {
-  const { QuillRef, content, setContent } = props;
+  const { QuillRef, content, setContent, height = '600px' } = props;
 
   const handleQuillInput = (value: string) => {
     setContent(value);
@@ -99,7 +100,7 @@ const Editor = (props: EditorProps) => {
 
   return (
     <ReactQuillNew
-      style={{ height: '600px' }}
+      style={{ height }}
       ref={QuillRef}
       placeholder="내용을 입력해주세요."
       theme={'snow'}

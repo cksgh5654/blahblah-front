@@ -1,6 +1,26 @@
 import { AspectRatio } from "blahblah-front-common-ui-kit";
+import { useEffect, useState } from "react";
+import { useUserContext } from "../../context/userContext";
+import { User } from "~types/user.type";
+import { getPostsByUserId } from "@apis/post.api";
 
-const MyPosts = () => {
+interface ProfilePostsProps {
+  profileUser?: User;
+}
+
+const ProfilePosts = ({ profileUser }: ProfilePostsProps) => {
+  const [posts, setPosts] = useState();
+  const [pageInfo, setPageInfo] = useState();
+  const { user: signinedUser } = useUserContext();
+  useEffect(() => {
+    if (!profileUser || !signinedUser) return;
+    getPostsByUserId(profileUser ? profileUser._id : signinedUser._id) //
+      .then(({ posts, pageInfo }) => {
+        setPosts(posts);
+        setPageInfo(pageInfo);
+      });
+  }, [profileUser]);
+  console.log({ pageInfo, posts });
   return (
     <>
       <ul className="py-4">
@@ -8,7 +28,7 @@ const MyPosts = () => {
           <div className="flex gap-x-2">
             <AspectRatio className="w-12 flex-shrink-0 self-start">
               <AspectRatio.Image
-                src="/public/favicon.svg"
+                src="/favicon.svg"
                 alt="board-image"
                 className="w-full h-full object-contain"
               />
@@ -32,7 +52,7 @@ const MyPosts = () => {
           <div className="flex gap-x-2">
             <AspectRatio className="w-12 flex-shrink-0 self-start">
               <AspectRatio.Image
-                src="/public/favicon.svg"
+                src="/favicon.svg"
                 alt="board-image"
                 className="w-full h-full object-contain"
               />
@@ -57,4 +77,4 @@ const MyPosts = () => {
   );
 };
 
-export default MyPosts;
+export default ProfilePosts;

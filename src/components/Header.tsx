@@ -3,8 +3,8 @@ import Logo from "./Icons/Logo";
 import MagnifyingGlass from "./Icons/MagnifyingGlass";
 import BaseButton from "./Button/BaseButton";
 import Avatar from "./Avatar";
-import { signout } from "../apis/auth.api";
-import { useUserContext } from "../context/userContext";
+import { useUserContext } from "@context/userContext";
+import { signout } from "@apis/auth.api";
 
 const Header = () => {
   const navigate = useNavigate();

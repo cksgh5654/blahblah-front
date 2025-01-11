@@ -16,13 +16,15 @@ export const getPostData = async (postId: string) => {
 export const createPost = async (
   boardId: string,
   title: string,
-  content: string
+  content: string,
+  type?: 'notification'
 ) => {
   try {
     const response = await baseInstance.post('/post/create', {
       boardId,
       title,
       content,
+      type,
     });
 
     if (response.data.isError) {
@@ -66,5 +68,17 @@ export const deletePost = async (postId: string) => {
     } catch (err) {
       console.error(err);
     }
+  }
+};
+
+export const getPostsByUserId = async (userId: string) => {
+  try {
+    const response = await baseInstance.get(`/post/user/${userId}`);
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response.data.data;
+  } catch (error) {
+    throw error;
   }
 };

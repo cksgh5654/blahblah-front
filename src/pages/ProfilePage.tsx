@@ -1,40 +1,34 @@
 import { useEffect, useMemo, useState } from "react";
-import { getUserInfo } from "../apis/user.api";
-import { useNavigate, useParams } from "react-router-dom";
-import Avatar from "../components/Avatar";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Tabs } from "blahblah-front-common-ui-kit";
-import BaseButton from "../components/Button/BaseButton";
-import MyPosts from "../components/Post/MyPosts";
-import MyComments from "../components/Comment/MyComments";
-import { useUserContext } from "../context/userContext";
-
-interface User {
-  email: string;
-  nickname: string;
-  image: string;
-  createdAt: string;
-}
+import Avatar from "@components/Avatar";
+import BaseButton from "@components/Button/BaseButton";
+import ProfileBoard from "@components/ProfileBoard";
+import ProfilePosts from "@components/Post/ProfilePosts";
+import ProfileComments from "@components/Comment/ProfileComments";
+import { User } from "~types/user.type";
+import { useUserContext } from "@context/userContext";
+import { getUserInfo } from "@apis/user.api";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState<User>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [profileUser, setProfileUser] = useState<User>();
   const { user: singinedUser } = useUserContext();
   const { email } = useParams();
   const isSigninedUser = useMemo(
-    () => user?.email === singinedUser.email,
-    [user, singinedUser]
+    () => profileUser?.email === singinedUser.email,
+    [profileUser, singinedUser]
   );
-
   const TabsDefaultValue = useMemo(
-    () => window.location.hash,
-    [window.location.hash]
+    () => searchParams.get("selectedTab") || "posts",
+    [searchParams]
   );
 
   useEffect(() => {
     if (!email) return;
-    navigate("#myposts");
     getUserInfo(email) //
-      .then(setUser);
+      .then(setProfileUser);
   }, [email]);
 
   return (
@@ -45,31 +39,32 @@ const ProfilePage = () => {
       <div className="w-[768px] py-10">
         <div className="flex flex-col gap-y-8">
           <div className="flex gap-x-8">
-            <Avatar size="large" url={user?.image} />
+            <Avatar size="large" url={profileUser?.image} />
             <div className="flex-1 flex flex-col py-4">
-              <h1>{user?.email}</h1>
-              <p className="text-gray-500 text-sm">{user?.nickname}</p>
+              <h1>{profileUser?.email}</h1>
+              <p className="text-gray-500 text-sm">{profileUser?.nickname}</p>
               <p className="text-gray-500 text-sm">
-                가입한 날짜 : <span>{user?.createdAt.split("T")[0]}</span>
+                가입한 날짜 :{" "}
+                <span>{profileUser?.createdAt.split("T")[0]}</span>
               </p>
             </div>
             {isSigninedUser && (
               <BaseButton
                 className="w-fit h-fit self-center"
-                onClick={() => navigate(`/${user?.email}/profile`)}
+                onClick={() => navigate(`/${profileUser?.email}/profile`)}
               >
                 프로필 수정
               </BaseButton>
             )}
           </div>
           <div>
-            <Tabs.Root defaultValue="#myposts">
+            <Tabs.Root defaultValue={TabsDefaultValue}>
               <Tabs.List className="w-fit flex text-sm font-semibold cursor-pointer">
                 <Tabs.Trigger
-                  value="#myposts"
-                  onClick={() => navigate("#myposts")}
+                  value="posts"
+                  onClick={() => setSearchParams({ selectedTab: "posts" })}
                   className={`${
-                    TabsDefaultValue === "#myposts" &&
+                    TabsDefaultValue === "posts" &&
                     "border-b-2 border-violet-800 pb-2"
                   } flex justify-center items-center px-4`}
                 >
@@ -78,21 +73,36 @@ const ProfilePage = () => {
                   </p>
                 </Tabs.Trigger>
                 <Tabs.Trigger
-                  value="#mycomments"
-                  onClick={() => navigate("#mycomments")}
+                  value="comments"
+                  onClick={() => setSearchParams({ selectedTab: "comments" })}
                   className={`${
-                    TabsDefaultValue === "#mycomments" &&
+                    TabsDefaultValue === "comments" &&
                     "border-b-2 border-violet-800 pb-2"
                   } flex justify-center items-center px-4`}
                 >
                   <p>{isSigninedUser ? "내 댓글 보기" : "댓글 보기"}</p>
                 </Tabs.Trigger>
+                {isSigninedUser && (
+                  <Tabs.Trigger
+                    value="board"
+                    onClick={() => setSearchParams({ selectedTab: "board" })}
+                    className={`${
+                      TabsDefaultValue === "board" &&
+                      "border-b-2 border-violet-800 pb-2"
+                    } flex justify-center items-center px-4`}
+                  >
+                    <p>내가 개설한 게시판 보기</p>
+                  </Tabs.Trigger>
+                )}
               </Tabs.List>
-              <Tabs.Content value="#myposts">
-                <MyPosts />
+              <Tabs.Content value="posts">
+                <ProfilePosts profileUser={profileUser} />
               </Tabs.Content>
-              <Tabs.Content value="#mycomments">
-                <MyComments />
+              <Tabs.Content value="comments">
+                <ProfileComments profileUser={profileUser} />
+              </Tabs.Content>
+              <Tabs.Content value="board">
+                {isSigninedUser && <ProfileBoard />}
               </Tabs.Content>
             </Tabs.Root>
           </div>

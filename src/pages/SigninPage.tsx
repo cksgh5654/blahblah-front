@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import { signinWithEmail } from "../apis/auth.api";
-import EmailAuthForm, { EmailFormDataType } from "../components/EmailAuthForm";
-import GoogleOauthButton from "../components/Button/GoogleOauthButton";
 import { useMemo } from "react";
-import BaseButton from "../components/Button/BaseButton";
-import Logo from "../components/Icons/Logo";
-import { useUserContext } from "../context/userContext";
+import EmailAuthForm, { EmailFormDataType } from "@components/EmailAuthForm";
+import Logo from "@components/Icons/Logo";
+import BaseButton from "@components/Button/BaseButton";
+import GoogleOauthButton from "@components/Button/GoogleOauthButton";
+import { useUserContext } from "@context/userContext";
+import { signinWithEmail } from "@apis/auth.api";
 
 const SigninPage = () => {
   const navigate = useNavigate();

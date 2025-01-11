@@ -1,0 +1,10 @@
+export { default as MainPage } from "./MainPage";
+export { default as SignupPage } from "./SignupPage";
+export { default as SigninPage } from "./SigninPage";
+export { default as EmailOtpPage } from "./EmailOtpPage";
+export { default as PasswordResetPage } from "./PasswordResetPage";
+export { default as PostPage } from "./PostPage";
+export { default as CreateBoardPage } from "./CreateBoardPage";
+export { default as ProfilePage } from "./ProfilePage";
+export { default as ProfileUpdatePage } from "./ProfileUpdatePage";
+export { default as BoardDashBoardPage } from "./BoardDashBoardPage";

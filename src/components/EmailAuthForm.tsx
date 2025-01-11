@@ -1,7 +1,7 @@
 import { ChangeEvent, useState } from "react";
 import BaseInput from "./Input/BaseInput";
 import BaseButton from "./Button/BaseButton";
-import { EmailValidation, PasswordValidation } from "../utils/validation";
+import { EmailValidation, PasswordValidation } from "@utils/validation";
 const DEFAULT_EMAIL_FORM_DATA = {
   email: "",
   password: "",

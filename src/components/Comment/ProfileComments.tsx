@@ -1,13 +1,33 @@
+import { getCommentsByUserId } from "@apis/comment.api";
+import { useUserContext } from "@context/userContext";
 import { AspectRatio } from "blahblah-front-common-ui-kit";
+import { useEffect, useState } from "react";
+import { User } from "~types/user.type";
+interface ProfileCommentsProps {
+  profileUser?: User;
+}
 
-const MyComments = () => {
+const ProfileComments = ({ profileUser }: ProfileCommentsProps) => {
+  const [comments, setComments] = useState();
+  const [pageInfo, setPageInfo] = useState();
+  const { user: signinedUser } = useUserContext();
+  useEffect(() => {
+    if (!profileUser || !signinedUser) return;
+    getCommentsByUserId(profileUser ? profileUser._id : signinedUser._id) //
+      .then(({ comments, pageInfo }) => {
+        setComments(comments);
+        setPageInfo(pageInfo);
+      });
+  }, [profileUser]);
+  console.log({ pageInfo, comments });
+
   return (
     <ul className="py-4">
       <li className="flex gap-x-2 p-4">
         <div>
           <AspectRatio className="w-12 flex-shrink-0 self-start">
             <AspectRatio.Image
-              src="/public/favicon.svg"
+              src="/favicon.svg"
               alt="board-image"
               className="w-full h-full object-contain"
             />
@@ -33,4 +53,4 @@ const MyComments = () => {
   );
 };
 
-export default MyComments;
+export default ProfileComments;
