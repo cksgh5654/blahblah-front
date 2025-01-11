@@ -86,6 +86,7 @@ const PostPage = () => {
     }
 
     deletePost(postId).then((data) => {
+      console.log(data);
       if (!data.isError) {
         alert(data.message);
       }

@@ -1,17 +1,16 @@
-import ReactQuillNew, { Quill } from "react-quill-new";
-import "react-quill-new/dist/quill.snow.css";
-import { ImageResize } from "quill-image-resize-module-ts";
+import ReactQuillNew, { Quill } from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
+import { ImageResize } from 'quill-image-resize-module-ts';
+import { imageUpload } from '@config/aws.config';
 import {
   useMemo,
   ChangeEvent,
   RefObject,
   Dispatch,
   SetStateAction,
-  useEffect,
-} from "react";
-import { imageUpload } from "@config/aws.config";
+} from 'react';
 
-Quill.register("modules/ImageResize", ImageResize);
+Quill.register('modules/ImageResize', ImageResize);
 
 interface EditorProps {
   QuillRef: RefObject<ReactQuillNew>;
@@ -21,18 +20,18 @@ interface EditorProps {
 }
 
 const Editor = (props: EditorProps) => {
-  const { QuillRef, content, setContent, height = "600px" } = props;
+  const { QuillRef, content, setContent, height = '600px' } = props;
 
   const handleQuillInput = (value: string) => {
     setContent(value);
   };
 
   const triggerHandler = () => {
-    const input = document.createElement("input");
-    input.setAttribute("type", "file");
-    input.setAttribute("accept", "image/*");
-    input.setAttribute("multiple", "multiple");
-    input.addEventListener("change", imageHandler);
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.setAttribute('multiple', 'multiple');
+    input.addEventListener('change', imageHandler);
     input.click();
   };
 
@@ -58,15 +57,15 @@ const Editor = (props: EditorProps) => {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const imageURL = await imageUpload(file);
-        editor.insertEmbed(range.index, "image", imageURL);
+        editor.insertEmbed(range.index, 'image', imageURL);
 
-        const img = editor.root.querySelectorAll("img");
+        const img = editor.root.querySelectorAll('img');
         const insertedImage = img[img.length - 1];
-        insertedImage.style.position = "relative";
+        insertedImage.style.position = 'relative';
         editor.setSelection(range.index + 1);
       }
     } catch (err) {
-      console.log("사진 업로드 실패", err);
+      console.log('사진 업로드 실패', err);
     }
   };
 
@@ -76,11 +75,11 @@ const Editor = (props: EditorProps) => {
         container: [
           [{ font: [] }],
           [{ size: [] }],
-          ["bold", "italic", "underline"],
-          [{ align: "" }, { align: "center" }, { align: "right" }],
-          [{ indent: "-1" }, { indent: "+1" }],
-          ["link", "image"],
-          [{ list: "ordered" }, { list: "bullet" }],
+          ['bold', 'italic', 'underline'],
+          [{ align: '' }, { align: 'center' }, { align: 'right' }],
+          [{ indent: '-1' }, { indent: '+1' }],
+          ['link', 'image'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
           [
             {
               color: [],
@@ -93,7 +92,7 @@ const Editor = (props: EditorProps) => {
         },
       },
       ImageResize: {
-        modules: ["Resize"],
+        modules: ['Resize'],
       },
     }),
     []
@@ -104,7 +103,7 @@ const Editor = (props: EditorProps) => {
       style={{ height }}
       ref={QuillRef}
       placeholder="내용을 입력해주세요."
-      theme={"snow"}
+      theme={'snow'}
       modules={modules}
       value={content}
       onChange={handleQuillInput}
