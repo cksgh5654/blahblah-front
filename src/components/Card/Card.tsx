@@ -29,7 +29,7 @@ interface CardProps {
 const Card = ({ data }: CardProps) => {
   const navigate = useNavigate();
   return (
-    <button onClick={() => navigate(`/board/${data._id}`)}>
+    <button onClick={() => navigate(`/board/${data.url}`)}>
       <figure className="flex flex-col rounded-lg border border-slate-300 drop-shadow">
         <img
           src={data.image ? data.image : defaultImg}

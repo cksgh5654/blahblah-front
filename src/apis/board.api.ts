@@ -60,3 +60,15 @@ export const getBoardPosts = async (
     throw error;
   }
 };
+
+export const getBoardAndPostsByUrl = async (boardUrl: string) => {
+  try {
+    const response = await baseInstance.get(`/board/${boardUrl}/board-post`);
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

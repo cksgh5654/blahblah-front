@@ -110,8 +110,7 @@ const CreateBoardPage = () => {
         ...prev,
         image,
       }));
-      console.log("Uploaded image URL:", image);
-      console.log("boardInfo:", boardInfo);
+      return image;
     } catch (error) {
       console.error("Error uploading image:", error);
     }
@@ -126,11 +125,15 @@ const CreateBoardPage = () => {
       alert("게시판 운영원칙에 동의해주세요");
       setIsLoading(false);
     } else {
+      let imgUrl: string | undefined = "";
       if (img) {
-        await FileUpload(img);
+        imgUrl = await FileUpload(img);
       }
       try {
-        const response = await axios.post("/api/board/submit", boardInfo);
+        const response = await axios.post("/api/board/submit", {
+          ...boardInfo,
+          image: imgUrl,
+        });
         if (response.status === 201) {
           alert(response.data.message);
         }

@@ -15,6 +15,7 @@ import {
 } from "@pages/index";
 import { useUserContext } from "@context/userContext";
 import { getSigninStatus } from "@apis/auth.api";
+import BoardPage from "@pages/BoardPage";
 
 const router = createBrowserRouter([
   {
@@ -50,8 +51,12 @@ const router = createBrowserRouter([
         element: <PostPage />,
       },
       {
-        path: "/create",
+        path: "/create-board",
         element: <CreateBoardPage />,
+      },
+      {
+        path: "/board/:url",
+        element: <BoardPage />,
       },
       {
         path: "/:email",
