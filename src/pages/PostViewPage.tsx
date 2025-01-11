@@ -5,7 +5,8 @@ import { deletePost, getPostData } from '../apis/post.api';
 import { useNavigate, useParams } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import BaseButton from '../components/Button/BaseButton';
-import { getCommentData } from '../apis/comment.api';
+import { createComment, getComments } from '../apis/comment.api';
+import PostComment from '../components/Comment/PostComment';
 
 type defaultPostType = {
   title: string;
@@ -15,11 +16,23 @@ type defaultPostType = {
   content: string;
 };
 
+export type defaultCommentType = {
+  _id: string;
+  content: string;
+  createdAt: string;
+  creator: {
+    image: string;
+    nickname: string;
+    _id: string;
+  };
+};
+
 const PostViewPage = () => {
   const navigator = useNavigate();
   const { postId = '677e9d96f28c4c6603555b14' } = useParams();
 
   const [postData, setPostData] = useState<defaultPostType>();
+  const [commentData, setCommentData] = useState([]);
   const [comment, setComment] = useState<string>('');
 
   const handleCommentInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -45,7 +58,7 @@ const PostViewPage = () => {
       return;
     }
 
-    getCommentData(postId, comment).then((data) => {
+    createComment(postId, comment).then((data) => {
       if (!data.isError) {
         alert(data.message);
       }
@@ -66,7 +79,21 @@ const PostViewPage = () => {
         };
 
         setPostData(getdata);
-        return;
+      });
+
+      getComments(postId).then((data) => {
+        const comments = data.comments;
+
+        const filteredComments = comments.map(
+          ({ _id, content, createdAt, creator }: defaultCommentType) => ({
+            _id,
+            content,
+            createdAt,
+            creator,
+          })
+        );
+
+        setCommentData(filteredComments);
       });
     }
   }, []);
@@ -78,7 +105,7 @@ const PostViewPage = () => {
       <div className="p-5">
         <div className="bg-white px-10 py-5">
           <div className="flex justify-between">
-            <p className="max-768:text-sm max-768:truncate sm:text-lg md:text-xl font-bold overflow-auto">
+            <p className="max-768:text-lg md:text-xl font-bold ">
               {postData ? postData.title : '제목'}
             </p>
 
@@ -109,10 +136,8 @@ const PostViewPage = () => {
             </div>
 
             <div className="flex gap-5">
-              <p className="max-768:text-sm max-768:truncate md:text-lg overflow-auto">
-                {postData ? postData.nickname : '닉네임'}
-              </p>
-              <p className="max-768:text-sm max-768:truncate text-nowrap md:text-lg text-slate-300 overflow-auto">
+              <p className="">{postData ? postData.nickname : '닉네임'}</p>
+              <p className="text-slate-300">
                 {postData ? postData.createdAt.split('T')[0] : '2024-12-31'}
               </p>
             </div>
@@ -131,9 +156,10 @@ const PostViewPage = () => {
             />
           </div>
         </div>
-
         <div className="mt-5">
-          <p className="text-lg font-semi">0 개의 댓글</p>
+          <p className="text-lg font-semi">
+            {commentData ? commentData.length : '0'} 개의 댓글
+          </p>
 
           <div className="mt-2">
             <Textarea
@@ -153,8 +179,13 @@ const PostViewPage = () => {
             </div>
           </div>
         </div>
-
         <p className="h-[2px] w-full bg-slate-200 mt-5" />
+
+        {commentData
+          ? commentData.map((comment, index) => (
+              <PostComment key={index} comment={comment} />
+            ))
+          : null}
       </div>
     </div>
   );
