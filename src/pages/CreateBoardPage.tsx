@@ -144,7 +144,6 @@ const CreateBoardPage = () => {
         }
       } finally {
         setIsLoading(false);
-        console.log(boardInfo);
       }
     }
   };

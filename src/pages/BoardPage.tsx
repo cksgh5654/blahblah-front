@@ -8,6 +8,10 @@ import { useEffect, useState } from "react";
 import { getBoardAndPostsByUrl } from "../apis/board.api";
 import SpeechBubbleIcon from "@components/Icons/SpeechBubbleIcon";
 import LoudSpeakerIcon from "@components/Icons/LoudSpeakerIcon";
+import defaultImg from "../components/Card/defaultImg.svg";
+import { useNavigate } from "react-router-dom";
+import { createBoardUser } from "@apis/boardUser.api";
+import axios from "axios";
 
 interface Manager {
   email: string;
@@ -50,6 +54,7 @@ interface Post {
   updatedAt: Date;
   __v: number;
 }
+
 const pageSize = 15;
 const blockSize = 15;
 
@@ -57,6 +62,9 @@ const BoardPage = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [currentNoticePage, setCurrentNoticePage] = useState(0);
   const [isNotice, setIsNotice] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isApply, setIsApply] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState("");
   const [boardData, setBoardData] = useState<Board>({
     category: "",
     createdAt: "",
@@ -77,6 +85,8 @@ const BoardPage = () => {
     __v: 0,
   });
   const [postData, setPostData] = useState<Post[]>([]);
+  const [isJoin, setIsJoin] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const pathSegments = window.location.pathname.split("/");
@@ -86,8 +96,11 @@ const BoardPage = () => {
       try {
         const data = await getBoardAndPostsByUrl(boardUrl);
         console.log(data);
-        setBoardData(() => data.data.board);
-        setPostData(() => data.data.posts);
+        setBoardData(data.data.board);
+        setPostData(data.data.posts);
+        setCurrentUserId(data.userId);
+        setIsJoin(data.isJoin);
+        setIsApply(data.isApply);
       } catch (error) {
         console.error("게시글을 가져오는 데 실패했습니다.", error);
       }
@@ -121,6 +134,22 @@ const BoardPage = () => {
     endNoticeIdx
   );
 
+  const handleClickJoin = async () => {
+    setIsLoading(true);
+    try {
+      const response = await createBoardUser(boardData._id, currentUserId);
+      alert(response);
+      setIsApply(true);
+    } catch (err) {
+      console.log("handleClickJoin 오류", err);
+      if (axios.isAxiosError(err)) {
+        alert(err.response?.data.message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex justify-center">
       <main className="w-[1280px] px-8 py-16 flex gap-6 flex-col">
@@ -129,13 +158,31 @@ const BoardPage = () => {
             <h2 className="text-violet-800 text-3xl font-semibold">
               {boardData.name}
             </h2>
-            <BaseButton>가입하기</BaseButton>
+            {boardData.manager._id === currentUserId ? (
+              <BaseButton
+                onClick={() => navigate(`/board/dashboard/${boardData._id}`)}
+              >
+                게시판 관리
+              </BaseButton>
+            ) : (
+              <BaseButton
+                onClick={handleClickJoin}
+                disabled={isLoading || isApply}
+                className={isJoin ? "hidden" : "block"}
+              >
+                {isLoading
+                  ? "신청 중..."
+                  : isApply
+                  ? "신청되었습니다."
+                  : "가입하기"}
+              </BaseButton>
+            )}
           </div>
           <hr className="border-slate-300" />
         </div>
         <section className=" grid grid-cols-[1fr] lg:grid-cols-[1fr_2fr] xl:grid-cols-[1fr_2fr_1fr] xl:grid-rows-1 gap-6">
           <img
-            src={boardData.image}
+            src={boardData.image ? boardData.image : defaultImg}
             alt={boardData.name}
             className="h-64 w-full object-cover border rounded-md border-slate-200 bg-slate-200"
           />
@@ -199,7 +246,12 @@ const BoardPage = () => {
                 </button>
               </Tabs.Trigger>
             </Tabs.List>
-            <BaseButton>글쓰기</BaseButton>
+            <BaseButton
+              onClick={() => navigate(`/post/create/${boardData._id}`)}
+              className={isJoin ? "block" : "hidden"}
+            >
+              글쓰기
+            </BaseButton>
           </div>
           <div>
             <div className="grid grid-cols-[1fr_1fr_10fr_2fr_2fr_1fr] border-y-2 py-3 border-violet-800 text-center">
@@ -224,7 +276,10 @@ const BoardPage = () => {
                       <SpeechBubbleIcon height="24px" />
                     )}
                   </p>
-                  <button className="text-start px-8 hover:underline underline-offset-4 text-base text-slate-800">
+                  <button
+                    onClick={() => navigate(`/post/detail/${post._id}`)}
+                    className="text-start px-8 hover:underline underline-offset-4 text-base text-slate-800"
+                  >
                     {post.title}
                   </button>
                   <p>{post.creator.nickname}</p>

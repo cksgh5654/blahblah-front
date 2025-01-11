@@ -56,3 +56,20 @@ export const updateBoardUserJoinedStatus = async (
     }
   }
 };
+
+export const createBoardUser = async (board: string, user: string) => {
+  try {
+    const response = await baseInstance.post("/board/createBoardUser", {
+      board,
+      user,
+    });
+    if (response.data.isError) {
+      throw new Error(response.data.isError);
+    }
+    return response.data.message;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+  }
+};
