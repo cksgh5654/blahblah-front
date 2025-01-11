@@ -90,10 +90,10 @@ const BoardDashBoardPage = () => {
               </Tabs.Trigger>
             </Tabs.List>
             <Tabs.Content value="USERS">
-              <BoardUsers boardId={boardId} />
+              <BoardUsers boardId={boardId} selectedTab={selectedTab} />
             </Tabs.Content>
             <Tabs.Content value="POSTS">
-              <BoardPosts boardId={boardId} />
+              <BoardPosts boardId={boardId} selectedTab={selectedTab} />
             </Tabs.Content>
             <Tabs.Content value="NOTIFICATION">
               <WriteBoardNotification boardId={boardId} />
