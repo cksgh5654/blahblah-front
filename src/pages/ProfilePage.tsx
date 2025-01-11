@@ -9,6 +9,7 @@ import ProfileComments from "@components/Comment/ProfileComments";
 import { User } from "~types/user.type";
 import { useUserContext } from "@context/userContext";
 import { getUserInfo } from "@apis/user.api";
+import ErrorPage from "@components/ErrorPage";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -30,6 +31,8 @@ const ProfilePage = () => {
     getUserInfo(email) //
       .then(setProfileUser);
   }, [email]);
+
+  if (!profileUser) return <ErrorPage />;
 
   return (
     <div
