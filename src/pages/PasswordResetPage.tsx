@@ -1,17 +1,17 @@
 import { ChangeEvent, FormEvent, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Logo from "@components/Icons/Logo";
+import BaseInput from "@components/Input/BaseInput";
+import BaseButton from "@components/Button/BaseButton";
 import {
   requestOtpVerifyForResetPassword,
   requestPasswordResetOtp,
-} from "../apis/auth.api";
-import { useNavigate } from "react-router-dom";
+} from "@apis/auth.api";
 import {
   EmailValidation,
   otpValidation,
   PasswordValidation,
-} from "../utils/validation";
-import Logo from "@components/Icons/Logo";
-import BaseInput from "@components/Input/BaseInput";
-import BaseButton from "@components/Button/BaseButton";
+} from "@utils/validation";
 
 const PasswordResetPage = () => {
   const navigate = useNavigate();

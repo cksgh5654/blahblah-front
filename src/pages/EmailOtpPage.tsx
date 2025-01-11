@@ -1,10 +1,10 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-import { sendOtp } from "../apis/auth.api";
 import { useNavigate } from "react-router-dom";
-import { otpValidation } from "../utils/validation";
 import Logo from "@components/Icons/Logo";
 import BaseInput from "@components/Input/BaseInput";
 import BaseButton from "@components/Button/BaseButton";
+import { sendOtp } from "@apis/auth.api";
+import { otpValidation } from "@utils/validation";
 
 const EmailOtpPage = () => {
   const navigate = useNavigate();

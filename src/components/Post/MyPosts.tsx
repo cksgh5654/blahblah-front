@@ -1,4 +1,8 @@
 import { AspectRatio } from "blahblah-front-common-ui-kit";
+import { useEffect, useState } from "react";
+import { useUserContext } from "../../context/userContext";
+import { getPostsByUserId } from "../../apis/post.api";
+import { User } from "~types/user.type";
 
 const MyPosts = () => {
   return (

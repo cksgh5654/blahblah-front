@@ -1,6 +1,6 @@
+import UserProvider from "@context/userContext";
+import RouteProvider from "@components/Routes/RouteProvider";
 import "./App.css";
-import UserProvider from "./context/userContext";
-import RouteProvider from "./components/Routes/RouteProvider";
 
 function App() {
   return (

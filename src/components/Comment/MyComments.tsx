@@ -1,6 +1,19 @@
 import { AspectRatio } from "blahblah-front-common-ui-kit";
 
-const MyComments = () => {
+const ProfileComments = () => {
+  // const [posts, setPosts] = useState();
+  //   const [pageInfo, setPageInfo] = useState();
+  //   const { user: signinedUser } = useUserContext();
+  //   useEffect(() => {
+  //     if (!profileUser || !signinedUser) return;
+  //     getPostsByUserId(profileUser ? profileUser._id : signinedUser._id) //
+  //       .then(({ posts, pageInfo }) => {
+  //         setPosts(posts);
+  //         setPageInfo(pageInfo);
+  //       });
+  //   }, [profileUser]);
+  //   console.log({ pageInfo, posts });
+
   return (
     <ul className="py-4">
       <li className="flex gap-x-2 p-4">
@@ -33,4 +46,4 @@ const MyComments = () => {
   );
 };
 
-export default MyComments;
+export default ProfileComments;

@@ -1,5 +1,5 @@
+import { getBoardBySigninUserId } from "@apis/board.api";
 import { useEffect, useState } from "react";
-import { getBoardBySigninUserId } from "../apis/board.api";
 type BoardItem = {
   name: string;
 };

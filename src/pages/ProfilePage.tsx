@@ -1,20 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
-import { getUserInfo } from "../apis/user.api";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Tabs } from "blahblah-front-common-ui-kit";
-import { useUserContext } from "../context/userContext";
 import Avatar from "@components/Avatar";
 import BaseButton from "@components/Button/BaseButton";
 import MyPosts from "@components/Post/MyPosts";
 import MyComments from "@components/Comment/MyComments";
 import ProfileBoard from "@components/ProfileBoard";
-
-interface User {
-  email: string;
-  nickname: string;
-  image: string;
-  createdAt: string;
-}
+import ProfilePosts from "@components/Post/ProfilePosts";
+import ProfileComments from "@components/Comment/ProfileComments";
+import { User } from "~types/user.type";
+import { useUserContext } from "@context/userContext";
+import { getUserInfo } from "@apis/user.api";
 
 const ProfilePage = () => {
   const navigate = useNavigate();

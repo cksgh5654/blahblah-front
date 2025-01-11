@@ -6,14 +6,14 @@ import {
   useRef,
   useState,
 } from "react";
-import { updateMyProfile } from "../apis/user.api";
-import { imageUpload } from "../config/aws.config";
-import { Profile } from "../types/user.type";
 import { useNavigate } from "react-router-dom";
-import { useUserContext } from "../context/userContext";
 import Avatar from "@components/Avatar";
 import BaseInput from "@components/Input/BaseInput";
 import BaseButton from "@components/Button/BaseButton";
+import { useUserContext } from "@context/userContext";
+import { Profile } from "~types/user.type";
+import { updateMyProfile } from "@apis/user.api";
+import { imageUpload } from "@config/aws.config";
 
 const ProfileUpdatePage = () => {
   const navigate = useNavigate();

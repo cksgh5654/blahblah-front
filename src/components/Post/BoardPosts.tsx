@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { getBoardPosts } from "../../apis/board.api";
-import { Post } from "../../types/post.type";
-import { deletePost } from "../../apis/post.api";
 import { Pagination } from "blahblah-front-common-ui-kit";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Avatar from "@components/Avatar";
+import { Post } from "~types/post.type";
+import { deletePost } from "@apis/post.api";
+import { getBoardPosts } from "@apis/board.api";
 interface BoardPostsProps {
   boardId?: string;
 }

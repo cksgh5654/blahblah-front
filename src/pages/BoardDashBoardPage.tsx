@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import { getBoardById } from "../apis/board.api";
 import { useParams, useSearchParams } from "react-router-dom";
-import { Board } from "../types/board.type";
 import { AspectRatio, Tabs } from "blahblah-front-common-ui-kit";
 import WriteBoardNotification from "@components/WriteBoardNotification";
 import BoardPosts from "@components/Post/BoardPosts";
 import BoardUsers from "@components/BoardUsers";
 import Avatar from "@components/Avatar";
+import { Board } from "~types/board.type";
+import { getBoardById } from "@apis/board.api";
 
 const BoardDashBoardPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();

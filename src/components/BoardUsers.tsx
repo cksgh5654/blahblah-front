@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Pagination } from "blahblah-front-common-ui-kit";
-import { BoardUser } from "../types/user.type";
+
+import Avatar from "./Avatar";
+import BaseButton from "./Button/BaseButton";
+import { BoardUser } from "~types/user.type";
 import {
   getBoardUsers,
   kickBoardUser,
   updateBoardUserJoinedStatus,
-} from "../apis/boardUser.api";
-import Avatar from "./Avatar";
-import BaseButton from "./Button/BaseButton";
+} from "@apis/boardUser.api";
 
 interface BoardUsersProps {
   boardId?: string;

@@ -1,11 +1,11 @@
 import { ChangeEvent, useRef, useState } from "react";
-import { PostTitleValidation } from "../utils/validation";
-import { createPost } from "../apis/post.api";
 import { useSearchParams } from "react-router-dom";
 import { Tabs } from "blahblah-front-common-ui-kit";
 import BaseInput from "./Input/BaseInput";
 import Editor from "./Editor/Editor";
 import BaseButton from "./Button/BaseButton";
+import { createPost } from "@apis/post.api";
+import { PostTitleValidation } from "@utils/validation";
 
 interface WriteBoardNotificationProps {
   boardId?: string;

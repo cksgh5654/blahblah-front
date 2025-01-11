@@ -1,4 +1,4 @@
-import { ProfileFormData } from "../types/form.type";
+import { ProfileFormData } from "~types/form.type";
 import { baseInstance } from "./axios.config";
 
 export const getMyProfile = async () => {

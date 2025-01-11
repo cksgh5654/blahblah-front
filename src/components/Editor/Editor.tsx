@@ -1,7 +1,6 @@
 import ReactQuillNew, { Quill } from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import { ImageResize } from "quill-image-resize-module-ts";
-import { imageUpload } from "../../config/aws.config";
 import {
   useMemo,
   ChangeEvent,
@@ -10,6 +9,7 @@ import {
   SetStateAction,
   useEffect,
 } from "react";
+import { imageUpload } from "@config/aws.config";
 
 Quill.register("modules/ImageResize", ImageResize);
 

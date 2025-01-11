@@ -25,6 +25,26 @@ export default defineConfig({
         find: "@pages",
         replacement: path.resolve(__dirname, "src/pages"),
       },
+      {
+        find: "~types",
+        replacement: path.resolve(__dirname, "src/types"),
+      },
+      {
+        find: "@context",
+        replacement: path.resolve(__dirname, "src/context"),
+      },
+      {
+        find: "@utils",
+        replacement: path.resolve(__dirname, "src/utils"),
+      },
+      {
+        find: "@config",
+        replacement: path.resolve(__dirname, "src/config"),
+      },
+      {
+        find: "@apis",
+        replacement: path.resolve(__dirname, "src/apis"),
+      },
     ],
   },
 });

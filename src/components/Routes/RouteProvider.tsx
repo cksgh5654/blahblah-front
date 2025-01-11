@@ -1,7 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { useUserContext } from "../../context/userContext";
 import { useEffect } from "react";
-import { getSigninStatus } from "../../apis/auth.api";
 import BaseLayout from "@components/BaseLayout";
 import {
   MainPage,
@@ -15,6 +13,8 @@ import {
   ProfileUpdatePage,
   BoardDashBoardPage,
 } from "@pages/index";
+import { useUserContext } from "@context/userContext";
+import { getSigninStatus } from "@apis/auth.api";
 
 const router = createBrowserRouter([
   {
