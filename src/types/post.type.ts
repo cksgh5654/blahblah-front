@@ -1,4 +1,9 @@
+import { Board } from "./board.type";
 import { User } from "./user.type";
+
+export type ProfilePost = Omit<Post, "board"> & {
+  board: Board;
+};
 
 export interface Post {
   board: string;
@@ -7,5 +12,6 @@ export interface Post {
   content: string;
   deletedAt: string;
   updatedAt: string;
+  createdAt: string;
   _id: string;
 }

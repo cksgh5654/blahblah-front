@@ -33,7 +33,7 @@ const ProfilePage = () => {
 
   return (
     <div
-      className="w-screen flex flex-col items-center"
+      className="flex flex-col items-center"
       style={{ height: "calc(-68.5px + 100vh)" }}
     >
       <div className="w-[768px] py-10">
@@ -96,10 +96,16 @@ const ProfilePage = () => {
                 )}
               </Tabs.List>
               <Tabs.Content value="posts">
-                <ProfilePosts profileUser={profileUser} />
+                <ProfilePosts
+                  profileUser={profileUser}
+                  selectedTab={TabsDefaultValue}
+                />
               </Tabs.Content>
               <Tabs.Content value="comments">
-                <ProfileComments profileUser={profileUser} />
+                <ProfileComments
+                  profileUser={profileUser}
+                  selectedTab={TabsDefaultValue}
+                />
               </Tabs.Content>
               <Tabs.Content value="board">
                 {isSigninedUser && <ProfileBoard />}

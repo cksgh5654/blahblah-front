@@ -14,7 +14,7 @@ import {
 interface BoardUsersProps {
   boardId?: string;
 }
-export type PageInfo = {
+type PageInfo = {
   currentPage: number;
   nextPage: number;
   prevPage: number;
