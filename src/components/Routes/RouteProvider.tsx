@@ -1,6 +1,6 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { useEffect } from 'react';
-import BaseLayout from '@components/BaseLayout';
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { useEffect } from "react";
+import BaseLayout from "@components/BaseLayout";
 import {
   MainPage,
   SignupPage,
@@ -12,70 +12,75 @@ import {
   ProfilePage,
   ProfileUpdatePage,
   BoardDashBoardPage,
-} from '@pages/index';
-import { useUserContext } from '@context/userContext';
-import { getSigninStatus } from '@apis/auth.api';
-import BoardPage from '@pages/BoardPage';
-import PostViewPage from '@pages/PostViewPage';
+} from "@pages/index";
+import { useUserContext } from "@context/userContext";
+import { getSigninStatus } from "@apis/auth.api";
+import BoardPage from "@pages/BoardPage";
+import PostViewPage from "@pages/PostViewPage";
+import ErrorPage from "@components/ErrorPage";
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <BaseLayout />,
     children: [
       {
-        path: '/',
+        path: "/",
         element: <MainPage />,
       },
       {
-        path: '/signup',
+        path: "/signup",
         element: <SignupPage />,
       },
       {
-        path: '/signin',
+        path: "/signin",
         element: <SigninPage />,
       },
       {
-        path: '/signup/otp/verify',
+        path: "/signup/otp/verify",
         element: <EmailOtpPage />,
       },
       {
-        path: '/password-reset/otp',
+        path: "/password-reset/otp",
         element: <PasswordResetPage />,
       },
       {
-        path: '/post/create/:boardId',
+        path: "/post/create/:boardId",
         element: <PostPage />,
       },
       {
-        path: '/post/detail/:postId',
+        path: "/post/detail/:postId",
         element: <PostPage />,
       },
       {
-        path: '/post/view/:postId',
+        path: "/post/view/:postId",
         element: <PostViewPage />,
       },
       {
-        path: '/create-board',
+        path: "/create-board",
         element: <CreateBoardPage />,
       },
       {
-        path: '/board/:url',
+        path: "/board/:url",
         element: <BoardPage />,
       },
       {
-        path: '/:email',
+        path: "/:email",
         element: <ProfilePage />,
       },
       {
-        path: '/:email/profile',
+        path: "/:email/profile",
         element: <ProfileUpdatePage />,
       },
       {
-        path: '/board/dashboard/:boardId',
+        path: "/board/dashboard/:boardId",
         element: <BoardDashBoardPage />,
       },
     ],
+  },
+  {
+    path: "*",
+    element: <ErrorPage />,
   },
 ]);
 
