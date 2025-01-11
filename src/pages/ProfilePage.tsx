@@ -58,7 +58,7 @@ const ProfilePage = () => {
             )}
           </div>
           <div>
-            <Tabs.Root defaultValue="posts">
+            <Tabs.Root defaultValue={TabsDefaultValue}>
               <Tabs.List className="w-fit flex text-sm font-semibold cursor-pointer">
                 <Tabs.Trigger
                   value="posts"
@@ -99,7 +99,7 @@ const ProfilePage = () => {
                 <ProfilePosts profileUser={profileUser} />
               </Tabs.Content>
               <Tabs.Content value="comments">
-                <ProfileComments />
+                <ProfileComments profileUser={profileUser} />
               </Tabs.Content>
               <Tabs.Content value="board">
                 {isSigninedUser && <ProfileBoard />}
