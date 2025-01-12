@@ -18,7 +18,8 @@ import { getSigninStatus } from "@apis/auth.api";
 import BoardPage from "@pages/BoardPage";
 import PostViewPage from "@pages/PostViewPage";
 import ErrorPage from "@pages/ErrorPage";
-import { profileLoader } from "./routeLoader";
+import { boardDashBoardLoader, profileLoader } from "./routeLoader";
+import UnauthorizedErrorPage from "@pages/UnauthorizedErrorPage";
 
 const router = createBrowserRouter([
   {
@@ -78,6 +79,8 @@ const router = createBrowserRouter([
       {
         path: "/board/dashboard/:boardId",
         element: <BoardDashBoardPage />,
+        loader: boardDashBoardLoader,
+        errorElement: <UnauthorizedErrorPage />,
       },
     ],
   },

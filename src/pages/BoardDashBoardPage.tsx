@@ -1,27 +1,20 @@
-import { useEffect, useMemo, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useMemo } from "react";
+import { useLoaderData, useSearchParams } from "react-router-dom";
 import { AspectRatio, Tabs } from "blahblah-front-common-ui-kit";
 import WriteBoardNotification from "@components/WriteBoardNotification";
 import BoardPosts from "@components/Post/BoardPosts";
 import BoardUsers from "@components/BoardUsers";
 import Avatar from "@components/Avatar";
 import { Board } from "~types/board.type";
-import { getBoardById } from "@apis/board.api";
 
 const BoardDashBoardPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [board, setBoard] = useState<Board>();
-  const { boardId } = useParams();
+  const board = useLoaderData<Board>();
   const selectedTab = useMemo(
     () => searchParams.get("selectedTab") || "USERS",
     [searchParams]
   );
 
-  useEffect(() => {
-    if (!boardId) return;
-    getBoardById(boardId) //
-      .then(setBoard);
-  }, []);
   return (
     <div
       className="w-screen flex justify-center py-2"
@@ -90,13 +83,13 @@ const BoardDashBoardPage = () => {
               </Tabs.Trigger>
             </Tabs.List>
             <Tabs.Content value="USERS">
-              <BoardUsers boardId={boardId} selectedTab={selectedTab} />
+              <BoardUsers boardId={board._id} selectedTab={selectedTab} />
             </Tabs.Content>
             <Tabs.Content value="POSTS">
-              <BoardPosts boardId={boardId} selectedTab={selectedTab} />
+              <BoardPosts boardId={board._id} selectedTab={selectedTab} />
             </Tabs.Content>
             <Tabs.Content value="NOTIFICATION">
-              <WriteBoardNotification boardId={boardId} />
+              <WriteBoardNotification boardId={board._id} />
             </Tabs.Content>
           </Tabs.Root>
         </div>
