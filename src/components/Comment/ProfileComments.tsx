@@ -2,7 +2,7 @@ import { getCommentsByUserId } from "@apis/comment.api";
 import { useUserContext } from "@context/userContext";
 import { AspectRatio, Pagination } from "blahblah-front-common-ui-kit";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ProfileComment } from "~types/comment.type";
 import { User } from "~types/user.type";
 interface ProfileCommentsProps {
@@ -22,6 +22,7 @@ const ProfileComments = ({
   profileUser,
   selectedTab,
 }: ProfileCommentsProps) => {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [comments, setComments] = useState<ProfileComment[]>();
   const [pageInfo, setPageInfo] = useState<PageInfo>();
@@ -47,30 +48,30 @@ const ProfileComments = ({
       <ul className="flex-1">
         {comments?.map(({ content, createdAt, post, _id }) => (
           <li
-            className="flex gap-x-2 p-4 border-b"
+            className="flex gap-x-2 p-4 border-b border-gray-300 hover:bg-gray-50 transition duration-200"
             key={`comments-item-${_id}`}
           >
             <div>
-              <AspectRatio className="w-14 self-start">
+              <AspectRatio className="w-14 self-start" ratio={1 / 1}>
                 <AspectRatio.Image
                   src={post.board.image}
                   alt="board-image"
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-cover rounded-md"
                 />
               </AspectRatio>
             </div>
             <div className="flex-grow">
               <div>
                 <span
-                  className="text-xl font-bold text-violet-800 cursor-pointer"
-                  onClick={() => console.log("해당 게실물 이동")}
+                  className="text-xl font-bold text-violet-800 hover:underline cursor-pointer"
+                  onClick={() => navigate(`/post/view/${post._id}`)}
                 >
                   {post.title}{" "}
                 </span>
                 <span className="text-base font-semibold">에 남긴 댓글</span>
               </div>
               <p className="line-clamp-1">{content}</p>
-              <span className="text-gray-500 text-sm">
+              <span className="text-sm text-gray-500 font-bold">
                 {createdAt.split("T")[0]}
               </span>
             </div>
