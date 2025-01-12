@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import Avatar from "@components/Avatar";
 import BaseInput from "@components/Input/BaseInput";
 import BaseButton from "@components/Button/BaseButton";
@@ -16,6 +16,7 @@ import { updateMyProfile } from "@apis/user.api";
 import { imageUpload } from "@config/aws.config";
 
 const ProfileUpdatePage = () => {
+  const { email } = useParams();
   const navigate = useNavigate();
   const { user } = useUserContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -59,9 +60,13 @@ const ProfileUpdatePage = () => {
   };
 
   useEffect(() => {
+    if (!user.email) return;
+    if (user.email !== email) {
+      navigate(`/${user.email}/profile`, { replace: true });
+    }
     setOriginal(user);
     setFormData(user);
-  }, [user]);
+  }, [user, email]);
 
   return (
     <div className="w-screen flex justify-center items-center">
