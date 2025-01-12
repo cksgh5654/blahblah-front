@@ -45,8 +45,11 @@ const ProfileComments = ({
   return (
     <div className="h-full flex flex-col">
       <ul className="flex-1">
-        {comments?.map(({ content, createdAt, post }) => (
-          <li className="flex gap-x-2 p-4 border-b">
+        {comments?.map(({ content, createdAt, post, _id }) => (
+          <li
+            className="flex gap-x-2 p-4 border-b"
+            key={`comments-item-${_id}`}
+          >
             <div>
               <AspectRatio className="w-14 self-start">
                 <AspectRatio.Image
@@ -78,7 +81,7 @@ const ProfileComments = ({
         {pageInfo && (
           <Pagination
             onPageChange={handleChangePage}
-            total={pageInfo?.totalCommentsCount ?? 1}
+            total={pageInfo?.totalCommentsCount ?? 0}
             value={pageInfo?.currentPage - 1}
             className="flex justify-center"
           >

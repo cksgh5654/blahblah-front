@@ -18,6 +18,7 @@ import { getSigninStatus } from "@apis/auth.api";
 import BoardPage from "@pages/BoardPage";
 import PostViewPage from "@pages/PostViewPage";
 import ErrorPage from "@pages/ErrorPage";
+import { profileLoader } from "./routeLoader";
 
 const router = createBrowserRouter([
   {
@@ -67,6 +68,8 @@ const router = createBrowserRouter([
       {
         path: "/:email",
         element: <ProfilePage />,
+        loader: profileLoader,
+        errorElement: <ErrorPage />,
       },
       {
         path: "/:email/profile",

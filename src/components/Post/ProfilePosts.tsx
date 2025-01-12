@@ -42,8 +42,6 @@ const ProfilePosts = ({ profileUser, selectedTab }: ProfilePostsProps) => {
       });
   }, [profileUser, searchParams]);
 
-  if (!profileUser) return <ErrorPage />;
-
   return (
     <div className="h-full flex flex-col">
       <ul className="flex-1">
