@@ -4,7 +4,7 @@ import { useUserContext } from "../../context/userContext";
 import { User } from "~types/user.type";
 import { getPostsByUserId } from "@apis/post.api";
 import { ProfilePost } from "~types/post.type";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 interface ProfilePostsProps {
   profileUser?: User;
@@ -20,6 +20,7 @@ export type PageInfo = {
 };
 
 const ProfilePosts = ({ profileUser, selectedTab }: ProfilePostsProps) => {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [posts, setPosts] = useState<ProfilePost[]>();
   const [pageInfo, setPageInfo] = useState<PageInfo>();
@@ -43,26 +44,41 @@ const ProfilePosts = ({ profileUser, selectedTab }: ProfilePostsProps) => {
     <>
       <ul className="py-4">
         {posts?.map(({ title, createdAt, board, _id }) => (
-          <li className="p-4 border-b" key={`post-item-${_id}`}>
-            <div className="flex gap-x-2">
-              <div className="flex flex-col">
-                <AspectRatio className="w-14 self-start" ratio={1 / 1}>
+          <li
+            className="p-4 border-b border-gray-300 hover:bg-gray-50 transition duration-200"
+            key={`post-item-${_id}`}
+          >
+            <div className="flex flex-col gap-4">
+              <div className="flex items-start gap-4">
+                <AspectRatio className="w-14 h-14 shrink-0" ratio={1 / 1}>
                   <AspectRatio.Image
                     src={board.image}
                     alt="board-image"
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-cover rounded-md shadow-md"
                   />
                 </AspectRatio>
-                <p className="text-center">{board.name}</p>
+                <div className="flex flex-col justify-center gap-1">
+                  <span
+                    className="text-2xl font-bold text-violet-800 hover:underline cursor-pointer"
+                    onClick={() => navigate(`/board/${board.url}`)}
+                  >
+                    {board.name}
+                  </span>
+                  <span className="text-sm text-gray-600">
+                    게시판에 작성한 게시글
+                  </span>
+                </div>
               </div>
-              <div className="flex flex-col flex-grow">
-                <div className="items-center gap-x-4 py-2">
-                  <p className="font-medium">{profileUser?.nickname}</p>
-                  <p className="text-gray-500">{createdAt.split("T")[0]}</p>
-                </div>
-                <div className="p-4 rounded-md bg-gray-100/60">
-                  <h1 className="text-xl font-bold">{title}</h1>
-                </div>
+              <div className="flex items-baseline">
+                <h1
+                  className="text-lg font-bold text-gray-800 hover:underline cursor-pointer"
+                  onClick={() => navigate(`/post/view/${_id}`)}
+                >
+                  {title}
+                </h1>
+                <span className="text-sm text-gray-500 ml-2 font-bold">
+                  {createdAt.split("T")[0]}
+                </span>
               </div>
             </div>
           </li>
