@@ -17,7 +17,7 @@ import { useUserContext } from "@context/userContext";
 import { getSigninStatus } from "@apis/auth.api";
 import BoardPage from "@pages/BoardPage";
 import PostViewPage from "@pages/PostViewPage";
-import ErrorPage from "@components/ErrorPage";
+import ErrorPage from "@pages/ErrorPage";
 
 const router = createBrowserRouter([
   {

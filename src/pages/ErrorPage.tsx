@@ -1,11 +1,10 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const ErrorPage = () => {
   const navigate = useNavigate();
 
   const handleGoHome = () => {
-    navigate("/"); // 홈으로 이동
+    navigate("/");
   };
 
   return (
@@ -14,7 +13,6 @@ const ErrorPage = () => {
       <h1 className="text-3xl font-semibold mb-2 py-8">
         요청하신 페이지가 존재하지 않아요!
       </h1>
-      {/* 버튼 */}
       <button
         onClick={handleGoHome}
         className="px-6 py-3 bg-violet-800 text-white font-medium rounded-md shadow-md hover:bg-violet-700 transition"
