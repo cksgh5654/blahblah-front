@@ -43,47 +43,52 @@ const ProfileComments = ({
   }, [profileUser, searchParams]);
 
   return (
-    <ul className="py-4">
-      {comments?.map(({ content, createdAt, post }) => (
-        <li className="flex gap-x-2 p-4 border-b">
-          <div>
-            <AspectRatio className="w-14 self-start">
-              <AspectRatio.Image
-                src={post.board.image}
-                alt="board-image"
-                className="w-full h-full object-contain"
-              />
-            </AspectRatio>
-          </div>
-          <div className="flex-grow">
+    <div className="h-full flex flex-col">
+      <ul className="flex-1">
+        {comments?.map(({ content, createdAt, post }) => (
+          <li className="flex gap-x-2 p-4 border-b">
             <div>
-              <span
-                className="text-xl font-bold text-violet-800 cursor-pointer"
-                onClick={() => console.log("해당 게실물 이동")}
-              >
-                {post.title}{" "}
-              </span>
-              <span className="text-base font-semibold">에 남긴 댓글</span>
+              <AspectRatio className="w-14 self-start">
+                <AspectRatio.Image
+                  src={post.board.image}
+                  alt="board-image"
+                  className="w-full h-full object-contain"
+                />
+              </AspectRatio>
             </div>
-            <p className="line-clamp-1">{content}</p>
-            <span className="text-gray-500 text-sm">
-              {createdAt.split("T")[0]}
-            </span>
-          </div>
-        </li>
-      ))}
-      {pageInfo && (
-        <Pagination
-          onPageChange={handleChangePage}
-          total={pageInfo?.totalCommentsCount ?? 0}
-          value={pageInfo?.currentPage - 1}
-        >
-          <Pagination.Navigator className="flex justify-center items-center gap-x-2">
-            <Pagination.Buttons className="px-3 py-1 bg-gray-200 rounded-md hover:bg-violet-300" />
-          </Pagination.Navigator>
-        </Pagination>
-      )}
-    </ul>
+            <div className="flex-grow">
+              <div>
+                <span
+                  className="text-xl font-bold text-violet-800 cursor-pointer"
+                  onClick={() => console.log("해당 게실물 이동")}
+                >
+                  {post.title}{" "}
+                </span>
+                <span className="text-base font-semibold">에 남긴 댓글</span>
+              </div>
+              <p className="line-clamp-1">{content}</p>
+              <span className="text-gray-500 text-sm">
+                {createdAt.split("T")[0]}
+              </span>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <div>
+        {pageInfo && (
+          <Pagination
+            onPageChange={handleChangePage}
+            total={pageInfo?.totalCommentsCount ?? 1}
+            value={pageInfo?.currentPage - 1}
+            className="flex justify-center"
+          >
+            <Pagination.Navigator className="flex gap-4 mt-2">
+              <Pagination.Buttons className="PaginationButtons flex gap-4 font-bold text-slate-300" />
+            </Pagination.Navigator>
+          </Pagination>
+        )}
+      </div>
+    </div>
   );
 };
 

@@ -7,10 +7,14 @@ import { Board } from "~types/board.type";
 const ProfileBoard = () => {
   const navigate = useNavigate();
   const [board, setBoard] = useState<Board[]>();
+
   useEffect(() => {
     getBoardBySigninUserId() //
-      .then(setBoard);
+      .then((response) => {
+        setBoard(response);
+      });
   }, []);
+
   return (
     <>
       <ul className="py-4 flex flex-wrap">

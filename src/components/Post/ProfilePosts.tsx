@@ -5,6 +5,7 @@ import { User } from "~types/user.type";
 import { getPostsByUserId } from "@apis/post.api";
 import { ProfilePost } from "~types/post.type";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import ErrorPage from "@pages/ErrorPage";
 
 interface ProfilePostsProps {
   profileUser?: User;
@@ -40,9 +41,12 @@ const ProfilePosts = ({ profileUser, selectedTab }: ProfilePostsProps) => {
         setPageInfo(pageInfo);
       });
   }, [profileUser, searchParams]);
+
+  if (!profileUser) return <ErrorPage />;
+
   return (
-    <>
-      <ul className="py-4">
+    <div className="h-full flex flex-col">
+      <ul className="flex-1">
         {posts?.map(({ title, createdAt, board, _id }) => (
           <li
             className="p-4 border-b border-gray-300 hover:bg-gray-50 transition duration-200"
@@ -83,19 +87,22 @@ const ProfilePosts = ({ profileUser, selectedTab }: ProfilePostsProps) => {
             </div>
           </li>
         ))}
-        {pageInfo && (
+      </ul>
+      {pageInfo && (
+        <div>
           <Pagination
             onPageChange={handleChangePage}
             total={pageInfo?.totalPostsCount ?? 0}
             value={pageInfo?.currentPage - 1}
+            className="flex justify-center"
           >
-            <Pagination.Navigator className="flex justify-center items-center gap-x-2">
-              <Pagination.Buttons className="px-3 py-1 bg-gray-200 rounded-md hover:bg-violet-300" />
+            <Pagination.Navigator className="flex gap-4 mt-2">
+              <Pagination.Buttons className="PaginationButtons flex gap-4 font-bold text-slate-300" />
             </Pagination.Navigator>
           </Pagination>
-        )}
-      </ul>
-    </>
+        </div>
+      )}
+    </div>
   );
 };
 
