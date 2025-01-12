@@ -7,21 +7,24 @@ import {
   SigninPage,
   EmailOtpPage,
   PasswordResetPage,
-  PostPage,
   CreateBoardPage,
   ProfilePage,
   ProfileUpdatePage,
   BoardDashBoardPage,
+  PostViewPage,
+  UpdatePostPage,
+  CreatePostPage,
+  ErrorPage,
 } from '@pages/index';
 import { useUserContext } from '@context/userContext';
 import { getSigninStatus } from '@apis/auth.api';
 import BoardPage from '@pages/BoardPage';
-import PostViewPage from '@pages/PostViewPage';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <BaseLayout />,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: '/',
@@ -45,11 +48,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/post/create/:boardId',
-        element: <PostPage />,
+        element: <CreatePostPage />,
       },
       {
         path: '/post/detail/:postId',
-        element: <PostPage />,
+        element: <UpdatePostPage />,
       },
       {
         path: '/post/view/:postId',
