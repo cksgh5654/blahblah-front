@@ -1,11 +1,19 @@
+import { deleteBoard } from "@apis/board.api";
 import BaseButton from "@components/Button/BaseButton";
 import { Pagination, Tabs } from "blahblah-front-common-ui-kit";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useLoaderData, useSearchParams } from "react-router-dom";
 import { Board } from "~types/board.type";
+import { User } from "~types/user.type";
 
 const AdminPage = () => {
-  const { board, users, pageInfo } = useLoaderData();
+  const {
+    board: initialBoard,
+    users: initialUsers,
+    pageInfo,
+  } = useLoaderData();
+  const [board, setBoard] = useState<Board[]>(initialBoard);
+  const [users, setUsers] = useState<User[]>(initialUsers);
   const [searchParam, setSearchParams] = useSearchParams();
   const handleChangePage = (index: number) => {
     setSearchParams({ page: String(index + 1) });
@@ -14,7 +22,17 @@ const AdminPage = () => {
     () => searchParam.get("selectedTab") ?? "BOARD",
     [searchParam]
   );
-  console.log(board, users);
+
+  const handleDeleteBoard = (boardId: string) => {
+    deleteBoard(boardId) //
+      .then(() => {
+        const updatedBoard = board.filter((board) => board._id !== boardId);
+        setBoard(updatedBoard);
+      });
+  };
+
+  console.log(initialBoard);
+
   return (
     <>
       <p>admin</p>
@@ -42,7 +60,10 @@ const AdminPage = () => {
         <Tabs.Content value="BOARD">
           <ul>
             {board?.map(({ _id, name }: Board) => (
-              <li key={`board-item-${_id}`}>
+              <li
+                key={`board-item-${_id}`}
+                onClick={() => handleDeleteBoard(_id)}
+              >
                 <p>{name}</p>
                 <BaseButton>게시판 폐쇄</BaseButton>
               </li>

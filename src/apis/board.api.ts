@@ -97,3 +97,15 @@ export const getBoards = async (page: string = "1") => {
     throw error;
   }
 };
+
+export const deleteBoard = async (boardId: string) => {
+  try {
+    const response = await baseInstance.delete(`/admin/board/${boardId}`);
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
