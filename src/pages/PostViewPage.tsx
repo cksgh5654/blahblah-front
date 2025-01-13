@@ -38,6 +38,7 @@ const PostViewPage = () => {
   const [postData, setPostData] = useState<defaultPostType>();
   const [commentData, setCommentData] = useState([]);
   const [comment, setComment] = useState<string>('');
+  const [url, setUrl] = useState<string>('');
   const overflowTextRef = useRef<HTMLParagraphElement[] | null[]>([]);
 
   const handleCommentInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -50,7 +51,7 @@ const PostViewPage = () => {
 
       if (!response.isError) {
         alert(response.message);
-        navigator('/');
+        navigator(`/board/${url}`);
       }
     } catch (err) {
       console.error(`[handlePostDelete] : ${err}`);
@@ -82,6 +83,7 @@ const PostViewPage = () => {
         }
 
         const post = response.post;
+        setUrl(post.board.url);
 
         const getdata = {
           title: post.title,
@@ -128,7 +130,10 @@ const PostViewPage = () => {
   };
 
   useEffect(() => {
-    handleGetPost(postId);
+    if (postId) {
+      handleGetPost(postId);
+      return;
+    }
 
     if (!overflowTextRef.current) {
       return;

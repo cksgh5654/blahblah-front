@@ -50,7 +50,7 @@ const router = createBrowserRouter([
         element: <PasswordResetPage />,
       },
       {
-        path: '/post/create/:boardId',
+        path: '/post/create/:url',
         element: <CreatePostPage />,
       },
       {

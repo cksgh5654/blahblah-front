@@ -10,12 +10,11 @@ import { PostTitleValidation } from '@utils/validation';
 
 /***
  * boardId가 아무값이 들어왔을 떄 x
- * 작성 후에 해당 게시판으로 이동 x
  */
 
 const CreatePostPage = () => {
   const navigator = useNavigate();
-  const { boardId = '' } = useParams();
+  const { url = '' } = useParams();
 
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
@@ -31,7 +30,7 @@ const CreatePostPage = () => {
   };
 
   const handlePostCreate = async () => {
-    if (!boardId) {
+    if (!url) {
       alert('존재하지 않는 게시판입니다.');
       return;
     }
@@ -45,10 +44,10 @@ const CreatePostPage = () => {
       return;
     }
 
-    const data = await createPost(boardId, title, content);
+    const data = await createPost(url, title, content);
     if (!data.isError) {
       alert(data.message);
-      navigator('/');
+      navigator(`/board/${url}`);
     }
   };
 
@@ -81,7 +80,9 @@ const CreatePostPage = () => {
         </div>
 
         <div className="flex justify-end gap-10 mt-20">
-          <BaseButton onClick={() => navigator('/')}>목록으로</BaseButton>
+          <BaseButton onClick={() => navigator(`/board/${url}`)}>
+            목록으로
+          </BaseButton>
           <BaseButton onClick={handlePostCreate}>등록하기</BaseButton>
         </div>
       </div>
