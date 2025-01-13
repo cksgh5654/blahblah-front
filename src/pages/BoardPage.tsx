@@ -28,6 +28,7 @@ interface Board {
   image: string;
   manager: Manager;
   name: string;
+  memberCount: number;
   updatedAt: string;
   url: string;
   _id: string;
@@ -63,7 +64,10 @@ const BoardPage = () => {
   const [isNotice, setIsNotice] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isApply, setIsApply] = useState(false);
-  const [memberCount, setMemberCount] = useState(0);
+  const [totalPostCount, setTotalPostCount] = useState({
+    basic: 0,
+    notification: 0,
+  });
   const [currentUserId, setCurrentUserId] = useState<string>('');
   const [boardData, setBoardData] = useState<Board>({
     category: '',
@@ -77,30 +81,39 @@ const BoardPage = () => {
       _id: '',
     },
     name: '',
+    memberCount: 0,
     updatedAt: '',
     url: '',
     _id: '',
     __v: 0,
   });
-  const [postData, setPostData] = useState<Post[]>([]);
+  const [basicPostData, setBasicPostData] = useState<Post[]>([]);
+  const [notificationPostData, setNotificationPostData] = useState<Post[]>([]);
   const [isJoin, setIsJoin] = useState(false);
   const navigate = useNavigate();
   const { user } = useUserContext();
+  const pathSegments = window.location.pathname.split('/');
+  const boardUrl = pathSegments[pathSegments.length - 1];
+
+  const userId = user._id || null;
 
   useEffect(() => {
-    const pathSegments = window.location.pathname.split('/');
-    const boardUrl = pathSegments[pathSegments.length - 1];
-    const userId = user._id || null;
     if (userId) setCurrentUserId(userId);
 
     const fetchData = async () => {
       try {
-        const data = await getBoardAndPostsByUrlAndId(boardUrl, userId);
-        setBoardData(data.data.board);
-        setPostData(data.data.posts);
+        const data = await getBoardAndPostsByUrlAndId(
+          boardUrl,
+          userId,
+          0,
+          pageSize
+        );
+        setBoardData(data.board);
+        setBasicPostData(data.basicPosts);
+        setNotificationPostData(data.notificationPosts);
         setIsJoin(data.isJoin);
         setIsApply(data.isApply);
-        setMemberCount(data.memberCount);
+        setTotalPostCount(data.totalPostCount);
       } catch (error) {
         console.error('게시글을 가져오는 데 실패했습니다.', error);
       }
@@ -109,30 +122,39 @@ const BoardPage = () => {
     fetchData();
   }, [user]);
 
-  const handlePageChange = (index: number) => {
+  const handlePageChange = async (index: number) => {
     setCurrentPage(index);
   };
+
+  useEffect(() => {
+    const pageMove = async () => {
+      const data = await getBoardAndPostsByUrlAndId(
+        boardUrl,
+        userId,
+        currentPage,
+        pageSize
+      );
+      setBasicPostData(data.basicPosts);
+    };
+    pageMove();
+  }, [currentPage]);
 
   const handleNoticePageChange = (index: number) => {
     setCurrentNoticePage(index);
   };
 
-  const startIdx = currentPage * pageSize;
-  const endIdx = startIdx + pageSize;
-
-  const startNoticeIdx = currentNoticePage * pageSize;
-  const endNoticeIdx = startNoticeIdx + pageSize;
-
-  const pageItems = postData.filter((post) => post.type === 'basic');
-  const noticePageItems = postData.filter(
-    (post) => post.type === 'notification'
-  );
-
-  const currentPageItems = pageItems.slice(startIdx, endIdx);
-  const currentNoticePageItems = noticePageItems.slice(
-    startNoticeIdx,
-    endNoticeIdx
-  );
+  useEffect(() => {
+    const pageMove = async () => {
+      const data = await getBoardAndPostsByUrlAndId(
+        boardUrl,
+        userId,
+        currentNoticePage,
+        pageSize
+      );
+      setNotificationPostData(data.notificationPosts);
+    };
+    pageMove();
+  }, [currentNoticePage]);
 
   const handleClickJoin = async () => {
     setIsLoading(true);
@@ -212,7 +234,7 @@ const BoardPage = () => {
                     멤버
                   </figcaption>
                 </figure>
-                <p className="text-slate-600">{memberCount}명</p>
+                <p className="text-slate-600">{boardData.memberCount}명</p>
               </div>
               <div className="flex items-center xl:px-4">
                 <figure className="flex items-center pr-2 gap-2">
@@ -252,7 +274,7 @@ const BoardPage = () => {
               </Tabs.Trigger>
             </Tabs.List>
             <BaseButton
-              onClick={() => navigate(`/post/create/${boardData.url}`)}
+              onClick={() => navigate(`/post/create/${boardUrl}`)}
               className={
                 isJoin || boardData.manager._id === currentUserId
                   ? 'block'
@@ -272,7 +294,7 @@ const BoardPage = () => {
               <p>조회</p>
             </div>
             <Tabs.Content value="all">
-              {currentPageItems.map((post, index) => (
+              {basicPostData.map((post, index) => (
                 <div
                   key={post._id}
                   className="grid grid-cols-[1fr_1fr_10fr_2fr_2fr_1fr] border-b py-3 border-slate-300 text-center text-sm text-slate-500"
@@ -287,9 +309,7 @@ const BoardPage = () => {
                   </p>
                   <button
                     onClick={() => {
-                      isNotice
-                        ? navigate(`/post/view/${post._id}`)
-                        : navigate(`/post/view/${post._id}`);
+                      navigate(`/post/view/${post._id}`);
                     }}
                     className="text-start px-8 hover:underline underline-offset-4 text-base text-slate-800"
                   >
@@ -311,7 +331,7 @@ const BoardPage = () => {
                 </div>
               ))}
               <Pagination
-                total={pageItems.length}
+                total={totalPostCount.basic}
                 value={currentPage}
                 onPageChange={handlePageChange}
                 className="flex justify-center pt-8"
@@ -324,7 +344,7 @@ const BoardPage = () => {
               </Pagination>
             </Tabs.Content>
             <Tabs.Content value="notice">
-              {currentNoticePageItems.map((post, index) => (
+              {notificationPostData.map((post, index) => (
                 <div
                   key={post._id}
                   className="grid grid-cols-[1fr_1fr_10fr_2fr_2fr_1fr] border-b py-3 border-slate-300 text-center text-sm text-slate-500"
@@ -337,7 +357,12 @@ const BoardPage = () => {
                       <SpeechBubbleIcon height="24px" />
                     )}
                   </p>
-                  <button className="text-start px-8 hover:underline underline-offset-4 text-base text-slate-800">
+                  <button
+                    onClick={() => {
+                      navigate(`/post/view/${post._id}`);
+                    }}
+                    className="text-start px-8 hover:underline underline-offset-4 text-base text-slate-800"
+                  >
                     {post.title}
                   </button>
                   <p>{post.creator.nickname}</p>
@@ -356,7 +381,7 @@ const BoardPage = () => {
                 </div>
               ))}
               <Pagination
-                total={noticePageItems.length}
+                total={totalPostCount.notification}
                 value={currentNoticePage}
                 onPageChange={handleNoticePageChange}
                 className="flex justify-center pt-8"

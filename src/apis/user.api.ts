@@ -45,3 +45,27 @@ export const updateMyProfile = async (data: ProfileFormData) => {
     }
   }
 };
+
+export const getUsers = async (page: string) => {
+  try {
+    const response = await baseInstance.get(`/admin/users?page=${page}`);
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteUser = async (userId: string) => {
+  try {
+    const response = await baseInstance.delete(`/admin/users/${userId}`);
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
