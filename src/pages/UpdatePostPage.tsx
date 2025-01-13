@@ -8,10 +8,6 @@ import BaseButton from '@components/Button/BaseButton';
 import { deletePost, getPostData, updatePost } from '@apis/post.api';
 import { PostTitleValidation } from '@utils/validation';
 
-/***
- * postId가 아무값이 들어왔을 떄 x
- */
-
 const UpdatePostPage = () => {
   const navigator = useNavigate();
   const { postId = '' } = useParams();
@@ -31,11 +27,6 @@ const UpdatePostPage = () => {
   };
 
   const handlePostUpdate = async (postId: string) => {
-    if (!postId) {
-      alert('존재하지 않는 게시글입니다.');
-      return;
-    }
-
     if (!isVaild) {
       return;
     }
@@ -48,21 +39,14 @@ const UpdatePostPage = () => {
     const data = await updatePost(title, content, postId);
 
     if (!data.isError) {
-      alert(data.message);
       navigator(`/post/view/${postId}`);
     }
   };
 
   const handlePostDelete = async (postId: string) => {
-    if (!postId) {
-      alert('존재하지 않는 게시글입니다.');
-      return;
-    }
-
     const data = await deletePost(postId);
 
     if (!data.isError) {
-      alert(data.message);
       navigator(`/board/${url}`);
     }
   };
@@ -70,11 +54,6 @@ const UpdatePostPage = () => {
   const handleGetPost = async (postId: string) => {
     try {
       const response = await getPostData(postId);
-      if (!response.post) {
-        alert('존재하지 않는 게시글입니다.');
-        navigator('/');
-        return;
-      }
       const post = response.post;
 
       setUrl(post.board.url);
@@ -86,6 +65,7 @@ const UpdatePostPage = () => {
       }
     } catch (err) {
       console.error(`[handleGetPost] : ${err}`);
+      navigator(`/board/${url}`);
     }
   };
 

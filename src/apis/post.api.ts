@@ -1,4 +1,5 @@
 import { baseInstance } from './axios.config';
+import { toast } from 'react-toastify';
 
 export const getPostData = async (postId: string) => {
   try {
@@ -9,7 +10,8 @@ export const getPostData = async (postId: string) => {
     }
     return response.data;
   } catch (err) {
-    console.error(err);
+    toast.error('존재하지 않는 게시글입니다.');
+    throw err;
   }
 };
 
@@ -30,9 +32,11 @@ export const createPost = async (
     if (response.data.isError) {
       throw new Error(response.data.message);
     }
+    toast.success(response.data.message);
     return response.data;
   } catch (err) {
-    console.error(err);
+    toast.error(`${err}`);
+    throw err;
   }
 };
 
@@ -50,9 +54,25 @@ export const updatePost = async (
     if (response.data.isError) {
       throw new Error(response.data.message);
     }
+    toast.success(response.data.message);
     return response.data;
   } catch (err) {
-    console.error(err);
+    toast.error(`${err}`);
+    throw err;
+  }
+};
+
+export const checkAuthor = async (postId: string) => {
+  try {
+    const response = await baseInstance.get(`/post/checkuser/${postId}`);
+
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (err) {
+    toast.error('해당 게시글의 수정 및 삭제 권한이 없습니다.');
+    throw err;
   }
 };
 
@@ -64,10 +84,15 @@ export const deletePost = async (postId: string) => {
       if (response.data.isError) {
         throw new Error(response.data.message);
       }
+      toast.success(response.data.message);
       return response.data;
     } catch (err) {
-      console.error(err);
+      toast.error(`${err}`);
+      throw err;
     }
+  } else {
+    toast.error('삭제 취소');
+    throw new Error('삭제 취소');
   }
 };
 

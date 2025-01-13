@@ -1,16 +1,12 @@
 import ReactQuillNew from 'react-quill-new';
 import { ChangeEvent, useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-
 import BaseInput from '@components/Input/BaseInput';
 import Editor from '@components/Editor/Editor';
 import BaseButton from '@components/Button/BaseButton';
 import { createPost } from '@apis/post.api';
 import { PostTitleValidation } from '@utils/validation';
-
-/***
- * boardId가 아무값이 들어왔을 떄 x
- */
+import { getBoard } from '@apis/board.api';
 
 const CreatePostPage = () => {
   const navigator = useNavigate();
@@ -45,14 +41,32 @@ const CreatePostPage = () => {
     }
 
     const data = await createPost(url, title, content);
+
     if (!data.isError) {
-      alert(data.message);
       navigator(`/board/${url}`);
+    }
+  };
+
+  const handleGetBoard = async (url: string) => {
+    if (!url) {
+      alert('존재하지 않는 게시판입니다.');
+      return;
+    }
+
+    try {
+      await getBoard(url);
+    } catch (err) {
+      console.log(err);
+      navigator('/');
     }
   };
 
   useEffect(() => {
     if (!QuillRef.current) return;
+
+    if (url) {
+      handleGetBoard(url);
+    }
   }, []);
 
   return (

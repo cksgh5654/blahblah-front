@@ -1,7 +1,11 @@
 import { AspectRatio, Textarea } from 'blahblah-front-common-ui-kit';
 import { ChangeEvent, useEffect, useState, useRef } from 'react';
 import { defaultCommentType } from '../../pages/PostViewPage';
-import { deleteComment, updateComment } from '../../apis/comment.api';
+import {
+  deleteComment,
+  updateComment,
+  checkAuthor,
+} from '../../apis/comment.api';
 import BaseButton from '../Button/BaseButton';
 
 const PostComment = ({ comment }: { comment: defaultCommentType }) => {
@@ -18,14 +22,8 @@ const PostComment = ({ comment }: { comment: defaultCommentType }) => {
       alert('존재하지 않는 댓글입니다.');
       return;
     }
-
-    const response = await deleteComment(commentId);
-
-    if (response && response.isConfirmed) {
-      if (!response.data.isError) {
-        alert(response.data.message);
-      }
-    }
+    await checkAuthor(commentId);
+    await deleteComment(commentId);
   };
 
   const handleCommentUpdate = async (commentId: string) => {
@@ -34,10 +32,10 @@ const PostComment = ({ comment }: { comment: defaultCommentType }) => {
       return;
     }
 
+    await checkAuthor(commentId);
     const data = await updateComment(commentId, content);
 
     if (!data.isError) {
-      alert(data.message);
       setIsEdit(false);
     }
   };

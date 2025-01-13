@@ -1,7 +1,7 @@
 import { AspectRatio, Textarea } from 'blahblah-front-common-ui-kit';
 import userIcon from '../../public/default-user-icon.svg';
-import { ChangeEvent, useEffect, useState, useRef, useCallback } from 'react';
-import { deletePost, getPostData } from '../apis/post.api';
+import { ChangeEvent, useEffect, useState, useRef } from 'react';
+import { checkAuthor, deletePost, getPostData } from '../apis/post.api';
 import { useNavigate, useParams } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import BaseButton from '../components/Button/BaseButton';
@@ -27,10 +27,6 @@ export type defaultCommentType = {
   };
 };
 
-/***
- * postId가 아무값이 들어왔을 떄 x
- */
-
 const PostViewPage = () => {
   const navigator = useNavigate();
   const { postId = '' } = useParams();
@@ -47,14 +43,48 @@ const PostViewPage = () => {
 
   const handlePostDelete = async (postId: string) => {
     try {
+      await checkAuthor(postId);
       const response = await deletePost(postId);
 
       if (!response.isError) {
-        alert(response.message);
         navigator(`/board/${url}`);
       }
     } catch (err) {
       console.error(`[handlePostDelete] : ${err}`);
+    }
+  };
+
+  const handlePostUpdate = async (postId: string) => {
+    try {
+      const response = await checkAuthor(postId);
+
+      if (!response.isError) {
+        navigator(`/post/detail/${postId}`);
+      }
+    } catch (err) {
+      console.error(`[handlePostUpdate] : ${err}`);
+    }
+  };
+
+  const handleGetPost = async (postId: string) => {
+    try {
+      const response = await getPostData(postId);
+
+      const post = response.post;
+      setUrl(post.board.url);
+
+      const getdata = {
+        title: post.title,
+        nickname: post.creator.nickname,
+        createdAt: post.createdAt,
+        image: post.creator.image,
+        content: post.content,
+      };
+      setPostData(getdata);
+      handleGetComments(postId);
+    } catch (err) {
+      console.error(`[handleGetPost] : ${err}`);
+      navigator(`/board/${url}`);
     }
   };
 
@@ -63,7 +93,6 @@ const PostViewPage = () => {
       const response = await createComment(postId, comment);
 
       if (!response.isError) {
-        alert(response.message);
         handleGetComments(postId);
         return;
       }
@@ -71,35 +100,6 @@ const PostViewPage = () => {
       console.error(`[handleCommentCreate] : ${err}`);
     }
   };
-
-  const handleGetPost = useCallback(
-    async (postId: string) => {
-      try {
-        const response = await getPostData(postId);
-        if (!response.post) {
-          alert('존재하지 않는 게시글입니다.');
-          navigator('/');
-          return;
-        }
-
-        const post = response.post;
-        setUrl(post.board.url);
-
-        const getdata = {
-          title: post.title,
-          nickname: post.creator.nickname,
-          createdAt: post.createdAt,
-          image: post.creator.image,
-          content: post.content,
-        };
-        setPostData(getdata);
-        handleGetComments(postId);
-      } catch (err) {
-        console.error(`[handleGetPost] : ${err}`);
-      }
-    },
-    [commentData]
-  );
 
   const handleGetComments = async (postId: string) => {
     try {
@@ -144,7 +144,7 @@ const PostViewPage = () => {
     return () => {
       window.removeEventListener('resize', handleOverflowText);
     };
-  }, []);
+  }, [commentData]);
 
   return (
     <div className="min-w-[360px] max-w-[1280px] mx-auto py-20 bg-gray-100">
@@ -163,7 +163,7 @@ const PostViewPage = () => {
             <div className="flex gap-2">
               <button
                 className="text-sm text-green-500 text-nowrap"
-                onClick={() => navigator(`/post/detail/${postId}`)}
+                onClick={() => handlePostUpdate(postId)}
               >
                 수정
               </button>

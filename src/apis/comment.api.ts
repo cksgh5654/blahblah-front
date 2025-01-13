@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify';
 import { baseInstance } from './axios.config';
 
 export const createComment = async (postId: string, content: string) => {
@@ -10,9 +11,11 @@ export const createComment = async (postId: string, content: string) => {
     if (response.data.isError) {
       throw new Error(response.data.message);
     }
+    toast.success(response.data.message);
     return response.data;
   } catch (err) {
     console.error(err);
+    toast.error(`${err}`);
   }
 };
 
@@ -28,6 +31,20 @@ export const getComments = async (postId: string) => {
     return response.data;
   } catch (err) {
     console.error(err);
+  }
+};
+
+export const checkAuthor = async (commentId: string) => {
+  try {
+    const response = await baseInstance.get(`/comment/checkuser/${commentId}`);
+
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (err) {
+    toast.error('해당 댓글의 수정 및 삭제 권한이 없습니다.');
+    throw err;
   }
 };
 
@@ -48,25 +65,19 @@ export const updateComment = async (commentId: string, content: string) => {
 
 export const deleteComment = async (commentId: string) => {
   if (!window.confirm('댓글을 삭제하시겠습니까?')) {
-    return {
-      isConfirmed: false,
-      data: null,
-    };
-  }
+    try {
+      const response = await baseInstance.delete(`/comment/${commentId}`);
 
-  try {
-    const response = await baseInstance.delete(`/comment/${commentId}`);
-
-    if (response.data.isError) {
-      throw new Error(response.data.message);
+      if (response.data.isError) {
+        throw new Error(response.data.message);
+      }
+      return response.data;
+    } catch (err) {
+      console.error(err);
     }
-
-    return {
-      isConfirmed: true,
-      data: response.data,
-    };
-  } catch (err) {
-    console.error(err);
+  } else {
+    toast.error('삭제 취소');
+    throw new Error('삭제 취소');
   }
 };
 
