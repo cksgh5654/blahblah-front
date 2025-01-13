@@ -1,6 +1,6 @@
 import { AspectRatio, Textarea } from 'blahblah-front-common-ui-kit';
 import userIcon from '../../public/default-user-icon.svg';
-import { ChangeEvent, useEffect, useState, useRef } from 'react';
+import { ChangeEvent, useEffect, useState, useRef, useCallback } from 'react';
 import { deletePost, getPostData } from '../apis/post.api';
 import { useNavigate, useParams } from 'react-router-dom';
 import DOMPurify from 'dompurify';
@@ -71,35 +71,37 @@ const PostViewPage = () => {
     }
   };
 
-  const handleGetPost = async (postId: string) => {
-    try {
-      const response = await getPostData(postId);
-      if (!response.post) {
-        alert('존재하지 않는 게시글입니다.');
-        navigator('/');
-        return;
+  const handleGetPost = useCallback(
+    async (postId: string) => {
+      try {
+        const response = await getPostData(postId);
+        if (!response.post) {
+          alert('존재하지 않는 게시글입니다.');
+          navigator('/');
+          return;
+        }
+
+        const post = response.post;
+
+        const getdata = {
+          title: post.title,
+          nickname: post.creator.nickname,
+          createdAt: post.createdAt,
+          image: post.creator.image,
+          content: post.content,
+        };
+        setPostData(getdata);
+        handleGetComments(postId);
+      } catch (err) {
+        console.error(`[handleGetPost] : ${err}`);
       }
-
-      const post = response.post;
-
-      const getdata = {
-        title: post.title,
-        nickname: post.creator.nickname,
-        createdAt: post.createdAt,
-        image: post.creator.image,
-        content: post.content,
-      };
-      setPostData(getdata);
-      handleGetComments(postId);
-    } catch (err) {
-      console.error(`[handleGetPost] : ${err}`);
-    }
-  };
+    },
+    [commentData]
+  );
 
   const handleGetComments = async (postId: string) => {
     try {
       const response = await getComments(postId);
-
       const comments = response.comments;
 
       const filteredComments = comments.map(
@@ -137,7 +139,7 @@ const PostViewPage = () => {
     return () => {
       window.removeEventListener('resize', handleOverflowText);
     };
-  }, [commentData]);
+  }, []);
 
   return (
     <div className="min-w-[360px] max-w-[1280px] mx-auto py-20 bg-gray-100">
