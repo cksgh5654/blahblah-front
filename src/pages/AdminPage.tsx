@@ -1,4 +1,5 @@
 import { deleteBoard } from "@apis/board.api";
+import { deleteUser } from "@apis/user.api";
 import BaseButton from "@components/Button/BaseButton";
 import { Pagination, Tabs } from "blahblah-front-common-ui-kit";
 import { useMemo, useState } from "react";
@@ -31,7 +32,13 @@ const AdminPage = () => {
       });
   };
 
-  console.log(initialBoard);
+  const handleDeleteUser = (userId: string) => {
+    deleteUser(userId) //
+      .then(() => {
+        const updatedUsers = users.filter((user) => user._id !== userId);
+        setUsers(updatedUsers);
+      });
+  };
 
   return (
     <>
@@ -70,7 +77,18 @@ const AdminPage = () => {
             ))}
           </ul>
         </Tabs.Content>
-        <Tabs.Content value="USERS">users</Tabs.Content>
+        <Tabs.Content value="USERS">
+          <ul>
+            {users.map(({ _id, nickname }) => (
+              <li key={`user-item-${_id}`}>
+                <p>{nickname}</p>
+                <BaseButton onClick={() => handleDeleteUser(_id)}>
+                  유저 삭제
+                </BaseButton>
+              </li>
+            ))}
+          </ul>
+        </Tabs.Content>
       </Tabs.Root>
       <Pagination
         onPageChange={handleChangePage}

@@ -57,3 +57,15 @@ export const getUsers = async (page: string) => {
     throw error;
   }
 };
+
+export const deleteUser = async (userId: string) => {
+  try {
+    const response = await baseInstance.delete(`/admin/users/${userId}`);
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
