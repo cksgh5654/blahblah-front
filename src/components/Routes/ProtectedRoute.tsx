@@ -1,20 +1,25 @@
 import { useUserContext } from "@context/userContext";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 interface ProtectedRouteProps {
   children: React.ReactNode;
+  requiredRole: Array<"USER" | "ADMIN">;
 }
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const navigate = useNavigate();
+const ProtectedRoute = ({
+  children,
+  requiredRole = ["USER"],
+}: ProtectedRouteProps) => {
   const { user } = useUserContext();
+  const signinStatus = localStorage.getItem("signinStatus");
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/", { replace: true });
-    }
-  }, [user, navigate]);
+  if (!signinStatus || signinStatus === "false") {
+    return <Navigate to="/signin" replace />;
+  }
 
-  return user ? children : null;
+  if (user.role && !requiredRole.includes(user.role)) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;

@@ -1,5 +1,6 @@
 export type Profile = Omit<User, "_id">;
 
+export type UserRole = "USER" | "ADMIN";
 export interface BoardUser {
   baordId: string;
   user: User;
@@ -12,5 +13,5 @@ export interface User {
   image: string;
   _id: string;
   createdAt: string;
-  role?: "USER" | "ADMIN";
+  role?: UserRole;
 }

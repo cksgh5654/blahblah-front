@@ -14,12 +14,10 @@ import {
   CreatePostPage,
   UpdatePostPage,
 } from "@pages/index";
-import { useUserContext } from "@context/userContext";
-import { getSigninStatus } from "@apis/auth.api";
 import BoardPage from "@pages/BoardPage";
 import PostViewPage from "@pages/PostViewPage";
 import ErrorPage from "@pages/ErrorPage";
-import { boardDashBoardLoader, profileLoader, userLoader } from "./routeLoader";
+import { boardDashBoardLoader, profileLoader } from "./routeLoader";
 import UnauthorizedErrorPage from "@pages/UnauthorizedErrorPage";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminPage from "@pages/AdminPage";
@@ -79,7 +77,7 @@ const router = createBrowserRouter([
       {
         path: "/:email/profile",
         element: (
-          <ProtectedRoute>
+          <ProtectedRoute requiredRole={["ADMIN", "USER"]}>
             <ProfileUpdatePage />
           </ProtectedRoute>
         ),
@@ -93,11 +91,10 @@ const router = createBrowserRouter([
       {
         path: "/admin",
         element: (
-          <ProtectedRoute requiredRole="ADMIN">
+          <ProtectedRoute requiredRole={["ADMIN"]}>
             <AdminPage />
           </ProtectedRoute>
         ),
-        // errorElement: <UnauthorizedErrorPage />,
       },
     ],
   },
