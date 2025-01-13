@@ -20,6 +20,7 @@ import PostViewPage from "@pages/PostViewPage";
 import ErrorPage from "@pages/ErrorPage";
 import { boardDashBoardLoader, profileLoader } from "./routeLoader";
 import UnauthorizedErrorPage from "@pages/UnauthorizedErrorPage";
+import ProtectedRoute from "./ProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -74,7 +75,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/:email/profile",
-        element: <ProfileUpdatePage />,
+        element: (
+          <ProtectedRoute>
+            <ProfileUpdatePage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/board/dashboard/:boardId",
