@@ -1,5 +1,5 @@
 import { AspectRatio, Textarea } from 'blahblah-front-common-ui-kit';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState, useRef } from 'react';
 import { defaultCommentType } from '../../pages/PostViewPage';
 import { deleteComment, updateComment } from '../../apis/comment.api';
 import BaseButton from '../Button/BaseButton';
@@ -7,40 +7,64 @@ import BaseButton from '../Button/BaseButton';
 const PostComment = ({ comment }: { comment: defaultCommentType }) => {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [content, setContent] = useState<string>('');
+  const overflowTextRef = useRef<HTMLParagraphElement[] | null[]>([]);
 
   const handleCommentInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
   };
 
-  const handleCommentDelete = (commentId: string) => {
+  const handleCommentDelete = async (commentId: string) => {
     if (!commentId) {
       alert('존재하지 않는 댓글입니다.');
       return;
     }
 
-    deleteComment(commentId).then((data) => {
-      if (!data.isError) {
-        alert(data.message);
+    const response = await deleteComment(commentId);
+
+    if (response && response.isConfirmed) {
+      if (!response.data.isError) {
+        alert(response.data.message);
       }
-    });
+    }
   };
 
-  const handleCommentUpdate = (commentId: string) => {
+  const handleCommentUpdate = async (commentId: string) => {
     if (!commentId) {
       alert('존재하지 않는 댓글입니다.');
       return;
     }
 
-    updateComment(commentId, content).then((data) => {
-      if (!data.isError) {
-        alert(data.message);
+    const data = await updateComment(commentId, content);
+
+    if (!data.isError) {
+      alert(data.message);
+      setIsEdit(false);
+    }
+  };
+
+  const handleOverflowText = () => {
+    overflowTextRef.current.map((element) => {
+      if (element) {
+        element.scrollLeft = 0;
       }
     });
   };
+
+  useEffect(() => {
+    if (!overflowTextRef.current) {
+      return;
+    }
+
+    window.addEventListener('resize', handleOverflowText);
+
+    return () => {
+      window.removeEventListener('resize', handleOverflowText);
+    };
+  }, []);
 
   return (
-    <div className="p-5">
-      <div className="bg-white px-10 py-5">
+    <div className="py-5">
+      <div className="bg-white p-5">
         <div className="flex justify-between">
           <div>
             <div className="w-10 bg-gray-100 p-2 rounded-[15px]">
@@ -54,19 +78,28 @@ const PostComment = ({ comment }: { comment: defaultCommentType }) => {
             </div>
 
             <div className="flex gap-5">
-              <p className="max-768:text-sm max-768:truncate md:text-lg overflow-auto">
+              <p
+                ref={(el) => (overflowTextRef.current[0] = el)}
+                className="basis-[100px] shrink-0 max-768:text-sm max-768:overflow-hidden max-768:text-ellipsis md:overflow-x-scroll md:text-lg text-nowrap"
+              >
                 {comment ? comment.creator.nickname : '닉네임'}
               </p>
-              <p className="max-768:text-sm max-768:truncate text-nowrap md:text-lg text-slate-300 overflow-auto">
+              <p
+                ref={(el) => (overflowTextRef.current[1] = el)}
+                className="basis-[100px] shrink-0 max-768:text-sm max-768:overflow-hidden max-768:text-ellipsis md:overflow-x-scroll md:text-lg text-nowrap text-slate-300"
+              >
                 {comment ? comment.createdAt.split('T')[0] : '2024-12-31'}
               </p>
             </div>
           </div>
 
-          <div className="flex gap-2 px-2">
+          <div className="flex gap-2 basis-[100px] justify-end">
             <button
               className="text-sm text-green-500 text-nowrap"
-              onClick={() => setIsEdit(true)}
+              onClick={() => {
+                setIsEdit(true);
+                setContent(comment.content);
+              }}
             >
               수정
             </button>
@@ -87,7 +120,7 @@ const PostComment = ({ comment }: { comment: defaultCommentType }) => {
               placeholder="댓글을 작성해주세요"
               className="p-2 resize-y w-full rounded-md border"
               name="comment"
-              value={content || comment.content}
+              value={content}
               onChange={handleCommentInput}
             />
             <div className="flex justify-end gap-2">

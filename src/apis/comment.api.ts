@@ -47,17 +47,26 @@ export const updateComment = async (commentId: string, content: string) => {
 };
 
 export const deleteComment = async (commentId: string) => {
-  if (window.confirm('댓글을 삭제하시겠습니까?')) {
-    try {
-      const response = await baseInstance.delete(`/comment/${commentId}`);
+  if (!window.confirm('댓글을 삭제하시겠습니까?')) {
+    return {
+      isConfirmed: false,
+      data: null,
+    };
+  }
 
-      if (response.data.isError) {
-        throw new Error(response.data.message);
-      }
-      return response.data;
-    } catch (err) {
-      console.error(err);
+  try {
+    const response = await baseInstance.delete(`/comment/${commentId}`);
+
+    if (response.data.isError) {
+      throw new Error(response.data.message);
     }
+
+    return {
+      isConfirmed: true,
+      data: response.data,
+    };
+  } catch (err) {
+    console.error(err);
   }
 };
 

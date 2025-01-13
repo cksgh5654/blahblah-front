@@ -1,6 +1,6 @@
 import { AspectRatio, Textarea } from 'blahblah-front-common-ui-kit';
 import userIcon from '../../public/default-user-icon.svg';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState, useRef, useCallback } from 'react';
 import { deletePost, getPostData } from '../apis/post.api';
 import { useNavigate, useParams } from 'react-router-dom';
 import DOMPurify from 'dompurify';
@@ -27,48 +27,61 @@ export type defaultCommentType = {
   };
 };
 
+/***
+ * postId가 아무값이 들어왔을 떄 x
+ */
+
 const PostViewPage = () => {
   const navigator = useNavigate();
-  const { postId = '677e9d96f28c4c6603555b14' } = useParams();
+  const { postId = '' } = useParams();
 
   const [postData, setPostData] = useState<defaultPostType>();
   const [commentData, setCommentData] = useState([]);
   const [comment, setComment] = useState<string>('');
+  const overflowTextRef = useRef<HTMLParagraphElement[] | null[]>([]);
 
   const handleCommentInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setComment(e.target.value);
   };
 
-  const handlePostDelete = (postId: string) => {
-    if (!postId) {
-      alert('존재하지 않는 게시글입니다.');
-      return;
-    }
+  const handlePostDelete = async (postId: string) => {
+    try {
+      const response = await deletePost(postId);
 
-    deletePost(postId).then((data) => {
-      if (!data.isError) {
-        alert(data.message);
+      if (!response.isError) {
+        alert(response.message);
+        navigator('/');
       }
-    });
+    } catch (err) {
+      console.error(`[handlePostDelete] : ${err}`);
+    }
   };
 
-  const handleCommentCreate = (postId: string) => {
-    if (!postId) {
-      alert('존재하지 않는 게시글입니다.');
-      return;
-    }
+  const handleCommentCreate = async (postId: string) => {
+    try {
+      const response = await createComment(postId, comment);
 
-    createComment(postId, comment).then((data) => {
-      if (!data.isError) {
-        alert(data.message);
+      if (!response.isError) {
+        alert(response.message);
+        handleGetComments(postId);
+        return;
       }
-    });
+    } catch (err) {
+      console.error(`[handleCommentCreate] : ${err}`);
+    }
   };
 
-  useEffect(() => {
-    if (postId) {
-      getPostData(postId).then((data) => {
-        const post = data.post;
+  const handleGetPost = useCallback(
+    async (postId: string) => {
+      try {
+        const response = await getPostData(postId);
+        if (!response.post) {
+          alert('존재하지 않는 게시글입니다.');
+          navigator('/');
+          return;
+        }
+
+        const post = response.post;
 
         const getdata = {
           title: post.title,
@@ -77,25 +90,55 @@ const PostViewPage = () => {
           image: post.creator.image,
           content: post.content,
         };
-
         setPostData(getdata);
-      });
+        handleGetComments(postId);
+      } catch (err) {
+        console.error(`[handleGetPost] : ${err}`);
+      }
+    },
+    [commentData]
+  );
 
-      getComments(postId).then((data) => {
-        const comments = data.comments;
+  const handleGetComments = async (postId: string) => {
+    try {
+      const response = await getComments(postId);
+      const comments = response.comments;
 
-        const filteredComments = comments.map(
-          ({ _id, content, createdAt, creator }: defaultCommentType) => ({
-            _id,
-            content,
-            createdAt,
-            creator,
-          })
-        );
+      const filteredComments = comments.map(
+        ({ _id, content, createdAt, creator }: defaultCommentType) => ({
+          _id,
+          content,
+          createdAt,
+          creator,
+        })
+      );
 
-        setCommentData(filteredComments);
-      });
+      setCommentData(filteredComments);
+    } catch (err) {
+      console.error(`[handleGetComment] : ${err}`);
     }
+  };
+
+  const handleOverflowText = () => {
+    overflowTextRef.current.map((element) => {
+      if (element) {
+        element.scrollLeft = 0;
+      }
+    });
+  };
+
+  useEffect(() => {
+    handleGetPost(postId);
+
+    if (!overflowTextRef.current) {
+      return;
+    }
+
+    window.addEventListener('resize', handleOverflowText);
+
+    return () => {
+      window.removeEventListener('resize', handleOverflowText);
+    };
   }, []);
 
   return (
@@ -105,11 +148,14 @@ const PostViewPage = () => {
       <div className="p-5">
         <div className="bg-white px-10 py-5">
           <div className="flex justify-between">
-            <p className="max-768:text-lg md:text-xl font-bold ">
+            <p
+              ref={(el) => (overflowTextRef.current[0] = el)}
+              className="max-768:text-xl max-768:overflow-hidden max-768:text-ellipsis md:overflow-x-scroll md:text-2xl text-nowrap font-bold"
+            >
               {postData ? postData.title : '제목'}
             </p>
 
-            <div className="flex gap-2 px-2">
+            <div className="flex gap-2">
               <button
                 className="text-sm text-green-500 text-nowrap"
                 onClick={() => navigator(`/post/detail/${postId}`)}
@@ -136,8 +182,16 @@ const PostViewPage = () => {
             </div>
 
             <div className="flex gap-5">
-              <p className="">{postData ? postData.nickname : '닉네임'}</p>
-              <p className="text-slate-300">
+              <p
+                ref={(el) => (overflowTextRef.current[1] = el)}
+                className="basis-[120px] shrink-0 max-768:text-sm max-768:overflow-hidden max-768:text-ellipsis md:overflow-x-scroll md:text-lg text-nowrap"
+              >
+                {postData ? postData.nickname : '닉네임'}
+              </p>
+              <p
+                ref={(el) => (overflowTextRef.current[2] = el)}
+                className="basis-[120px] shrink-0 max-768:text-sm max-768:overflow-hidden max-768:text-ellipsis md:overflow-x-scroll md:text-lg text-nowrap text-slate-300"
+              >
                 {postData ? postData.createdAt.split('T')[0] : '2024-12-31'}
               </p>
             </div>
