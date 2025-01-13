@@ -42,7 +42,9 @@ const BoardPosts = ({ boardId, selectedTab }: BoardPostsProps) => {
 
   useEffect(() => {
     if (!boardId) return;
+    const selectedTab = searchParams.get("selectedTab") || "POSTS";
     const page = searchParams.get("page") ?? "1";
+    if (selectedTab !== "POSTS") return;
 
     getBoardPosts(boardId, page, "20") //
       .then(({ posts, pageInfo }) => {

@@ -3,7 +3,7 @@ import { baseInstance } from "./axios.config";
 export const getBoardUsers = async (
   boardId: string,
   page: string,
-  limit: string
+  limit: string = "20"
 ) => {
   try {
     const response = await baseInstance.get(

@@ -62,9 +62,10 @@ const BoardUsers = ({ boardId, selectedTab }: BoardUsersProps) => {
 
   useEffect(() => {
     if (!boardId) return;
+    const selectedTab = searchParams.get("selectedTab") || "USERS";
     const page = searchParams.get("page") ?? "1";
-
-    getBoardUsers(boardId, page, "20") //
+    if (selectedTab !== "USERS") return;
+    getBoardUsers(boardId, page) //
       .then(({ users, pageInfo }) => {
         setUsers(users);
         setPageIfno(pageInfo);
@@ -84,7 +85,7 @@ const BoardUsers = ({ boardId, selectedTab }: BoardUsersProps) => {
         hover:bg-gray-100 hover:shadow-lg transition-all duration-300 ease-in"
           >
             <Avatar
-              url={user.image}
+              url={user?.image}
               size="small"
               onClick={() => navigate(`/${user.email}`)}
             />
@@ -92,7 +93,7 @@ const BoardUsers = ({ boardId, selectedTab }: BoardUsersProps) => {
               className="flex-1 text-gray-800 font-medium cursor-pointer"
               onClick={() => navigate(`/${user.email}`)}
             >
-              {user.email}
+              {user?.email}
             </p>
             {joinedStatus ? (
               <BaseButton

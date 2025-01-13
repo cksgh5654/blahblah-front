@@ -1,15 +1,15 @@
-import { AxiosError } from "axios";
 import { useNavigate, useRouteError } from "react-router-dom";
 
 const UnauthorizedErrorPage = () => {
   const navigate = useNavigate();
-  const error = useRouteError() as AxiosError<{ message: string }>;
+  const error = useRouteError();
+  console.log({ error });
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-gray-800">
       <div className="text-violet-800 text-8xl font-bold mb-4">401</div>
       <h1 className="text-3xl font-semibold mb-2 py-8">
-        {error.response?.data.message}
+        접근 권한이 없습니다.🤔
       </h1>
       <button
         onClick={() => navigate("/")}
