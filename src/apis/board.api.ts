@@ -86,7 +86,7 @@ export const getBoardAndPostsByUrlAndId = async (
   }
 };
 
-export const getBoards = async (page: string = "1") => {
+export const getBoards = async (page: string) => {
   try {
     const response = await baseInstance.get(`/admin/board?page=${page}`);
     if (response.data.isError) {

@@ -12,4 +12,5 @@ export interface User {
   image: string;
   _id: string;
   createdAt: string;
+  role?: "USER" | "ADMIN";
 }
