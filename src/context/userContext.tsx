@@ -28,11 +28,11 @@ const DEFAULT_USER: User = {
   image: "",
   createdAt: "",
   _id: "",
-  role: undefined,
+  role: "USER",
 };
 
 const UserProvider = ({ children }: UserProviderProps) => {
-  const [user, setUser] = useState<User>(DEFAULT_USER);
+  const [user, setUser] = useState(DEFAULT_USER);
   const [isLoading, setIsLoading] = useState(true);
 
   const updateUser = (data: Partial<User>) => {
