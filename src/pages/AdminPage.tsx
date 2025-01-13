@@ -39,6 +39,7 @@ const AdminPage = () => {
         setUsers(updatedUsers);
       });
   };
+  console.log(initialBoard);
 
   return (
     <>
