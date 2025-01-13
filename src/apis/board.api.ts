@@ -9,7 +9,6 @@ export const fetchBoardInCategories = async (
     const response = await baseInstance.get(`/board/category/${name}`, {
       params: { page, limit },
     });
-
     if (response.data.isError) {
       throw new Error(response.data.message);
     }
@@ -69,15 +68,18 @@ export const getBoardPosts = async (
 
 export const getBoardAndPostsByUrlAndId = async (
   boardUrl: string,
-  userId: string | null
+  userId: string | null,
+  page: number,
+  limit: number
 ) => {
   try {
     const response = await baseInstance.get(`/board/board-post`, {
-      params: { boardUrl, userId },
+      params: { boardUrl, userId, page, limit },
     });
     if (response.data.isError) {
       throw new Error(response.data.message);
     }
+    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;
