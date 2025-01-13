@@ -248,7 +248,11 @@ const BoardPage = () => {
             </Tabs.List>
             <BaseButton
               onClick={() => navigate(`/post/create/${boardData._id}`)}
-              className={isJoin ? "block" : "hidden"}
+              className={
+                isJoin || boardData.manager._id === currentUserId
+                  ? "block"
+                  : "hidden"
+              }
             >
               글쓰기
             </BaseButton>
@@ -277,7 +281,11 @@ const BoardPage = () => {
                     )}
                   </p>
                   <button
-                    onClick={() => navigate(`/post/detail/${post._id}`)}
+                    onClick={() => {
+                      isNotice
+                        ? navigate(`/post/detail/${post._id}`)
+                        : navigate(`/post/detail/${post._id}`);
+                    }}
                     className="text-start px-8 hover:underline underline-offset-4 text-base text-slate-800"
                   >
                     {post.title}

@@ -25,6 +25,7 @@ import { fetchBoardInCategories } from "../apis/board.api";
 import BaseButton from "@components/Button/BaseButton";
 import Write from "@components/Icons/Write";
 import ChevronIcon from "@components/Icons/ChevronIcon";
+import { useInfinite } from "blahblah-front-common-ui-kit";
 
 const categoryData = [
   { id: 0, img: entertainments, name: "연예" },
@@ -73,24 +74,43 @@ const MainPage = () => {
   const navigate = useNavigate();
   const baseDivRef = useRef<HTMLDivElement>(null);
   const divRef = useRef<HTMLDivElement>(null);
+  const infiniteDivRef = useRef<HTMLDivElement>(null);
   const [baseDivRect, setBaseDivRect] = useState(new DOMRect());
   const [scrollPosition, setScrollPosition] = useState(0);
-
   const [cardData, setCardData] = useState<CardData[]>([]);
   const [currentCategory, setCurrentCategory] = useState({
     name: "연예",
     boardCount: 0,
   });
+  const [page, setPage] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const limit = 10;
 
   const handleClickCategory = async (name: string) => {
-    const boards = await fetchBoardInCategories(name);
-
-    setCurrentCategory({
-      name,
-      boardCount: boards.data.length,
-    });
-    setCardData(boards.data);
+    setPage(0);
+    setCardData([]);
+    setIsLoading(false);
+    setCurrentCategory((prev) => ({ ...prev, name }));
   };
+
+  useEffect(() => {
+    if (page === 0 && cardData.length === 0) {
+      const fetchBoards = async () => {
+        const boards = await fetchBoardInCategories(
+          currentCategory.name,
+          0,
+          limit
+        );
+        setCurrentCategory({
+          name: currentCategory.name,
+          boardCount: boards.totalCount,
+        });
+        setCardData(boards.data);
+      };
+      fetchBoards();
+    }
+  }, [page, cardData.length, currentCategory.name]);
 
   const handleScroll = () => {
     if (divRef.current) {
@@ -130,6 +150,30 @@ const MainPage = () => {
   const isAtStart = () => {
     return scrollPosition === 0;
   };
+
+  const trigger = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
+
+    const nextPage = page + 1;
+    const newBoards = await fetchBoardInCategories(
+      currentCategory.name,
+      nextPage,
+      limit
+    );
+
+    if (cardData.length >= newBoards.totalCount) return;
+
+    setCardData((prevData) => [...prevData, ...newBoards.data]);
+    setPage(nextPage);
+    setIsLoading(false);
+  };
+
+  const { setTargetRef } = useInfinite(trigger, [page]);
+
+  useEffect(() => {
+    setTargetRef(infiniteDivRef);
+  }, []);
 
   useEffect(() => {
     handleClickCategory("연예");
@@ -226,13 +270,14 @@ const MainPage = () => {
         <div
           className="grid gap-4 w-full pb-20"
           style={{
-            gridTemplateColumns: "repeat(auto-fit, minmax(328px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fill, minmax(328px, 1fr))",
           }}
         >
           {cardData.map((card) => (
             <Card key={card._id} data={card} />
           ))}
         </div>
+        <div ref={infiniteDivRef}></div>
       </section>
     </main>
   );
