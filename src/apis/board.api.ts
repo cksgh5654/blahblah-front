@@ -85,3 +85,15 @@ export const getBoardAndPostsByUrlAndId = async (
     throw error;
   }
 };
+
+export const getBoards = async (page: string = "1") => {
+  try {
+    const response = await baseInstance.get(`/admin/board?page=${page}`);
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
