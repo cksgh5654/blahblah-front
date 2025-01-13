@@ -10,11 +10,13 @@ import {
   kickBoardUser,
   updateBoardUserJoinedStatus,
 } from "@apis/boardUser.api";
+import { toast } from "react-toastify";
 
 interface BoardUsersProps {
   boardId?: string;
+  selectedTab: string;
 }
-export type PageInfo = {
+type PageInfo = {
   currentPage: number;
   nextPage: number;
   prevPage: number;
@@ -22,36 +24,40 @@ export type PageInfo = {
   totalUsersCount: number;
 };
 
-const BoardUsers = ({ boardId }: BoardUsersProps) => {
+const BoardUsers = ({ boardId, selectedTab }: BoardUsersProps) => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [users, setUsers] = useState<BoardUser[]>();
   const [pageInfo, setPageIfno] = useState<PageInfo>();
 
-  const handleChangePage = () => {
-    setSearchParams({ page: String(pageInfo?.nextPage) });
+  const handleChangePage = (index: number) => {
+    setSearchParams({ selectedTab, page: String(index + 1) });
   };
 
   const handleClickKickUser = (userId: string) => {
     if (!boardId) return;
     kickBoardUser(boardId, userId) //
       .then(() => {
+        toast.success("유저를 추방하였습니다.");
         const newUsers = users?.filter(({ user }) => user._id !== userId);
         setUsers(newUsers);
-      });
+      })
+      .catch(() => toast.error("유저 정보를 업데이트 하지 못했습니다."));
   };
 
   const handleUserRegistration = (status: boolean, userId: string) => {
     if (!boardId) return;
     updateBoardUserJoinedStatus(status, boardId, userId) //
       .then(() => {
+        toast.success(`유저를 ${status ? "승인" : "미승인"} 하였습니다.`);
         const newUsers = status
           ? users?.map((user) =>
               user.user._id === userId ? { ...user, joinedStatus: true } : user
             )
           : users?.filter(({ user }) => user._id !== userId);
         setUsers(newUsers);
-      });
+      })
+      .catch(() => toast.error("유저 정보를 업데이트 하지 못했습니다."));
   };
 
   useEffect(() => {
@@ -114,17 +120,19 @@ const BoardUsers = ({ boardId }: BoardUsersProps) => {
           </li>
         ))}
       </ul>
-      <div className="mt-auto">
-        <Pagination
-          onPageChange={handleChangePage}
-          total={pageInfo?.totalUsersCount ?? 0}
-          value={pageInfo?.currentPage ?? 0}
-        >
-          <Pagination.Navigator className="flex justify-center items-center gap-x-2">
-            <Pagination.Buttons className="px-3 py-1 bg-gray-200 rounded-md hover:bg-violet-300" />
-          </Pagination.Navigator>
-        </Pagination>
-      </div>
+      {pageInfo && (
+        <div className="mt-auto">
+          <Pagination
+            onPageChange={handleChangePage}
+            total={pageInfo?.totalUsersCount}
+            value={pageInfo?.currentPage - 1}
+          >
+            <Pagination.Navigator className="flex justify-center items-center gap-x-2">
+              <Pagination.Buttons className="px-3 py-1 bg-gray-200 rounded-md hover:bg-violet-300" />
+            </Pagination.Navigator>
+          </Pagination>
+        </div>
+      )}
     </div>
   );
 };

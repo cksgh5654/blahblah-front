@@ -1,79 +1,106 @@
-import { AspectRatio } from "blahblah-front-common-ui-kit";
+import { AspectRatio, Pagination } from "blahblah-front-common-ui-kit";
 import { useEffect, useState } from "react";
 import { useUserContext } from "../../context/userContext";
 import { User } from "~types/user.type";
 import { getPostsByUserId } from "@apis/post.api";
+import { ProfilePost } from "~types/post.type";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import ErrorPage from "@pages/ErrorPage";
 
 interface ProfilePostsProps {
   profileUser?: User;
+  selectedTab: string;
 }
 
-const ProfilePosts = ({ profileUser }: ProfilePostsProps) => {
-  const [posts, setPosts] = useState();
-  const [pageInfo, setPageInfo] = useState();
+export type PageInfo = {
+  currentPage: number;
+  nextPage: number;
+  prevPage: number;
+  totalPage: number;
+  totalPostsCount: number;
+};
+
+const ProfilePosts = ({ profileUser, selectedTab }: ProfilePostsProps) => {
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [posts, setPosts] = useState<ProfilePost[]>();
+  const [pageInfo, setPageInfo] = useState<PageInfo>();
   const { user: signinedUser } = useUserContext();
+
+  const handleChangePage = (index: number) => {
+    setSearchParams({ selectedTab, page: String(index + 1) });
+  };
+
   useEffect(() => {
     if (!profileUser || !signinedUser) return;
-    getPostsByUserId(profileUser ? profileUser._id : signinedUser._id) //
+    const page = searchParams.get("page") ?? "1";
+
+    getPostsByUserId(profileUser ? profileUser._id : signinedUser._id, page) //
       .then(({ posts, pageInfo }) => {
         setPosts(posts);
         setPageInfo(pageInfo);
       });
-  }, [profileUser]);
-  console.log({ pageInfo, posts });
+  }, [profileUser, searchParams]);
+
   return (
-    <>
-      <ul className="py-4">
-        <li className="flex p-4 border-b">
-          <div className="flex gap-x-2">
-            <AspectRatio className="w-12 flex-shrink-0 self-start">
-              <AspectRatio.Image
-                src="/favicon.svg"
-                alt="board-image"
-                className="w-full h-full object-contain"
-              />
-            </AspectRatio>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-x-4 py-2">
-                <p className="font-medium">ehdrjs130</p>
-                <p className="text-gray-500">2025-01-01</p>
+    <div className="h-full flex flex-col">
+      <ul className="flex-1">
+        {posts?.map(({ title, createdAt, board, _id }) => (
+          <li
+            className="p-4 border-b border-gray-300 hover:bg-gray-50 transition duration-200"
+            key={`post-item-${_id}`}
+          >
+            <div className="flex flex-col gap-4">
+              <div className="flex items-start gap-4">
+                <AspectRatio className="w-14 h-14 shrink-0" ratio={1 / 1}>
+                  <AspectRatio.Image
+                    src={board.image}
+                    alt="board-image"
+                    className="w-full h-full object-cover rounded-md shadow-md"
+                  />
+                </AspectRatio>
+                <div className="flex flex-col justify-center gap-1">
+                  <span
+                    className="text-2xl font-bold text-violet-800 hover:underline cursor-pointer"
+                    onClick={() => navigate(`/board/${board.url}`)}
+                  >
+                    {board.name}
+                  </span>
+                  <span className="text-sm text-gray-600">
+                    게시판에 작성한 게시글
+                  </span>
+                </div>
               </div>
-              <div className="bg-gray-100/60 p-4 rounded-md">
-                <h1 className="text-xl font-bold">피자가 먹고 싶어요!</h1>
-                <p className="line-clamp-2">
-                  베이컨 포테이토 피자가 먹고싶습니다. 피자 한판 정도는 혼자서
-                  먹을수있지 않나요?? 저는 L사이즈 혼자서 다먹을 수있습니다!
-                </p>
-              </div>
-            </div>
-          </div>
-        </li>
-        <li className="flex p-4 border-b">
-          <div className="flex gap-x-2">
-            <AspectRatio className="w-12 flex-shrink-0 self-start">
-              <AspectRatio.Image
-                src="/favicon.svg"
-                alt="board-image"
-                className="w-full h-full object-contain"
-              />
-            </AspectRatio>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-x-4 py-2">
-                <p className="font-medium">ehdrjs130</p>
-                <p className="text-gray-500">2025-01-01</p>
-              </div>
-              <div className="bg-gray-100/60 p-4 rounded-md">
-                <h1 className="text-xl font-bold">피자가 먹고 싶어요!</h1>
-                <p className="line-clamp-2">
-                  베이컨 포테이토 피자가 먹고싶습니다. 피자 한판 정도는 혼자서
-                  먹을수있지 않나요?? 저는 L사이즈 혼자서 다먹을 수있습니다!
-                </p>
+              <div className="flex items-baseline">
+                <h1
+                  className="text-lg font-bold text-gray-800 hover:underline cursor-pointer"
+                  onClick={() => navigate(`/post/view/${_id}`)}
+                >
+                  {title}
+                </h1>
+                <span className="text-sm text-gray-500 ml-2 font-bold">
+                  {createdAt.split("T")[0]}
+                </span>
               </div>
             </div>
-          </div>
-        </li>
+          </li>
+        ))}
       </ul>
-    </>
+      {pageInfo && (
+        <div>
+          <Pagination
+            onPageChange={handleChangePage}
+            total={pageInfo?.totalPostsCount ?? 0}
+            value={pageInfo?.currentPage - 1}
+            className="flex justify-center"
+          >
+            <Pagination.Navigator className="flex gap-4 mt-2">
+              <Pagination.Buttons className="PaginationButtons flex gap-4 font-bold text-slate-300" />
+            </Pagination.Navigator>
+          </Pagination>
+        </div>
+      )}
+    </div>
   );
 };
 

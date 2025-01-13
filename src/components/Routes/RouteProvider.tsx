@@ -11,14 +11,17 @@ import {
   ProfilePage,
   ProfileUpdatePage,
   BoardDashBoardPage,
-  PostViewPage,
-  UpdatePostPage,
   CreatePostPage,
-  ErrorPage,
+  UpdatePostPage,
 } from '@pages/index';
 import { useUserContext } from '@context/userContext';
 import { getSigninStatus } from '@apis/auth.api';
 import BoardPage from '@pages/BoardPage';
+import PostViewPage from '@pages/PostViewPage';
+import ErrorPage from '@pages/ErrorPage';
+import { boardDashBoardLoader, profileLoader } from './routeLoader';
+import UnauthorizedErrorPage from '@pages/UnauthorizedErrorPage';
+import ProtectedRoute from './ProtectedRoute';
 
 const router = createBrowserRouter([
   {
@@ -69,16 +72,28 @@ const router = createBrowserRouter([
       {
         path: '/:email',
         element: <ProfilePage />,
+        loader: profileLoader,
+        errorElement: <ErrorPage />,
       },
       {
         path: '/:email/profile',
-        element: <ProfileUpdatePage />,
+        element: (
+          <ProtectedRoute>
+            <ProfileUpdatePage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: '/board/dashboard/:boardId',
         element: <BoardDashBoardPage />,
+        loader: boardDashBoardLoader,
+        errorElement: <UnauthorizedErrorPage />,
       },
     ],
+  },
+  {
+    path: '*',
+    element: <ErrorPage />,
   },
 ]);
 

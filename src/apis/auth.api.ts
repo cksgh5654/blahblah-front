@@ -1,15 +1,26 @@
+import { toast } from "react-toastify";
 import { EmailFormDataType } from "../components/EmailAuthForm";
 import { baseInstance } from "./axios.config";
 
 export const requestSignupOtp = async (data: EmailFormDataType) => {
   try {
+    const toastId = toast("OTP 이메일 요청 중 입니다.", {
+      isLoading: true,
+    });
     const response = await baseInstance.post("/auth/signup/otp", data);
     if (response.data.isError) {
       throw new Error(response.data.message);
     }
+    toast.update(toastId, {
+      render: response.data.message,
+      type: "success",
+      isLoading: false,
+      autoClose: 3000,
+    });
     return response.data;
   } catch (error) {
     if (error instanceof Error) {
+      toast.error(error.message);
       throw error;
     }
   }
@@ -23,9 +34,11 @@ export const sendOtp = async (otp: string) => {
     if (response.data.isError) {
       throw new Error(response.data.message);
     }
+    toast.success("회원가입에 성공 하였습니다.");
     return response.data;
   } catch (error) {
     if (error instanceof Error) {
+      toast.error("OTP 인증에 실패하였습니다.");
       throw error;
     }
   }

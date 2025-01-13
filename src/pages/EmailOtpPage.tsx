@@ -25,7 +25,7 @@ const EmailOtpPage = () => {
     e.preventDefault();
     if (!otp || !isValidForm) return;
     sendOtp(otp) //
-      .then(() => navigate("/"));
+      .then(() => navigate("/signin"));
   };
   return (
     <div

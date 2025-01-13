@@ -1,8 +1,14 @@
 import { baseInstance } from "./axios.config";
 
-export const fetchBoardInCategories = async (name: string) => {
+export const fetchBoardInCategories = async (
+  name: string,
+  page: number,
+  limit: number
+) => {
   try {
-    const response = await baseInstance.get(`/board/category/${name}`);
+    const response = await baseInstance.get(`/board/category/${name}`, {
+      params: { page, limit },
+    });
 
     if (response.data.isError) {
       throw new Error(response.data.message);

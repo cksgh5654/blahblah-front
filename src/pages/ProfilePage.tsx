@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useMemo } from "react";
+import { useLoaderData, useNavigate, useSearchParams } from "react-router-dom";
 import { Tabs } from "blahblah-front-common-ui-kit";
 import Avatar from "@components/Avatar";
 import BaseButton from "@components/Button/BaseButton";
@@ -8,14 +8,12 @@ import ProfilePosts from "@components/Post/ProfilePosts";
 import ProfileComments from "@components/Comment/ProfileComments";
 import { User } from "~types/user.type";
 import { useUserContext } from "@context/userContext";
-import { getUserInfo } from "@apis/user.api";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [profileUser, setProfileUser] = useState<User>();
+  const profileUser = useLoaderData<User>();
   const { user: singinedUser } = useUserContext();
-  const { email } = useParams();
   const isSigninedUser = useMemo(
     () => profileUser?.email === singinedUser.email,
     [profileUser, singinedUser]
@@ -25,19 +23,13 @@ const ProfilePage = () => {
     [searchParams]
   );
 
-  useEffect(() => {
-    if (!email) return;
-    getUserInfo(email) //
-      .then(setProfileUser);
-  }, [email]);
-
   return (
     <div
-      className="w-screen flex flex-col items-center"
+      className="flex flex-col items-center"
       style={{ height: "calc(-68.5px + 100vh)" }}
     >
-      <div className="w-[768px] py-10">
-        <div className="flex flex-col gap-y-8">
+      <div className="w-[768px] py-10 flex-grow">
+        <div className="flex flex-col gap-y-8 h-full">
           <div className="flex gap-x-8">
             <Avatar size="large" url={profileUser?.image} />
             <div className="flex-1 flex flex-col py-4">
@@ -57,7 +49,7 @@ const ProfilePage = () => {
               </BaseButton>
             )}
           </div>
-          <div>
+          <div className="flex-grow">
             <Tabs.Root defaultValue={TabsDefaultValue}>
               <Tabs.List className="w-fit flex text-sm font-semibold cursor-pointer">
                 <Tabs.Trigger
@@ -95,13 +87,28 @@ const ProfilePage = () => {
                   </Tabs.Trigger>
                 )}
               </Tabs.List>
-              <Tabs.Content value="posts">
-                <ProfilePosts profileUser={profileUser} />
+              <Tabs.Content
+                value="posts"
+                className={`${TabsDefaultValue === "posts" && "h-full"}`}
+              >
+                <ProfilePosts
+                  profileUser={profileUser}
+                  selectedTab={TabsDefaultValue}
+                />
               </Tabs.Content>
-              <Tabs.Content value="comments">
-                <ProfileComments profileUser={profileUser} />
+              <Tabs.Content
+                value="comments"
+                className={`${TabsDefaultValue === "comments" && "h-full"}`}
+              >
+                <ProfileComments
+                  profileUser={profileUser}
+                  selectedTab={TabsDefaultValue}
+                />
               </Tabs.Content>
-              <Tabs.Content value="board">
+              <Tabs.Content
+                value="board"
+                className={`${TabsDefaultValue === "board" && "h-full"}`}
+              >
                 {isSigninedUser && <ProfileBoard />}
               </Tabs.Content>
             </Tabs.Root>

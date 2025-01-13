@@ -1,5 +1,6 @@
 import { ProfileFormData } from "~types/form.type";
 import { baseInstance } from "./axios.config";
+import { toast } from "react-toastify";
 
 export const getMyProfile = async () => {
   try {
@@ -35,9 +36,11 @@ export const updateMyProfile = async (data: ProfileFormData) => {
     if (response.data.isError) {
       throw new Error(response.data.message);
     }
+    toast.success("프로필 업데이트를 완료 하였습니다.");
     return response.data;
   } catch (error) {
     if (error instanceof Error) {
+      toast.error("프로필 업데이트 실패하였습니다.");
       throw error;
     }
   }

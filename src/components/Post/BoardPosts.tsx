@@ -5,8 +5,10 @@ import Avatar from "@components/Avatar";
 import { Post } from "~types/post.type";
 import { deletePost } from "@apis/post.api";
 import { getBoardPosts } from "@apis/board.api";
+import { toast } from "react-toastify";
 interface BoardPostsProps {
   boardId?: string;
+  selectedTab: string;
 }
 
 type PageInfo = {
@@ -17,7 +19,7 @@ type PageInfo = {
   totalPostsCount: number;
 };
 
-const BoardPosts = ({ boardId }: BoardPostsProps) => {
+const BoardPosts = ({ boardId, selectedTab }: BoardPostsProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [posts, setPosts] = useState<Post[]>();
   const [pageInfo, setPageIfno] = useState<PageInfo>();
@@ -26,13 +28,16 @@ const BoardPosts = ({ boardId }: BoardPostsProps) => {
   const handleClickDeletePost = (postId: string) => {
     deletePost(postId) //
       .then(() => {
+        toast.success("게시물을 삭제 하였습니다.");
         const updatedPosts = posts?.filter((post) => post._id !== postId);
         setPosts(updatedPosts);
-      });
+      })
+
+      .catch(() => toast.error("게시물을 삭제에 실패하였습니다."));
   };
 
-  const handleChangePage = () => {
-    setSearchParams({ page: String(pageInfo?.nextPage) });
+  const handleChangePage = (index: number) => {
+    setSearchParams({ selectedTab, page: String(index + 1) });
   };
 
   useEffect(() => {
@@ -44,7 +49,7 @@ const BoardPosts = ({ boardId }: BoardPostsProps) => {
         setPosts(posts);
         setPageIfno(pageInfo);
       });
-  }, []);
+  }, [searchParams]);
   return (
     <>
       <div
@@ -83,17 +88,19 @@ const BoardPosts = ({ boardId }: BoardPostsProps) => {
         {posts?.length === 0 && (
           <p className="text-center text-gray-500 mt-4">게시글이 없습니다.</p>
         )}
-        <div className="mt-auto">
-          <Pagination
-            onPageChange={handleChangePage}
-            total={pageInfo?.totalPostsCount ?? 0}
-            value={pageInfo?.currentPage ?? 0}
-          >
-            <Pagination.Navigator className="flex justify-center items-center gap-x-2">
-              <Pagination.Buttons className="px-3 py-1 bg-gray-200 rounded-md hover:bg-violet-300" />
-            </Pagination.Navigator>
-          </Pagination>
-        </div>
+        {pageInfo && (
+          <div className="mt-auto">
+            <Pagination
+              onPageChange={handleChangePage}
+              total={pageInfo?.totalPostsCount}
+              value={pageInfo?.currentPage - 1}
+            >
+              <Pagination.Navigator className="flex justify-center items-center gap-x-2">
+                <Pagination.Buttons className="px-3 py-1 bg-gray-200 rounded-md hover:bg-violet-300" />
+              </Pagination.Navigator>
+            </Pagination>
+          </div>
+        )}
       </div>
     </>
   );
