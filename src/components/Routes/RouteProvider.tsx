@@ -19,11 +19,7 @@ import { getSigninStatus } from "@apis/auth.api";
 import BoardPage from "@pages/BoardPage";
 import PostViewPage from "@pages/PostViewPage";
 import ErrorPage from "@pages/ErrorPage";
-import {
-  AdminPageLoader,
-  boardDashBoardLoader,
-  profileLoader,
-} from "./routeLoader";
+import { boardDashBoardLoader, profileLoader, userLoader } from "./routeLoader";
 import UnauthorizedErrorPage from "@pages/UnauthorizedErrorPage";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminPage from "@pages/AdminPage";
@@ -96,9 +92,12 @@ const router = createBrowserRouter([
       },
       {
         path: "/admin",
-        element: <AdminPage />,
-        loader: AdminPageLoader,
-        errorElement: <UnauthorizedErrorPage />,
+        element: (
+          <ProtectedRoute requiredRole="ADMIN">
+            <AdminPage />
+          </ProtectedRoute>
+        ),
+        // errorElement: <UnauthorizedErrorPage />,
       },
     ],
   },
@@ -109,15 +108,6 @@ const router = createBrowserRouter([
 ]);
 
 const RouteProvider = () => {
-  const { updateUser } = useUserContext();
-  useEffect(() => {
-    getSigninStatus() //
-      .then(({ user, signinStatus }) => {
-        updateUser(user);
-        localStorage.signinStatus = signinStatus;
-      });
-  }, []);
-
   return <RouterProvider router={router} />;
 };
 
