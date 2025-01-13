@@ -57,6 +57,7 @@ export const updateComment = async (commentId: string, content: string) => {
     if (response.data.isError) {
       throw new Error(response.data.message);
     }
+    toast.success('수정 성공');
     return response.data;
   } catch (err) {
     console.error(err);
@@ -64,13 +65,14 @@ export const updateComment = async (commentId: string, content: string) => {
 };
 
 export const deleteComment = async (commentId: string) => {
-  if (!window.confirm('댓글을 삭제하시겠습니까?')) {
+  if (window.confirm('댓글을 삭제하시겠습니까?')) {
     try {
       const response = await baseInstance.delete(`/comment/${commentId}`);
 
       if (response.data.isError) {
         throw new Error(response.data.message);
       }
+      toast.success('삭제 성공');
       return response.data;
     } catch (err) {
       console.error(err);
