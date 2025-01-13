@@ -5,7 +5,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import BaseInput from '@components/Input/BaseInput';
 import Editor from '@components/Editor/Editor';
 import BaseButton from '@components/Button/BaseButton';
-import { deletePost, getPostData, updatePost } from '@apis/post.api';
+import {
+  checkAuthor,
+  deletePost,
+  getPostData,
+  updatePost,
+} from '@apis/post.api';
 import { PostTitleValidation } from '@utils/validation';
 
 const UpdatePostPage = () => {
@@ -53,6 +58,7 @@ const UpdatePostPage = () => {
 
   const handleGetPost = async (postId: string) => {
     try {
+      await checkAuthor(postId);
       const response = await getPostData(postId);
       const post = response.post;
 

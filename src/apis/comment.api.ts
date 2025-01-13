@@ -3,7 +3,7 @@ import { baseInstance } from './axios.config';
 
 export const createComment = async (postId: string, content: string) => {
   try {
-    const response = await baseInstance.post('/comment/create', {
+    const response = await baseInstance.post('/comment', {
       postId,
       content,
     });
@@ -50,7 +50,7 @@ export const checkAuthor = async (commentId: string) => {
 
 export const updateComment = async (commentId: string, content: string) => {
   try {
-    const response = await baseInstance.put(`/comment/update/${commentId}`, {
+    const response = await baseInstance.put(`/comment/${commentId}`, {
       content,
     });
 
