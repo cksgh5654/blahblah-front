@@ -14,14 +14,14 @@ export const getPostData = async (postId: string) => {
 };
 
 export const createPost = async (
-  boardId: string,
+  url: string,
   title: string,
   content: string,
   type?: 'notification'
 ) => {
   try {
     const response = await baseInstance.post('/post/create', {
-      boardId,
+      url,
       title,
       content,
       type,

@@ -10,7 +10,6 @@ import { PostTitleValidation } from '@utils/validation';
 
 /***
  * postId가 아무값이 들어왔을 떄 x
- * 삭제 후에 해당 게시판으로 이동 x
  */
 
 const UpdatePostPage = () => {
@@ -20,6 +19,7 @@ const UpdatePostPage = () => {
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const [isVaild, setIsVaild] = useState<boolean>(false);
+  const [url, setUrl] = useState<string>('');
   const QuillRef = useRef<ReactQuillNew>(null);
 
   const handleTitleInput = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -63,20 +63,21 @@ const UpdatePostPage = () => {
 
     if (!data.isError) {
       alert(data.message);
-      navigator(`/`);
+      navigator(`/board/${url}`);
     }
   };
 
   const handleGetPost = async (postId: string) => {
-    if (!postId) {
-      alert('존재하지 않는 게시글입니다.');
-      return;
-    }
-
     try {
       const response = await getPostData(postId);
+      if (!response.post) {
+        alert('존재하지 않는 게시글입니다.');
+        navigator('/');
+        return;
+      }
       const post = response.post;
 
+      setUrl(post.board.url);
       setTitle(post.title || '');
       setContent(post.content || '');
 
@@ -121,20 +122,20 @@ const UpdatePostPage = () => {
           />
         </div>
 
-        {postId ? (
-          <div className="flex gap-10 mt-20 justify-between">
-            <BaseButton onClick={() => navigator('/')}>목록으로</BaseButton>
+        <div className="flex gap-10 mt-20 justify-between">
+          <BaseButton onClick={() => navigator(`/board/${url}`)}>
+            목록으로
+          </BaseButton>
 
-            <div className="flex gap-10">
-              <BaseButton onClick={() => handlePostUpdate(postId)}>
-                수정하기
-              </BaseButton>
-              <BaseButton onClick={() => handlePostDelete(postId)}>
-                삭제하기
-              </BaseButton>
-            </div>
+          <div className="flex gap-10">
+            <BaseButton onClick={() => handlePostUpdate(postId)}>
+              수정하기
+            </BaseButton>
+            <BaseButton onClick={() => handlePostDelete(postId)}>
+              삭제하기
+            </BaseButton>
           </div>
-        ) : null}
+        </div>
       </div>
     </div>
   );
