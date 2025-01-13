@@ -22,7 +22,7 @@ export const createPost = async (
   type?: 'notification'
 ) => {
   try {
-    const response = await baseInstance.post('/post/create', {
+    const response = await baseInstance.post('/post', {
       url,
       title,
       content,
@@ -46,7 +46,7 @@ export const updatePost = async (
   postId: string
 ) => {
   try {
-    const response = await baseInstance.put(`/post/update/${postId}`, {
+    const response = await baseInstance.put(`/post/${postId}`, {
       title,
       content,
     });
