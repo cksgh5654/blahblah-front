@@ -34,7 +34,9 @@ const ProfileComments = ({
 
   useEffect(() => {
     if (!profileUser || !signinedUser) return;
+    const selectedTab = searchParams.get("selectedTab") || "comments";
     const page = searchParams.get("page") ?? "1";
+    if (selectedTab !== "comments") return;
 
     getCommentsByUserId(profileUser ? profileUser._id : signinedUser._id, page) //
       .then(({ comments, pageInfo }) => {

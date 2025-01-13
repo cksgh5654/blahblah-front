@@ -10,9 +10,7 @@ const ProfileBoard = () => {
 
   useEffect(() => {
     getBoardBySigninUserId() //
-      .then((response) => {
-        setBoard(response);
-      });
+      .then(setBoard);
   }, []);
 
   return (
