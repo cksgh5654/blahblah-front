@@ -3,15 +3,16 @@ import BaseButton from "../components/Button/BaseButton";
 import CakeIcon from "../components/Icons/CakeIcon";
 import CrownIcon from "../components/Icons/CrownIcon";
 import MenIcon from "../components/Icons/MenIcon";
-import Pagination from "../components/Pagination";
 import { useEffect, useState } from "react";
-import { getBoardAndPostsByUrl } from "../apis/board.api";
+import { getBoardAndPostsByUrlAndId } from "../apis/board.api";
 import SpeechBubbleIcon from "@components/Icons/SpeechBubbleIcon";
 import LoudSpeakerIcon from "@components/Icons/LoudSpeakerIcon";
 import defaultImg from "../components/Card/defaultImg.svg";
 import { useNavigate } from "react-router-dom";
 import { createBoardUser } from "@apis/boardUser.api";
 import axios from "axios";
+import { useUserContext } from "@context/userContext";
+import Pagination from "@components/Pagination";
 
 interface Manager {
   email: string;
@@ -26,9 +27,7 @@ interface Board {
   description: string;
   image: string;
   manager: Manager;
-  memberCount: number;
   name: string;
-  postCount: number;
   updatedAt: string;
   url: string;
   _id: string;
@@ -64,7 +63,8 @@ const BoardPage = () => {
   const [isNotice, setIsNotice] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isApply, setIsApply] = useState(false);
-  const [currentUserId, setCurrentUserId] = useState("");
+  const [memberCount, setMemberCount] = useState(0);
+  const [currentUserId, setCurrentUserId] = useState<string>("");
   const [boardData, setBoardData] = useState<Board>({
     category: "",
     createdAt: "",
@@ -76,9 +76,7 @@ const BoardPage = () => {
       nickname: "",
       _id: "",
     },
-    memberCount: 0,
     name: "",
-    postCount: 0,
     updatedAt: "",
     url: "",
     _id: "",
@@ -87,27 +85,29 @@ const BoardPage = () => {
   const [postData, setPostData] = useState<Post[]>([]);
   const [isJoin, setIsJoin] = useState(false);
   const navigate = useNavigate();
+  const { user } = useUserContext();
 
   useEffect(() => {
     const pathSegments = window.location.pathname.split("/");
     const boardUrl = pathSegments[pathSegments.length - 1];
+    const userId = user._id || null;
+    if (userId) setCurrentUserId(userId);
 
     const fetchData = async () => {
       try {
-        const data = await getBoardAndPostsByUrl(boardUrl);
-        console.log(data);
+        const data = await getBoardAndPostsByUrlAndId(boardUrl, userId);
         setBoardData(data.data.board);
         setPostData(data.data.posts);
-        setCurrentUserId(data.userId);
         setIsJoin(data.isJoin);
         setIsApply(data.isApply);
+        setMemberCount(data.memberCount);
       } catch (error) {
         console.error("게시글을 가져오는 데 실패했습니다.", error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [user]);
 
   const handlePageChange = (index: number) => {
     setCurrentPage(index);
@@ -166,7 +166,11 @@ const BoardPage = () => {
               </BaseButton>
             ) : (
               <BaseButton
-                onClick={handleClickJoin}
+                onClick={
+                  currentUserId === ""
+                    ? () => navigate("/signin")
+                    : handleClickJoin
+                }
                 disabled={isLoading || isApply}
                 className={isJoin ? "hidden" : "block"}
               >
@@ -197,7 +201,8 @@ const BoardPage = () => {
                   </figcaption>
                 </figure>
                 <p className="text-slate-600 truncate">
-                  {boardData.manager.nickname} {boardData.manager.email}
+                  {boardData.manager.nickname} &#40;{boardData.manager.email}
+                  &#41;
                 </p>
               </div>
               <div className="flex items-center xl:px-4">
@@ -207,7 +212,7 @@ const BoardPage = () => {
                     멤버
                   </figcaption>
                 </figure>
-                <p className="text-slate-600">{boardData.memberCount}명</p>
+                <p className="text-slate-600">{memberCount}명</p>
               </div>
               <div className="flex items-center xl:px-4">
                 <figure className="flex items-center pr-2 gap-2">

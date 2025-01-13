@@ -67,9 +67,14 @@ export const getBoardPosts = async (
   }
 };
 
-export const getBoardAndPostsByUrl = async (boardUrl: string) => {
+export const getBoardAndPostsByUrlAndId = async (
+  boardUrl: string,
+  userId: string | null
+) => {
   try {
-    const response = await baseInstance.get(`/board/${boardUrl}/board-post`);
+    const response = await baseInstance.get(`/board/board-post`, {
+      params: { boardUrl, userId },
+    });
     if (response.data.isError) {
       throw new Error(response.data.message);
     }
