@@ -57,6 +57,7 @@ const Header = () => {
         isOpen={isOpen}
         onToggle={setIsOpen}
         className="flex justify-center"
+        position="bottom-fixed"
       >
         <div className="flex justify-between px-8 py-4 gap-6 w-[1280px]">
           <button
@@ -71,7 +72,7 @@ const Header = () => {
             <input
               value={searchTerm}
               onChange={handleInputChange}
-              onClick={() => setIsOpen(true)}
+              onClick={() => setIsOpen((prev) => !prev)}
               type="search"
               placeholder="게시판 검색"
               className="w-full h-full border rounded-md border-slate-300 pl-2"
@@ -124,7 +125,7 @@ const Header = () => {
                 key={board.url}
                 className="text-start text-slate-400 hover:text-slate-800"
                 onClick={() => {
-                  navigate(`board/${board.url}`);
+                  navigate(`/board/${board.url}`);
                   setBoardsData([]);
                   setIsOpen((prev) => !prev);
                   setSearchTerm("");

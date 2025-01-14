@@ -21,11 +21,16 @@ import media from "../categoryImg/media.svg";
 import etc from "../categoryImg/etc.svg";
 import PlusIcon from "../components/Icons/PlusIcon";
 import Card from "../components/Card/Card";
-import { fetchBoardInCategories } from "../apis/board.api";
+import {
+  fetchBoardInCategories,
+  getAllBoardsByCatogory,
+} from "../apis/board.api";
 import BaseButton from "@components/Button/BaseButton";
 import Write from "@components/Icons/Write";
 import ChevronIcon from "@components/Icons/ChevronIcon";
 import { useInfinite } from "blahblah-front-common-ui-kit";
+import Popover from "@components/Popover";
+import Pagination from "@components/Pagination";
 
 const categoryData = [
   { id: 0, img: entertainments, name: "연예" },
@@ -70,13 +75,25 @@ interface CardData {
   __v: number;
 }
 
+interface Board {
+  name: string;
+  url: string;
+}
+
+const pageSize = 60;
+const blockSize = 15;
+
 const MainPage = () => {
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalBoardCount, setTotalBoardCount] = useState(0);
   const navigate = useNavigate();
   const baseDivRef = useRef<HTMLDivElement>(null);
   const divRef = useRef<HTMLDivElement>(null);
   const infiniteDivRef = useRef<HTMLDivElement>(null);
   const [baseDivRect, setBaseDivRect] = useState(new DOMRect());
+  const [popoverBoardsData, setPopoverBoardsData] = useState<Board[]>([]);
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
   const [cardData, setCardData] = useState<CardData[]>([]);
   const [currentCategory, setCurrentCategory] = useState({
     name: "연예",
@@ -171,6 +188,24 @@ const MainPage = () => {
 
   const { setTargetRef } = useInfinite(trigger, [page]);
 
+  const borderOneGlance = async () => {
+    try {
+      const data = await getAllBoardsByCatogory(
+        currentCategory.name,
+        currentPage,
+        pageSize
+      );
+      setPopoverBoardsData(data.boards);
+      setTotalBoardCount(data.totalBoardCount);
+    } catch (error) {
+      console.error("게시글을 가져오는 데 실패했습니다.", error);
+    }
+  };
+
+  useEffect(() => {
+    borderOneGlance();
+  }, [currentCategory]);
+
   useEffect(() => {
     setTargetRef(infiniteDivRef);
   }, []);
@@ -189,6 +224,23 @@ const MainPage = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  const handlePageChange = async (index: number) => {
+    setCurrentPage(index);
+  };
+
+  useEffect(() => {
+    const pageMove = async () => {
+      const data = await getAllBoardsByCatogory(
+        currentCategory.name,
+        currentPage,
+        pageSize
+      );
+      setPopoverBoardsData(data.boards);
+      setTotalBoardCount(data.totalBoardCount);
+    };
+    pageMove();
+  }, [currentPage]);
 
   return (
     <>
@@ -262,10 +314,52 @@ const MainPage = () => {
             <h2 className=" text-violet-800 text-3xl">
               {currentCategory.name} &#40;{currentCategory.boardCount}&#41;
             </h2>
-            <button className="flex items-center text-slate-800 text-lg">
-              게시판 한눈에 보기
-              <PlusIcon height="24px" />
-            </button>
+
+            <Popover isOpen={isOpen} onToggle={setIsOpen} position="bottom">
+              <Popover.Trigger className="flex items-center text-slate-800 text-lg">
+                게시판 한눈에 보기
+                <PlusIcon
+                  height="24px"
+                  className="duration-300"
+                  transform={isOpen ? "rotate(45)" : ""}
+                />
+              </Popover.Trigger>
+              <Popover.Content>
+                <div className="flex justify-center w-screen h-96 mt-8 px-4 md:px-16 lg:px-24 xl:px-32">
+                  <div className="flex flex-col justify-between w-full bg-white border rounded-lg overflow-y-scroll">
+                    <div
+                      className="grid gap-2 w-full py-4 px-2"
+                      style={{
+                        gridTemplateColumns:
+                          "repeat(auto-fill, minmax(164px, 1fr))",
+                      }}
+                    >
+                      {popoverBoardsData.map((board) => (
+                        <button
+                          key={board.name}
+                          onClick={() => navigate(`board/${board.url}`)}
+                          className="text-start text-slate-500 hover:text-slate-800 duration-300"
+                        >
+                          {board.name}
+                        </button>
+                      ))}
+                    </div>
+                    <Pagination
+                      total={totalBoardCount}
+                      value={currentPage}
+                      onPageChange={handlePageChange}
+                      className="flex justify-center py-8"
+                      blockSize={blockSize}
+                      pageSize={pageSize}
+                    >
+                      <Pagination.Navigator className="flex gap-4">
+                        <Pagination.Buttons className="PaginationButtons flex gap-4 font-bold text-slate-300" />
+                      </Pagination.Navigator>
+                    </Pagination>
+                  </div>
+                </div>
+              </Popover.Content>
+            </Popover>
           </div>
           <hr className="border-slate-300 w-full mt-2 mb-8" />
           <div
@@ -281,6 +375,13 @@ const MainPage = () => {
           <div ref={infiniteDivRef}></div>
         </section>
       </main>
+      <style>
+        {`
+          .PaginationButtons button:disabled {
+            color: #5B21B6;
+          }
+        `}
+      </style>
     </>
   );
 };
