@@ -9,6 +9,7 @@ import { createComment, getComments } from '../apis/comment.api';
 import PostComment from '../components/Comment/PostComment';
 
 type defaultPostType = {
+  _id: string;
   title: string;
   nickname: string;
   createdAt: string;
@@ -30,7 +31,7 @@ export type defaultCommentType = {
 const PostViewPage = () => {
   const navigator = useNavigate();
   const { postId = '' } = useParams();
-
+  const [isOwner, setIsOwner] = useState<boolean>(false);
   const [postData, setPostData] = useState<defaultPostType>();
   const [commentData, setCommentData] = useState([]);
   const [comment, setComment] = useState<string>('');
@@ -74,6 +75,7 @@ const PostViewPage = () => {
       setUrl(post.board.url);
 
       const getdata = {
+        _id: post.creator._id,
         title: post.title,
         nickname: post.creator.nickname,
         createdAt: post.createdAt,
@@ -91,7 +93,6 @@ const PostViewPage = () => {
   const handleCommentCreate = async (postId: string) => {
     try {
       const response = await createComment(postId, comment);
-
       if (!response.isError) {
         handleGetComments(postId);
         return;
@@ -105,7 +106,6 @@ const PostViewPage = () => {
     try {
       const response = await getComments(postId);
       const comments = response.comments;
-
       const filteredComments = comments.map(
         ({ _id, content, createdAt, creator }: defaultCommentType) => ({
           _id,
@@ -114,7 +114,6 @@ const PostViewPage = () => {
           creator,
         })
       );
-
       setCommentData(filteredComments);
     } catch (err) {
       console.error(`[handleGetComment] : ${err}`);
@@ -129,9 +128,15 @@ const PostViewPage = () => {
     });
   };
 
+  const handleCheck = async (postId: string) => {
+    const { IsAuthor } = await checkAuthor(postId);
+    setIsOwner(IsAuthor);
+  };
+
   useEffect(() => {
     if (postId) {
       handleGetPost(postId);
+      handleCheck(postId);
       return;
     }
 
@@ -159,21 +164,22 @@ const PostViewPage = () => {
             >
               {postData ? postData.title : '제목'}
             </p>
-
-            <div className="flex gap-2">
-              <button
-                className="text-sm text-green-500 text-nowrap"
-                onClick={() => handlePostUpdate(postId)}
-              >
-                수정
-              </button>
-              <button
-                className="text-sm text-green-500 text-nowrap"
-                onClick={() => handlePostDelete(postId)}
-              >
-                삭제
-              </button>
-            </div>
+            {isOwner ? (
+              <div className="flex gap-2">
+                <button
+                  className="text-sm text-green-500 text-nowrap"
+                  onClick={() => handlePostUpdate(postId)}
+                >
+                  수정
+                </button>
+                <button
+                  className="text-sm text-green-500 text-nowrap"
+                  onClick={() => handlePostDelete(postId)}
+                >
+                  삭제
+                </button>
+              </div>
+            ) : null}
           </div>
           <div className="pt-5">
             <div className="w-10 bg-gray-100 p-2 rounded-[15px]">
@@ -215,6 +221,13 @@ const PostViewPage = () => {
             />
           </div>
         </div>
+
+        <div className="flex justify-end mt-5">
+          <BaseButton onClick={() => navigator(`/board/${url}`)}>
+            목록으로
+          </BaseButton>
+        </div>
+
         <div className="mt-5">
           <p className="text-lg font-semi">
             {commentData ? commentData.length : '0'} 개의 댓글
