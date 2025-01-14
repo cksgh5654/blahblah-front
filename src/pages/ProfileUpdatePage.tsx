@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Avatar from "@components/Avatar";
 import BaseInput from "@components/Input/BaseInput";
 import BaseButton from "@components/Button/BaseButton";
@@ -50,7 +50,6 @@ const ProfileUpdatePage = () => {
         const url = await imageUpload(imageFile);
         updatedFormData = { ...formData, image: url };
       }
-
       await updateMyProfile(updatedFormData);
       updateUser(updatedFormData);
       navigate(`/${updatedFormData.email}`);

@@ -1,5 +1,6 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { User } from "../types/user.type";
+import { getSigninStatus } from "@apis/auth.api";
 
 interface UserProviderProps {
   children: React.ReactNode;
@@ -21,25 +22,48 @@ export const useUserContext = () => {
   }
   return context;
 };
-const DEFAULT_USER = {
+const DEFAULT_USER: User = {
   email: "",
   nickname: "",
   image: "",
   createdAt: "",
   _id: "",
+  role: "USER",
 };
 
 const UserProvider = ({ children }: UserProviderProps) => {
-  const [user, setUser] = useState<User>(DEFAULT_USER);
+  const [user, setUser] = useState(DEFAULT_USER);
+  const [isLoading, setIsLoading] = useState(true);
+
   const updateUser = (data: Partial<User>) => {
     setUser((prev) => ({ ...prev, ...data }));
   };
-  const context = {
-    user,
-    updateUser,
-  };
+
+  useEffect(() => {
+    getSigninStatus() //
+      .then(({ user, signinStatus }) => {
+        setUser(user);
+        localStorage.signinStatus = signinStatus;
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-solid border-gray-200"></div>
+      </div>
+    );
+  }
   return (
-    <UserContext.Provider value={context}>{children}</UserContext.Provider>
+    <UserContext.Provider
+      value={{
+        user,
+        updateUser,
+      }}
+    >
+      {children}
+    </UserContext.Provider>
   );
 };
 

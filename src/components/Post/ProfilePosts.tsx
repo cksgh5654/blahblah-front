@@ -5,7 +5,6 @@ import { User } from "~types/user.type";
 import { getPostsByUserId } from "@apis/post.api";
 import { ProfilePost } from "~types/post.type";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import ErrorPage from "@pages/ErrorPage";
 
 interface ProfilePostsProps {
   profileUser?: User;
@@ -33,8 +32,9 @@ const ProfilePosts = ({ profileUser, selectedTab }: ProfilePostsProps) => {
 
   useEffect(() => {
     if (!profileUser || !signinedUser) return;
+    const selectedTab = searchParams.get("selectedTab") || "posts";
     const page = searchParams.get("page") ?? "1";
-
+    if (selectedTab !== "posts") return;
     getPostsByUserId(profileUser ? profileUser._id : signinedUser._id, page) //
       .then(({ posts, pageInfo }) => {
         setPosts(posts);
@@ -45,6 +45,11 @@ const ProfilePosts = ({ profileUser, selectedTab }: ProfilePostsProps) => {
   return (
     <div className="h-full flex flex-col">
       <ul className="flex-1">
+        {posts?.length === 0 && (
+          <div className="flex justify-center items-center h-full text-gray-500 font-bold text-xl">
+            <p>작성한 게시글이 없습니다.</p>
+          </div>
+        )}
         {posts?.map(({ title, createdAt, board, _id }) => (
           <li
             className="p-4 border-b border-gray-300 hover:bg-gray-50 transition duration-200"

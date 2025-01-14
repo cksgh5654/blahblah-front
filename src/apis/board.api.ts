@@ -87,7 +87,7 @@ export const getBoardAndPostsByUrlAndId = async (
   }
 };
 
-export const getBoards = async (page: string = '1') => {
+export const getBoards = async (page: string) => {
   try {
     const response = await baseInstance.get(`/admin/board?page=${page}`);
     if (response.data.isError) {
@@ -131,6 +131,26 @@ export const getBoardsByHeader = async (boardName: string) => {
   try {
     const response = await baseInstance.get('/board/board-name', {
       params: { boardName },
+    });
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+  }
+};
+
+export const getAllBoardsByCatogory = async (
+  categoryName: string,
+  page: number,
+  limit: number
+) => {
+  try {
+    const response = await baseInstance.get('/board/boards/category-name', {
+      params: { categoryName, page, limit },
     });
     if (response.data.isError) {
       throw new Error(response.data.message);

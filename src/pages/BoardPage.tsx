@@ -1,18 +1,18 @@
-import { Tabs } from 'blahblah-front-common-ui-kit';
-import BaseButton from '../components/Button/BaseButton';
-import CakeIcon from '../components/Icons/CakeIcon';
-import CrownIcon from '../components/Icons/CrownIcon';
-import MenIcon from '../components/Icons/MenIcon';
-import { useEffect, useState } from 'react';
-import { getBoardAndPostsByUrlAndId } from '../apis/board.api';
-import SpeechBubbleIcon from '@components/Icons/SpeechBubbleIcon';
-import LoudSpeakerIcon from '@components/Icons/LoudSpeakerIcon';
-import defaultImg from '../components/Card/defaultImg.svg';
-import { useNavigate } from 'react-router-dom';
-import { createBoardUser } from '@apis/boardUser.api';
-import axios from 'axios';
-import { useUserContext } from '@context/userContext';
-import Pagination from '@components/Pagination';
+import { Tabs } from "blahblah-front-common-ui-kit";
+import BaseButton from "../components/Button/BaseButton";
+import CakeIcon from "../components/Icons/CakeIcon";
+import CrownIcon from "../components/Icons/CrownIcon";
+import MenIcon from "../components/Icons/MenIcon";
+import { useEffect, useState } from "react";
+import { getBoardAndPostsByUrlAndId } from "../apis/board.api";
+import SpeechBubbleIcon from "@components/Icons/SpeechBubbleIcon";
+import LoudSpeakerIcon from "@components/Icons/LoudSpeakerIcon";
+import defaultImg from "../components/Card/defaultImg.svg";
+import { useNavigate, useParams } from "react-router-dom";
+import { createBoardUser } from "@apis/boardUser.api";
+import axios from "axios";
+import { useUserContext } from "@context/userContext";
+import Pagination from "@components/Pagination";
 
 interface Manager {
   email: string;
@@ -50,7 +50,7 @@ interface Post {
   creator: Creator;
   deletedAt: Date | null;
   title: string;
-  type: 'basic' | 'notification';
+  type: "basic" | "notification";
   updatedAt: Date;
   __v: number;
 }
@@ -68,23 +68,23 @@ const BoardPage = () => {
     basic: 0,
     notification: 0,
   });
-  const [currentUserId, setCurrentUserId] = useState<string>('');
+  const [currentUserId, setCurrentUserId] = useState<string>("");
   const [boardData, setBoardData] = useState<Board>({
-    category: '',
-    createdAt: '',
+    category: "",
+    createdAt: "",
     deleteAt: null,
-    description: '',
-    image: '',
+    description: "",
+    image: "",
     manager: {
-      email: '',
-      nickname: '',
-      _id: '',
+      email: "",
+      nickname: "",
+      _id: "",
     },
-    name: '',
+    name: "",
     memberCount: 0,
-    updatedAt: '',
-    url: '',
-    _id: '',
+    updatedAt: "",
+    url: "",
+    _id: "",
     __v: 0,
   });
   const [basicPostData, setBasicPostData] = useState<Post[]>([]);
@@ -92,22 +92,16 @@ const BoardPage = () => {
   const [isJoin, setIsJoin] = useState(false);
   const navigate = useNavigate();
   const { user } = useUserContext();
-  const pathSegments = window.location.pathname.split('/');
-  const boardUrl = pathSegments[pathSegments.length - 1];
+  const { url } = useParams();
 
   const userId = user._id || null;
 
   useEffect(() => {
     if (userId) setCurrentUserId(userId);
-
+    if (!url) return;
     const fetchData = async () => {
       try {
-        const data = await getBoardAndPostsByUrlAndId(
-          boardUrl,
-          userId,
-          0,
-          pageSize
-        );
+        const data = await getBoardAndPostsByUrlAndId(url, userId, 0, pageSize);
         setBoardData(data.board);
         setBasicPostData(data.basicPosts);
         setNotificationPostData(data.notificationPosts);
@@ -115,12 +109,12 @@ const BoardPage = () => {
         setIsApply(data.isApply);
         setTotalPostCount(data.totalPostCount);
       } catch (error) {
-        console.error('게시글을 가져오는 데 실패했습니다.', error);
+        console.error("게시글을 가져오는 데 실패했습니다.", error);
       }
     };
 
     fetchData();
-  }, [user]);
+  }, [user, url]);
 
   const handlePageChange = async (index: number) => {
     setCurrentPage(index);
@@ -128,8 +122,9 @@ const BoardPage = () => {
 
   useEffect(() => {
     const pageMove = async () => {
+      if (!url) return;
       const data = await getBoardAndPostsByUrlAndId(
-        boardUrl,
+        url,
         userId,
         currentPage,
         pageSize
@@ -145,8 +140,9 @@ const BoardPage = () => {
 
   useEffect(() => {
     const pageMove = async () => {
+      if (!url) return;
       const data = await getBoardAndPostsByUrlAndId(
-        boardUrl,
+        url,
         userId,
         currentNoticePage,
         pageSize
@@ -163,7 +159,7 @@ const BoardPage = () => {
       alert(response);
       setIsApply(true);
     } catch (err) {
-      console.log('handleClickJoin 오류', err);
+      console.log("handleClickJoin 오류", err);
       if (axios.isAxiosError(err)) {
         alert(err.response?.data.message);
       }
@@ -189,18 +185,18 @@ const BoardPage = () => {
             ) : (
               <BaseButton
                 onClick={
-                  currentUserId === ''
-                    ? () => navigate('/signin')
+                  currentUserId === ""
+                    ? () => navigate("/signin")
                     : handleClickJoin
                 }
                 disabled={isLoading || isApply}
-                className={isJoin ? 'hidden' : 'block'}
+                className={isJoin ? "hidden" : "block"}
               >
                 {isLoading
-                  ? '신청 중...'
+                  ? "신청 중..."
                   : isApply
-                  ? '신청되었습니다.'
-                  : '가입하기'}
+                  ? "신청되었습니다."
+                  : "가입하기"}
               </BaseButton>
             )}
           </div>
@@ -244,7 +240,7 @@ const BoardPage = () => {
                   </figcaption>
                 </figure>
                 <p className="text-slate-600">
-                  {boardData.createdAt.split('T')[0]}
+                  {boardData.createdAt.split("T")[0]}
                 </p>
               </div>
             </div>
@@ -274,11 +270,11 @@ const BoardPage = () => {
               </Tabs.Trigger>
             </Tabs.List>
             <BaseButton
-              onClick={() => navigate(`/post/create/${boardUrl}`)}
+              onClick={() => navigate(`/post/create/${url}`)}
               className={
                 isJoin || boardData.manager._id === currentUserId
-                  ? 'block'
-                  : 'hidden'
+                  ? "block"
+                  : "hidden"
               }
             >
               글쓰기
@@ -301,7 +297,7 @@ const BoardPage = () => {
                 >
                   <p>{index + 1}</p>
                   <p className="flex justify-center items-center">
-                    {post.type === 'notification' ? (
+                    {post.type === "notification" ? (
                       <LoudSpeakerIcon height="24px" />
                     ) : (
                       <SpeechBubbleIcon height="24px" />
@@ -318,13 +314,13 @@ const BoardPage = () => {
                   <p>{post.creator.nickname}</p>
                   <p>
                     {new Date(post.createdAt)
-                      .toLocaleDateString('ko-KR', {
-                        year: '2-digit',
-                        month: '2-digit',
-                        day: '2-digit',
+                      .toLocaleDateString("ko-KR", {
+                        year: "2-digit",
+                        month: "2-digit",
+                        day: "2-digit",
                       })
-                      .replace(/\.\s?/g, '.')
-                      .replace(/(\d{2})\.(\d{2})\.(\d{2})/, '$1.$2.$3')}{' '}
+                      .replace(/\.\s?/g, ".")
+                      .replace(/(\d{2})\.(\d{2})\.(\d{2})/, "$1.$2.$3")}{" "}
                   </p>
 
                   <p>조회수</p>
@@ -351,7 +347,7 @@ const BoardPage = () => {
                 >
                   <p>{index + 1}</p>
                   <p className="flex justify-center items-center">
-                    {post.type === 'notification' ? (
+                    {post.type === "notification" ? (
                       <LoudSpeakerIcon height="24px" />
                     ) : (
                       <SpeechBubbleIcon height="24px" />
@@ -368,13 +364,13 @@ const BoardPage = () => {
                   <p>{post.creator.nickname}</p>
                   <p>
                     {new Date(post.createdAt)
-                      .toLocaleDateString('ko-KR', {
-                        year: '2-digit',
-                        month: '2-digit',
-                        day: '2-digit',
+                      .toLocaleDateString("ko-KR", {
+                        year: "2-digit",
+                        month: "2-digit",
+                        day: "2-digit",
                       })
-                      .replace(/\.\s?/g, '.')
-                      .replace(/(\d{2})\.(\d{2})\.(\d{2})/, '$1.$2.$3')}{' '}
+                      .replace(/\.\s?/g, ".")
+                      .replace(/(\d{2})\.(\d{2})\.(\d{2})/, "$1.$2.$3")}{" "}
                   </p>
 
                   <p>조회수</p>

@@ -14,7 +14,6 @@ const BoardDashBoardPage = () => {
     () => searchParams.get("selectedTab") || "USERS",
     [searchParams]
   );
-
   return (
     <div
       className="w-screen flex justify-center py-2"

@@ -1,24 +1,17 @@
-import AWS from "aws-sdk";
-
-AWS.config.update({
-  accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
-  secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY,
-  region: import.meta.env.VITE_AWS_REGION,
-});
-
-const s3 = new AWS.S3();
+import { getPresignedUrl } from "@apis/image.api";
+import axios from "axios";
 
 export const imageUpload = async (file: File) => {
   try {
-    const response = await s3
-      .upload({
-        Bucket: "elice-project-blahblah",
-        Key: `images/${Date.now()}-${file.name}`,
-        Body: file,
-        ContentType: file.type,
-      })
-      .promise();
-    return response.Location;
+    const presignedUrl = await getPresignedUrl({
+      fileName: `${file.name}-${Date.now()}`,
+      fileType: file.type,
+    });
+    console.log({ presignedUrl });
+    await axios.put(presignedUrl, file, {
+      headers: { "Content-Type": file.type },
+    });
+    return presignedUrl.split("?")[0];
   } catch (error) {
     throw error;
   }

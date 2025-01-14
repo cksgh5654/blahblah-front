@@ -6,7 +6,7 @@ interface PlusIconProps extends SVGAttributes<SVGSVGElement> {
 }
 
 const PlusIcon = (props: PlusIconProps) => {
-  const { height, className } = props;
+  const { height, className, ...rest } = props;
   return (
     <svg
       className={className}
@@ -14,6 +14,7 @@ const PlusIcon = (props: PlusIconProps) => {
       viewBox="0 0 32 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      {...rest}
     >
       <path
         d="M16 8L16 24"
