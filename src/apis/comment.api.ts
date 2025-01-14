@@ -1,5 +1,6 @@
 import { toast } from 'react-toastify';
 import { baseInstance } from './axios.config';
+import { AxiosError } from 'axios';
 
 export const createComment = async (postId: string, content: string) => {
   try {
@@ -14,8 +15,10 @@ export const createComment = async (postId: string, content: string) => {
     toast.success(response.data.message);
     return response.data;
   } catch (err) {
-    console.error(err);
-    toast.error(`${err}`);
+    if (err instanceof AxiosError && err.response) {
+      toast.error(err.response.data.message);
+    }
+    throw err;
   }
 };
 
@@ -24,13 +27,15 @@ export const getComments = async (postId: string) => {
     const response = await baseInstance.post('/comment/view', {
       postId,
     });
-
     if (response.data.isError) {
       throw new Error(response.data.message);
     }
     return response.data;
   } catch (err) {
-    console.error(err);
+    if (err instanceof AxiosError && err.response) {
+      toast.error(err.response.data.message);
+    }
+    throw err;
   }
 };
 
@@ -41,10 +46,13 @@ export const checkAuthor = async (commentId: string) => {
     if (response.data.isError) {
       throw new Error(response.data.message);
     }
+    toast.success(response.data.message);
     return response.data;
   } catch (err) {
-    toast.error('해당 댓글의 수정 및 삭제 권한이 없습니다.');
-    throw err;
+    // if (err instanceof AxiosError && err.response) {
+    //   toast.error(err.response.data.message);
+    // }
+    // throw err;
   }
 };
 
@@ -57,10 +65,13 @@ export const updateComment = async (commentId: string, content: string) => {
     if (response.data.isError) {
       throw new Error(response.data.message);
     }
-    toast.success('수정 성공');
+    toast.success(response.data.message);
     return response.data;
   } catch (err) {
-    console.error(err);
+    if (err instanceof AxiosError && err.response) {
+      toast.error(err.response.data.message);
+    }
+    throw err;
   }
 };
 
@@ -72,10 +83,13 @@ export const deleteComment = async (commentId: string) => {
       if (response.data.isError) {
         throw new Error(response.data.message);
       }
-      toast.success('삭제 성공');
+      toast.success(response.data.message);
       return response.data;
     } catch (err) {
-      console.error(err);
+      if (err instanceof AxiosError && err.response) {
+        toast.error(err.response.data.message);
+      }
+      throw err;
     }
   } else {
     toast.error('삭제 취소');

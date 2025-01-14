@@ -1,7 +1,6 @@
 import ReactQuillNew from 'react-quill-new';
 import { ChangeEvent, useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-
 import BaseInput from '@components/Input/BaseInput';
 import Editor from '@components/Editor/Editor';
 import BaseButton from '@components/Button/BaseButton';
@@ -26,33 +25,36 @@ const UpdatePostPage = () => {
   const handleTitleInput = async (e: ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
-
   const handleValidationChange = (result: boolean) => {
     setIsVaild(result);
   };
-
   const handlePostUpdate = async (postId: string) => {
+    if (!title) {
+      alert('제목을 입력해주세요.');
+      return;
+    }
     if (!isVaild) {
       return;
     }
-
-    if (!content) {
-      alert('내용을 입력해주세요.');
-      return;
-    }
-
-    const data = await updatePost(title, content, postId);
-
-    if (!data.isError) {
-      navigator(`/post/view/${postId}`);
+    try {
+      const data = await updatePost(title, content, postId);
+      if (!data.isError) {
+        navigator(`/post/view/${postId}`);
+      }
+    } catch (err) {
+      console.error(`[handlePostUpdate] :`, err);
     }
   };
 
   const handlePostDelete = async (postId: string) => {
-    const data = await deletePost(postId);
+    try {
+      const data = await deletePost(postId);
 
-    if (!data.isError) {
-      navigator(`/board/${url}`);
+      if (!data.isError) {
+        navigator(`/board/${url}`);
+      }
+    } catch (err) {
+      console.error(`[handlePostDelete]`, err);
     }
   };
 
@@ -70,7 +72,7 @@ const UpdatePostPage = () => {
         setIsVaild(true);
       }
     } catch (err) {
-      console.error(`[handleGetPost] : ${err}`);
+      console.error(`[handleGetPost]`, err);
       navigator(`/board/${url}`);
     }
   };

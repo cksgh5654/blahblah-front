@@ -1,5 +1,6 @@
-import { toast } from "react-toastify";
-import { baseInstance } from "./axios.config";
+import { toast } from 'react-toastify';
+import { baseInstance } from './axios.config';
+import { AxiosError } from 'axios';
 
 export const fetchBoardInCategories = async (
   name: string,
@@ -86,7 +87,7 @@ export const getBoardAndPostsByUrlAndId = async (
   }
 };
 
-export const getBoards = async (page: string = "1") => {
+export const getBoards = async (page: string = '1') => {
   try {
     const response = await baseInstance.get(`/admin/board?page=${page}`);
     if (response.data.isError) {
@@ -112,21 +113,23 @@ export const deleteBoard = async (boardId: string) => {
 
 export const getBoard = async (url: string) => {
   try {
-    const response = await baseInstance.get(`/board/board/${url}`);
+    const response = await baseInstance.get(`/board/board-url/${url}`);
 
     if (response.data.isError) {
       throw new Error(response.data.message);
     }
     return response.data;
   } catch (err) {
-    toast.error("존재하지 않는 게시판입니다.");
+    if (err instanceof AxiosError && err.response) {
+      toast.error(err.response.data.message);
+    }
     throw err;
   }
 };
 
 export const getBoardsByHeader = async (boardName: string) => {
   try {
-    const response = await baseInstance.get("/board/board-name", {
+    const response = await baseInstance.get('/board/board-name', {
       params: { boardName },
     });
     if (response.data.isError) {

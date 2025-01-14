@@ -32,17 +32,16 @@ const CreatePostPage = () => {
     }
 
     if (!isVaild) {
+      alert('제목을 입력해주세요.');
       return;
     }
 
-    if (!content) {
-      alert('내용을 입력해주세요.');
-      return;
-    }
-
-    const data = await createPost(url, title, content);
-
-    if (!data.isError) {
+    try {
+      const data = await createPost(url, title, content);
+      const post = data.post;
+      navigator(`/post/view/${post._id}`);
+    } catch (err) {
+      console.error(`[handlePostCreate] :`, err);
       navigator(`/board/${url}`);
     }
   };
@@ -56,7 +55,7 @@ const CreatePostPage = () => {
     try {
       await getBoard(url);
     } catch (err) {
-      console.log(err);
+      console.error(`[handleGetBoard] :`, err);
       navigator('/');
     }
   };

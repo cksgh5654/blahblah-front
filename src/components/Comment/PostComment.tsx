@@ -19,6 +19,7 @@ const PostComment = ({
   postId: string;
 }) => {
   const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [isOwner, setIsOwner] = useState<boolean>(false);
   const [content, setContent] = useState<string>('');
   const overflowTextRef = useRef<HTMLParagraphElement[] | null[]>([]);
 
@@ -51,6 +52,11 @@ const PostComment = ({
     }
   };
 
+  const handleCheck = async (commonId: string) => {
+    const { IsAuthor } = await checkAuthor(commonId);
+    setIsOwner(IsAuthor);
+  };
+
   const handleOverflowText = () => {
     overflowTextRef.current.map((element) => {
       if (element) {
@@ -63,7 +69,7 @@ const PostComment = ({
     if (!overflowTextRef.current) {
       return;
     }
-
+    handleCheck(comment._id);
     window.addEventListener('resize', handleOverflowText);
 
     return () => {
@@ -105,24 +111,25 @@ const PostComment = ({
               </p>
             </div>
           </div>
-
-          <div className="flex gap-2 basis-[100px] justify-end">
-            <button
-              className="text-sm text-green-500 text-nowrap"
-              onClick={() => {
-                setIsEdit(true);
-                setContent(comment.content);
-              }}
-            >
-              수정
-            </button>
-            <button
-              className="text-sm text-green-500 text-nowrap"
-              onClick={() => handleCommentDelete(comment._id)}
-            >
-              삭제
-            </button>
-          </div>
+          {isOwner ? (
+            <div className="flex gap-2 basis-[100px] justify-end">
+              <button
+                className="text-sm text-green-500 text-nowrap"
+                onClick={() => {
+                  setIsEdit(true);
+                  setContent(comment.content);
+                }}
+              >
+                수정
+              </button>
+              <button
+                className="text-sm text-green-500 text-nowrap"
+                onClick={() => handleCommentDelete(comment._id)}
+              >
+                삭제
+              </button>
+            </div>
+          ) : null}
         </div>
 
         <p className="h-[1px] w-full bg-slate-200 mt-5" />
