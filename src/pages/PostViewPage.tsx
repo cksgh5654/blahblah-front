@@ -144,7 +144,7 @@ const PostViewPage = () => {
     return () => {
       window.removeEventListener('resize', handleOverflowText);
     };
-  }, [commentData]);
+  }, []);
 
   return (
     <div className="min-w-[360px] max-w-[1280px] mx-auto py-20 bg-gray-100">
@@ -180,7 +180,7 @@ const PostViewPage = () => {
               <AspectRatio ratio={1 / 1}>
                 <AspectRatio.Image
                   className="w-full h-full rounded-md"
-                  src={postData ? postData.image : userIcon}
+                  src={postData && postData.image ? postData.image : userIcon}
                   alt="프로필 이미지"
                 />
               </AspectRatio>
@@ -242,7 +242,12 @@ const PostViewPage = () => {
 
         {commentData
           ? commentData.map((comment, index) => (
-              <PostComment key={index} comment={comment} />
+              <PostComment
+                key={index}
+                comment={comment}
+                onCommentChange={handleGetComments}
+                postId={postId}
+              />
             ))
           : null}
       </div>

@@ -1,6 +1,7 @@
 import { AspectRatio, Textarea } from 'blahblah-front-common-ui-kit';
 import { ChangeEvent, useEffect, useState, useRef } from 'react';
 import { defaultCommentType } from '../../pages/PostViewPage';
+import userIcon from '../../../public/default-user-icon.svg';
 import {
   deleteComment,
   updateComment,
@@ -8,7 +9,15 @@ import {
 } from '../../apis/comment.api';
 import BaseButton from '../Button/BaseButton';
 
-const PostComment = ({ comment }: { comment: defaultCommentType }) => {
+const PostComment = ({
+  comment,
+  onCommentChange,
+  postId,
+}: {
+  comment: defaultCommentType;
+  onCommentChange: (postId: string) => Promise<void>;
+  postId: string;
+}) => {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [content, setContent] = useState<string>('');
   const overflowTextRef = useRef<HTMLParagraphElement[] | null[]>([]);
@@ -24,6 +33,7 @@ const PostComment = ({ comment }: { comment: defaultCommentType }) => {
     }
     await checkAuthor(commentId);
     await deleteComment(commentId);
+    await onCommentChange(postId);
   };
 
   const handleCommentUpdate = async (commentId: string) => {
@@ -34,6 +44,7 @@ const PostComment = ({ comment }: { comment: defaultCommentType }) => {
 
     await checkAuthor(commentId);
     const data = await updateComment(commentId, content);
+    await onCommentChange(postId);
 
     if (!data.isError) {
       setIsEdit(false);
@@ -69,7 +80,11 @@ const PostComment = ({ comment }: { comment: defaultCommentType }) => {
               <AspectRatio ratio={1 / 1}>
                 <AspectRatio.Image
                   className="w-full h-full rounded-md"
-                  src={comment ? comment.creator.image : ''}
+                  src={
+                    comment && comment.creator.image
+                      ? comment.creator.image
+                      : userIcon
+                  }
                   alt="프로필 이미지"
                 />
               </AspectRatio>
