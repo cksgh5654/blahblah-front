@@ -5,8 +5,7 @@ import TrashIcon from "@components/Icons/TrashIcon";
 import BaseButton from "@components/Button/BaseButton";
 import { fetchCategories } from "@apis/category.api";
 import { imageUpload } from "@config/aws.config";
-
-const urlRegex = /^[A-Za-z0-9_]*$/;
+import { urlRegex } from "../regex/regex";
 
 interface boardInfo {
   name: string;
@@ -118,33 +117,38 @@ const CreateBoardPage = () => {
 
   const handleClickSubmit = async () => {
     setIsLoading(true);
+
     if (!isCheckedPrivacyPolicy) {
       alert("게시판 개인정보보호정책에 동의해주세요");
       setIsLoading(false);
-    } else if (!isCheckedOperatingPrinciples) {
+      return;
+    }
+    if (!isCheckedOperatingPrinciples) {
       alert("게시판 운영원칙에 동의해주세요");
       setIsLoading(false);
-    } else {
-      let imgUrl: string | undefined = "";
-      if (img) {
-        imgUrl = await FileUpload(img);
+      return;
+    }
+
+    let imgUrl: string | undefined = "";
+    if (img) {
+      imgUrl = await FileUpload(img);
+    }
+
+    try {
+      const response = await axios.post("/api/board/submit", {
+        ...boardInfo,
+        image: imgUrl,
+      });
+      if (response.status === 201) {
+        alert(response.data.message);
       }
-      try {
-        const response = await axios.post("/api/board/submit", {
-          ...boardInfo,
-          image: imgUrl,
-        });
-        if (response.status === 201) {
-          alert(response.data.message);
-        }
-      } catch (err) {
-        console.log("handleClickSubmit 오류", err);
-        if (axios.isAxiosError(err)) {
-          alert(err.response?.data.message);
-        }
-      } finally {
-        setIsLoading(false);
+    } catch (err) {
+      console.log("handleClickSubmit 오류", err);
+      if (axios.isAxiosError(err)) {
+        alert(err.response?.data.message);
       }
+    } finally {
+      setIsLoading(false);
     }
   };
   return (

@@ -1,5 +1,5 @@
-import { toast } from 'react-toastify';
-import { baseInstance } from './axios.config';
+import { toast } from "react-toastify";
+import { baseInstance } from "./axios.config";
 
 export const fetchBoardInCategories = async (
   name: string,
@@ -80,7 +80,6 @@ export const getBoardAndPostsByUrlAndId = async (
     if (response.data.isError) {
       throw new Error(response.data.message);
     }
-    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;
@@ -120,7 +119,23 @@ export const getBoard = async (url: string) => {
     }
     return response.data;
   } catch (err) {
-    toast.error('존재하지 않는 게시판입니다.');
+    toast.error("존재하지 않는 게시판입니다.");
     throw err;
+  }
+};
+
+export const getBoardsByHeader = async (boardName: string) => {
+  try {
+    const response = await baseInstance.get("/board/board-name", {
+      params: { boardName },
+    });
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
   }
 };

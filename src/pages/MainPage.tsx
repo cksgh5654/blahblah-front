@@ -87,7 +87,7 @@ const MainPage = () => {
 
   const limit = 10;
 
-  const handleClickCategory = async (name: string) => {
+  const handleClickCategory = (name: string) => {
     setPage(0);
     setCardData([]);
     setIsLoading(false);
@@ -171,6 +171,8 @@ const MainPage = () => {
 
   const { setTargetRef } = useInfinite(trigger, [page]);
 
+  const handleClickOneGlance = async () => {};
+
   useEffect(() => {
     setTargetRef(infiniteDivRef);
   }, []);
@@ -191,95 +193,97 @@ const MainPage = () => {
   }, []);
 
   return (
-    <main className="bg-slate-50">
-      <section className="flex items-end flex-wrap pt-20 pb-20 px-4 md:px-16 lg:px-24 xl:px-32">
-        <div ref={baseDivRef}>
-          <h1 className="text-5xl text-slate-800 leading-tight pr-8">
-            <strong className="text-violet-800">블라블라 게시판은</strong>
-            <br /> 누구나 만들 수 있는 게시판입니다.
-          </h1>
-        </div>
-        <div>
-          <BaseButton
-            className="flex items-center justify-center mb-2 mt-4"
-            onClick={() => navigate("/create-board")}
-          >
-            <Write height="32px" className="mr-2" />
-            게시판 만들기
-          </BaseButton>
-        </div>
-      </section>
-      <section>
-        <div className="relative group">
-          <div
-            ref={divRef}
-            onScroll={handleScroll}
-            className="relative h-[144px] overflow-scroll scrollbar-hide flex items-center"
-          >
-            <div
-              className="flex gap-2 overflow-x-visible absolute"
-              style={{
-                left: `${baseDivRect.left}px`,
-              }}
-            >
-              {categoryData.map((item) => (
-                <button
-                  onClick={() => handleClickCategory(item.name)}
-                  key={item.id}
-                  className="w-[120px] text-center relative"
-                >
-                  <img
-                    src={item.img}
-                    alt={`Item ${item.id}`}
-                    className="w-[120px] h-[120px] object-cover"
-                  />
-                  <p>{item.name}</p>
-                </button>
-              ))}
-            </div>
+    <>
+      <main className="bg-slate-50">
+        <section className="flex items-end flex-wrap pt-20 pb-20 px-4 md:px-16 lg:px-24 xl:px-32">
+          <div ref={baseDivRef}>
+            <h1 className="text-5xl text-slate-800 leading-tight pr-8">
+              <strong className="text-violet-800">블라블라 게시판은</strong>
+              <br /> 누구나 만들 수 있는 게시판입니다.
+            </h1>
           </div>
-          <button
-            onClick={handleLeft}
-            className={`${
-              isAtStart() && "hidden"
-            } bg-white rounded-full absolute left-8 top-[60px] transform opacity-0 group-hover:opacity-100 duration-300 ease-in-out bg-opacity-75 backdrop-blur-sm`}
+          <div>
+            <BaseButton
+              className="flex items-center justify-center mb-2 mt-4"
+              onClick={() => navigate("/create-board")}
+            >
+              <Write height="32px" className="mr-2" />
+              게시판 만들기
+            </BaseButton>
+          </div>
+        </section>
+        <section>
+          <div className="relative group">
+            <div
+              ref={divRef}
+              onScroll={handleScroll}
+              className="relative h-[144px] overflow-scroll scrollbar-hide flex items-center"
+            >
+              <div
+                className="flex gap-2 overflow-x-visible absolute"
+                style={{
+                  left: `${baseDivRect.left}px`,
+                }}
+              >
+                {categoryData.map((item) => (
+                  <button
+                    onClick={() => handleClickCategory(item.name)}
+                    key={item.id}
+                    className="w-[120px] text-center relative"
+                  >
+                    <img
+                      src={item.img}
+                      alt={`Item ${item.id}`}
+                      className="w-[120px] h-[120px] object-cover"
+                    />
+                    <p>{item.name}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <button
+              onClick={handleLeft}
+              className={`${
+                isAtStart() && "hidden"
+              } bg-white rounded-full absolute left-8 top-[60px] transform opacity-0 group-hover:opacity-100 duration-300 ease-in-out bg-opacity-75 backdrop-blur-sm`}
+            >
+              <ChevronIcon height="56px" />
+            </button>
+            <button
+              onClick={handleRight}
+              className={`${
+                isAtEnd() && "hidden"
+              } rotate-180 bg-white rounded-full absolute right-8 top-[60px] transform opacity-0 group-hover:opacity-100 duration-300 ease-in-out bg-opacity-75 backdrop-blur-sm`}
+            >
+              <ChevronIcon height="56px" />
+            </button>
+          </div>
+        </section>
+        <section className="flex flex-col pt-20 items-start px-4 md:px-16 lg:px-24 xl:px-32">
+          <div className="flex w-full justify-between">
+            <h2 className=" text-violet-800 text-3xl">
+              {currentCategory.name} &#40;{currentCategory.boardCount}&#41;
+            </h2>
+            <button className="flex items-center text-slate-800 text-lg">
+              게시판 한눈에 보기
+              <PlusIcon height="24px" />
+            </button>
+          </div>
+          <hr className="border-slate-300 w-full mt-2 mb-8" />
+          <div
+            className="grid gap-4 w-full pb-20"
+            style={{
+              gridTemplateColumns: "repeat(auto-fill, minmax(328px, 1fr))",
+            }}
           >
-            <ChevronIcon height="56px" />
-          </button>
-          <button
-            onClick={handleRight}
-            className={`${
-              isAtEnd() && "hidden"
-            } rotate-180 bg-white rounded-full absolute right-8 top-[60px] transform opacity-0 group-hover:opacity-100 duration-300 ease-in-out bg-opacity-75 backdrop-blur-sm`}
-          >
-            <ChevronIcon height="56px" />
-          </button>
-        </div>
-      </section>
-      <section className="flex flex-col pt-20 items-start px-4 md:px-16 lg:px-24 xl:px-32">
-        <div className="flex w-full justify-between">
-          <h2 className=" text-violet-800 text-3xl">
-            {currentCategory.name} &#40;{currentCategory.boardCount}&#41;
-          </h2>
-          <button className="flex items-center text-slate-800 text-lg">
-            게시판 한눈에 보기
-            <PlusIcon height="24px" />
-          </button>
-        </div>
-        <hr className="border-slate-300 w-full mt-2 mb-8" />
-        <div
-          className="grid gap-4 w-full pb-20"
-          style={{
-            gridTemplateColumns: "repeat(auto-fill, minmax(328px, 1fr))",
-          }}
-        >
-          {cardData.map((card) => (
-            <Card key={card._id} data={card} />
-          ))}
-        </div>
-        <div ref={infiniteDivRef}></div>
-      </section>
-    </main>
+            {cardData.map((card) => (
+              <Card key={card._id} data={card} />
+            ))}
+          </div>
+          <div ref={infiniteDivRef}></div>
+        </section>
+      </main>
+    </>
   );
 };
 
