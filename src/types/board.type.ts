@@ -7,6 +7,7 @@ export interface Board {
   category: string;
   url: string;
   createdAt: string;
+  memberCount: number;
   _id: string;
   manager: User;
 }

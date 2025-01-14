@@ -12,36 +12,47 @@ const AdminPage = () => {
   );
 
   return (
-    <>
-      <Tabs.Root defaultValue={selectedTab}>
-        <Tabs.List className="w-fit flex text-sm font-semibold cursor-pointer mb-8">
-          <Tabs.Trigger
+    <div
+      className="flex flex-col items-center"
+      style={{ height: "calc(-68.5px + 100vh)" }}
+    >
+      <div className="w-[768px] py-8 flex-grow">
+        <Tabs.Root defaultValue={selectedTab}>
+          <Tabs.List className="w-fit flex text-sm font-semibold cursor-pointer">
+            <Tabs.Trigger
+              value="BOARD"
+              onClick={() => setSearchParams({ selectedTab: "BOARD" })}
+              className={`${
+                selectedTab === "BOARD" && "border-b-2 border-violet-800 pb-2"
+              } flex justify-center items-center px-4`}
+            >
+              <p className="text-center">게시판 관리</p>
+            </Tabs.Trigger>
+            <Tabs.Trigger
+              value="USERS"
+              onClick={() => setSearchParams({ selectedTab: "USERS" })}
+              className={`${
+                selectedTab === "USERS" && "border-b-2 border-violet-800 pb-2"
+              } flex justify-center items-center px-4`}
+            >
+              <p className="text-center">회원 관리</p>
+            </Tabs.Trigger>
+          </Tabs.List>
+          <Tabs.Content
             value="BOARD"
-            onClick={() => setSearchParams({ selectedTab: "BOARD" })}
-            className={`${
-              selectedTab === "BOARD" && "border-b-2 border-violet-800 pb-2"
-            } flex justify-center items-center px-4`}
+            className={`${selectedTab === "BOARD" && "h-full"}`}
           >
-            <p className="text-center">게시판 관리</p>
-          </Tabs.Trigger>
-          <Tabs.Trigger
+            <BoardList />
+          </Tabs.Content>
+          <Tabs.Content
             value="USERS"
-            onClick={() => setSearchParams({ selectedTab: "USERS" })}
-            className={`${
-              selectedTab === "USERS" && "border-b-2 border-violet-800 pb-2"
-            } flex justify-center items-center px-4`}
+            className={`${selectedTab === "USERS" && "h-full"}`}
           >
-            <p className="text-center">회원 관리</p>
-          </Tabs.Trigger>
-        </Tabs.List>
-        <Tabs.Content value="BOARD">
-          <BoardList />
-        </Tabs.Content>
-        <Tabs.Content value="USERS">
-          <UserList />
-        </Tabs.Content>
-      </Tabs.Root>
-    </>
+            <UserList />
+          </Tabs.Content>
+        </Tabs.Root>
+      </div>
+    </div>
   );
 };
 
