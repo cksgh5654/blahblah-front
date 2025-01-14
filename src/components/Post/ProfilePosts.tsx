@@ -5,6 +5,7 @@ import { User } from "~types/user.type";
 import { getPostsByUserId } from "@apis/post.api";
 import { ProfilePost } from "~types/post.type";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import defaultImage from "../../assets/image/defaultImg.svg";
 
 interface ProfilePostsProps {
   profileUser?: User;
@@ -19,16 +20,15 @@ export type PageInfo = {
   totalPostsCount: number;
 };
 
-const ProfilePosts = ({ profileUser, selectedTab }: ProfilePostsProps) => {
+const ProfilePosts = ({ profileUser }: ProfilePostsProps) => {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [posts, setPosts] = useState<ProfilePost[]>();
   const [pageInfo, setPageInfo] = useState<PageInfo>();
   const { user: signinedUser } = useUserContext();
 
   const handleChangePage = (index: number) => {
     navigate(`?selectedTab=posts&page=${index + 1}`, { replace: true });
-    // { selectedTab, page: String(index + 1) }
   };
 
   useEffect(() => {
@@ -63,7 +63,7 @@ const ProfilePosts = ({ profileUser, selectedTab }: ProfilePostsProps) => {
               <div className="flex items-start gap-4">
                 <AspectRatio className="w-14 h-14 shrink-0" ratio={1 / 1}>
                   <AspectRatio.Image
-                    src={board.image}
+                    src={board.image || defaultImage}
                     alt="board-image"
                     className="w-full h-full object-cover rounded-md shadow-md"
                   />

@@ -3,7 +3,7 @@ import { AspectRatio } from "blahblah-front-common-ui-kit";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Board } from "~types/board.type";
-import defaultImage from "./Card/defaultImg.svg";
+import defaultImage from "../assets/image/defaultImg.svg";
 
 const ProfileBoard = () => {
   const navigate = useNavigate();

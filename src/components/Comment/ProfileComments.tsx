@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ProfileComment } from "~types/comment.type";
 import { User } from "~types/user.type";
+import defaultImage from "../../assets/image/defaultImg.svg";
 interface ProfileCommentsProps {
   profileUser?: User;
   selectedTab: string;
@@ -18,18 +19,15 @@ export type PageInfo = {
   totalCommentsCount: number;
 };
 
-const ProfileComments = ({
-  profileUser,
-  selectedTab,
-}: ProfileCommentsProps) => {
+const ProfileComments = ({ profileUser }: ProfileCommentsProps) => {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [comments, setComments] = useState<ProfileComment[]>();
   const [pageInfo, setPageInfo] = useState<PageInfo>();
   const { user: signinedUser } = useUserContext();
 
   const handleChangePage = (index: number) => {
-    setSearchParams({ selectedTab, page: String(index + 1) });
+    navigate(`?selectedTab=commets&page=${index + 1}`, { replace: true });
   };
 
   useEffect(() => {
@@ -64,7 +62,7 @@ const ProfileComments = ({
             <div>
               <AspectRatio className="w-14 self-start" ratio={1 / 1}>
                 <AspectRatio.Image
-                  src={post.board.image}
+                  src={post.board.image || defaultImage}
                   alt="board-image"
                   className="w-full h-full object-cover rounded-md"
                 />
