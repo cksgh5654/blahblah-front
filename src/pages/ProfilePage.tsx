@@ -11,7 +11,7 @@ import { useUserContext } from "@context/userContext";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const profileUser = useLoaderData<User>();
   const { user: singinedUser } = useUserContext();
   const isSigninedUser = useMemo(

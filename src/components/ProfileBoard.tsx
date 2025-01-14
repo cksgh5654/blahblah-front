@@ -3,6 +3,7 @@ import { AspectRatio } from "blahblah-front-common-ui-kit";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Board } from "~types/board.type";
+import defaultImage from "./Card/defaultImg.svg";
 
 const ProfileBoard = () => {
   const navigate = useNavigate();
@@ -23,8 +24,8 @@ const ProfileBoard = () => {
 
   return (
     <>
-      <ul className="py-4 flex flex-wrap h-full">
-        <div className="flex flex-wrap h-fit">
+      <ul className="w-full py-4 flex flex-wrap">
+        <div className="flex flex-wrap flex-grow">
           {board?.map(({ _id, image, name, url }) => (
             <li
               key={`board-item-${_id}`}
@@ -34,7 +35,7 @@ const ProfileBoard = () => {
               <AspectRatio ratio={1 / 1}>
                 <AspectRatio.Image
                   className="w-full h-full object-cover"
-                  src={image}
+                  src={image || defaultImage}
                 />
                 <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity">
                   <p className="text-lg font-bold">{name}</p>
