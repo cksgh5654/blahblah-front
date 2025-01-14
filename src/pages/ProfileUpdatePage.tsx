@@ -50,7 +50,6 @@ const ProfileUpdatePage = () => {
         const url = await imageUpload(imageFile);
         updatedFormData = { ...formData, image: url };
       }
-
       await updateMyProfile(updatedFormData);
       updateUser(updatedFormData);
       navigate(`/${updatedFormData.email}`);
