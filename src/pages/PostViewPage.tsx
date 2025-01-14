@@ -180,7 +180,7 @@ const PostViewPage = () => {
               <AspectRatio ratio={1 / 1}>
                 <AspectRatio.Image
                   className="w-full h-full rounded-md"
-                  src={postData ? postData.image : userIcon}
+                  src={postData && postData.image ? postData.image : userIcon}
                   alt="프로필 이미지"
                 />
               </AspectRatio>

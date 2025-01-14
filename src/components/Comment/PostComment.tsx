@@ -1,6 +1,7 @@
 import { AspectRatio, Textarea } from 'blahblah-front-common-ui-kit';
 import { ChangeEvent, useEffect, useState, useRef } from 'react';
 import { defaultCommentType } from '../../pages/PostViewPage';
+import userIcon from '../../../public/default-user-icon.svg';
 import {
   deleteComment,
   updateComment,
@@ -79,7 +80,11 @@ const PostComment = ({
               <AspectRatio ratio={1 / 1}>
                 <AspectRatio.Image
                   className="w-full h-full rounded-md"
-                  src={comment ? comment.creator.image : ''}
+                  src={
+                    comment && comment.creator.image
+                      ? comment.creator.image
+                      : userIcon
+                  }
                   alt="프로필 이미지"
                 />
               </AspectRatio>
