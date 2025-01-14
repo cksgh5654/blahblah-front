@@ -41,12 +41,22 @@ const ProfilePage = () => {
               </p>
             </div>
             {isSigninedUser && (
-              <BaseButton
-                className="w-fit h-fit self-center"
-                onClick={() => navigate(`/${profileUser?.email}/profile`)}
-              >
-                프로필 수정
-              </BaseButton>
+              <div className="flex flex-col self-center">
+                <BaseButton
+                  className="w-fit mb-2"
+                  onClick={() => navigate(`/${profileUser?.email}/profile`)}
+                >
+                  프로필 수정
+                </BaseButton>
+                {singinedUser.role === "ADMIN" && (
+                  <p
+                    className="font-xl font-bold hover:underline cursor-pointer"
+                    onClick={() => navigate("/admin")}
+                  >
+                    관리자 페이지로 가기
+                  </p>
+                )}
+              </div>
             )}
           </div>
           <div className="flex-grow">
