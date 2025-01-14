@@ -8,7 +8,15 @@ import {
 } from '../../apis/comment.api';
 import BaseButton from '../Button/BaseButton';
 
-const PostComment = ({ comment }: { comment: defaultCommentType }) => {
+const PostComment = ({
+  comment,
+  onCommentChange,
+  postId,
+}: {
+  comment: defaultCommentType;
+  onCommentChange: (postId: string) => Promise<void>;
+  postId: string;
+}) => {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [content, setContent] = useState<string>('');
   const overflowTextRef = useRef<HTMLParagraphElement[] | null[]>([]);
@@ -24,6 +32,7 @@ const PostComment = ({ comment }: { comment: defaultCommentType }) => {
     }
     await checkAuthor(commentId);
     await deleteComment(commentId);
+    await onCommentChange(postId);
   };
 
   const handleCommentUpdate = async (commentId: string) => {
@@ -34,6 +43,7 @@ const PostComment = ({ comment }: { comment: defaultCommentType }) => {
 
     await checkAuthor(commentId);
     const data = await updateComment(commentId, content);
+    await onCommentChange(postId);
 
     if (!data.isError) {
       setIsEdit(false);

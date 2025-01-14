@@ -144,7 +144,7 @@ const PostViewPage = () => {
     return () => {
       window.removeEventListener('resize', handleOverflowText);
     };
-  }, [commentData]);
+  }, []);
 
   return (
     <div className="min-w-[360px] max-w-[1280px] mx-auto py-20 bg-gray-100">
@@ -242,7 +242,12 @@ const PostViewPage = () => {
 
         {commentData
           ? commentData.map((comment, index) => (
-              <PostComment key={index} comment={comment} />
+              <PostComment
+                key={index}
+                comment={comment}
+                onCommentChange={handleGetComments}
+                postId={postId}
+              />
             ))
           : null}
       </div>
