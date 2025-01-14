@@ -27,7 +27,8 @@ const ProfilePosts = ({ profileUser, selectedTab }: ProfilePostsProps) => {
   const { user: signinedUser } = useUserContext();
 
   const handleChangePage = (index: number) => {
-    setSearchParams({ selectedTab, page: String(index + 1) });
+    navigate(`?selectedTab=posts&page=${index + 1}`, { replace: true });
+    // { selectedTab, page: String(index + 1) }
   };
 
   useEffect(() => {

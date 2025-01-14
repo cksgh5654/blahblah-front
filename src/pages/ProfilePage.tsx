@@ -54,7 +54,9 @@ const ProfilePage = () => {
               <Tabs.List className="w-fit flex text-sm font-semibold cursor-pointer">
                 <Tabs.Trigger
                   value="posts"
-                  onClick={() => setSearchParams({ selectedTab: "posts" })}
+                  onClick={() =>
+                    navigate(`?selectedTab=posts`, { replace: true })
+                  }
                   className={`${
                     TabsDefaultValue === "posts" &&
                     "border-b-2 border-violet-800 pb-2"
@@ -66,7 +68,9 @@ const ProfilePage = () => {
                 </Tabs.Trigger>
                 <Tabs.Trigger
                   value="comments"
-                  onClick={() => setSearchParams({ selectedTab: "comments" })}
+                  onClick={() =>
+                    navigate(`?selectedTab=comments`, { replace: true })
+                  }
                   className={`${
                     TabsDefaultValue === "comments" &&
                     "border-b-2 border-violet-800 pb-2"
@@ -77,7 +81,9 @@ const ProfilePage = () => {
                 {isSigninedUser && (
                   <Tabs.Trigger
                     value="board"
-                    onClick={() => setSearchParams({ selectedTab: "board" })}
+                    onClick={() =>
+                      navigate(`?selectedTab=board`, { replace: true })
+                    }
                     className={`${
                       TabsDefaultValue === "board" &&
                       "border-b-2 border-violet-800 pb-2"
