@@ -13,14 +13,17 @@ const ProfileBoard = () => {
       .then(setBoard);
   }, []);
 
+  if (!board?.length) {
+    return (
+      <div className="flex-1 flex justify-center items-center h-full text-gray-500 font-bold text-xl">
+        <p>개설한 게시판이 없습니다.</p>
+      </div>
+    );
+  }
+
   return (
     <>
       <ul className="py-4 flex flex-wrap h-full">
-        {board?.length === 0 && (
-          <div className="flex-1 flex justify-center items-center h-full text-gray-500 font-bold text-xl">
-            <p>개설한 게시판이 없습니다.</p>
-          </div>
-        )}
         <div className="flex flex-wrap h-fit">
           {board?.map(({ _id, image, name, url }) => (
             <li

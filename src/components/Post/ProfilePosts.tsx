@@ -42,14 +42,17 @@ const ProfilePosts = ({ profileUser, selectedTab }: ProfilePostsProps) => {
       });
   }, [profileUser, searchParams]);
 
+  if (!posts?.length) {
+    return (
+      <div className="flex justify-center items-center h-full text-gray-500 font-bold text-xl">
+        <p>작성한 게시글이 없습니다.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="h-full flex flex-col">
       <ul className="flex-1">
-        {posts?.length === 0 && (
-          <div className="flex justify-center items-center h-full text-gray-500 font-bold text-xl">
-            <p>작성한 게시글이 없습니다.</p>
-          </div>
-        )}
         {posts?.map(({ title, createdAt, board, _id }) => (
           <li
             className="p-4 border-b border-gray-300 hover:bg-gray-50 transition duration-200"

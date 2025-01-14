@@ -44,14 +44,18 @@ const ProfileComments = ({
         setPageInfo(pageInfo);
       });
   }, [profileUser, searchParams]);
+
+  if (!comments?.length) {
+    return (
+      <div className="flex justify-center items-center h-full text-gray-500 font-bold text-xl">
+        <p>작성한 댓글이 없습니다.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="h-full flex flex-col">
       <ul className="flex-1">
-        {comments?.length === 0 && (
-          <div className="flex justify-center items-center h-full text-gray-500 font-bold text-xl">
-            <p>작성한 댓글이 없습니다.</p>
-          </div>
-        )}
         {comments?.map(({ content, createdAt, post, _id }) => (
           <li
             className="flex gap-x-2 p-4 border-b border-gray-300 hover:bg-gray-50 transition duration-200"

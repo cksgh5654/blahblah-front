@@ -49,8 +49,6 @@ const Header = () => {
     }
   }, [debouncedSearchTerm]);
 
-  console.log(boardsData);
-
   return (
     <header className="sticky top-0 bg-white  border-b border-slate-300">
       <Popover
