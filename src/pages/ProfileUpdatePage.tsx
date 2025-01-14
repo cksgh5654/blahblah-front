@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Avatar from "@components/Avatar";
 import BaseInput from "@components/Input/BaseInput";
 import BaseButton from "@components/Button/BaseButton";

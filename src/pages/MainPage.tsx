@@ -171,8 +171,6 @@ const MainPage = () => {
 
   const { setTargetRef } = useInfinite(trigger, [page]);
 
-  const handleClickOneGlance = async () => {};
-
   useEffect(() => {
     setTargetRef(infiniteDivRef);
   }, []);

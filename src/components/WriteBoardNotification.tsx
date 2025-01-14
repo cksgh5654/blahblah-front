@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Tabs } from "blahblah-front-common-ui-kit";
 import BaseInput from "./Input/BaseInput";

@@ -1,5 +1,4 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { useEffect } from "react";
 import BaseLayout from "@components/BaseLayout";
 import {
   MainPage,
