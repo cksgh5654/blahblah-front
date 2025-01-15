@@ -11,7 +11,6 @@ import defaultImg from "../components/Card/defaultImg.svg";
 import { useNavigate, useParams } from "react-router-dom";
 import { createBoardUser } from "@apis/boardUser.api";
 import axios from "axios";
-import { useUserContext } from "@context/userContext";
 
 interface Manager {
   email: string;
