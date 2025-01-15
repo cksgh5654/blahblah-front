@@ -4,10 +4,10 @@ import { Tabs } from "blahblah-front-common-ui-kit";
 import Avatar from "@components/Avatar";
 import BaseButton from "@components/Button/BaseButton";
 import ProfileBoard from "@components/ProfileBoard";
-import ProfilePosts from "@components/Post/ProfilePosts";
 import ProfileComments from "@components/Comment/ProfileComments";
 import { User } from "~types/user.type";
 import { useUserContext } from "@context/userContext";
+import ProfilePosts from "@components/Post/ProfilePosts";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
