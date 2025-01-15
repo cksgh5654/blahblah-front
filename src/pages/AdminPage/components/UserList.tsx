@@ -73,18 +73,25 @@ const UserList = () => {
         ))}
       </ul>
       {pageInfo && (
-        <div className="py-4">
+        <div className="flex justify-center">
           <Pagination
             onPageChange={handleChangePage}
             total={pageInfo?.totalUsersCount}
             value={pageInfo?.currentPage - 1}
           >
-            <Pagination.Navigator className="flex justify-center items-center gap-x-2">
-              <Pagination.Buttons className="px-3 py-1 bg-gray-200 rounded-md hover:bg-violet-300 active:bg-violet-400" />
+            <Pagination.Navigator className="flex gap-4">
+              <Pagination.Buttons className="PaginationButtons flex gap-4 font-bold text-slate-300" />
             </Pagination.Navigator>
           </Pagination>
         </div>
       )}
+      <style>
+        {`
+            .PaginationButtons button:disabled {
+              color: #5B21B6;
+            }
+          `}
+      </style>
     </div>
   );
 };

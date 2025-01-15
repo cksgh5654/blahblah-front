@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Board } from "~types/board.type";
+import defaultImage from "../../../assets/image/defaultImg.svg";
 
 type PageInfo = {
   currentPage: number;
@@ -66,7 +67,6 @@ const BoardList = () => {
         setPageInfo(pageInfo);
       });
   }, [searchParams]);
-  console.log(board);
   return (
     <div className="flex flex-col h-full bg-gray-50 p-4 rounded-md shadow-lg">
       <ul className="space-y-4 flex-grow">
@@ -81,7 +81,7 @@ const BoardList = () => {
             >
               <AspectRatio ratio={1 / 1}>
                 <AspectRatio.Image
-                  src={image}
+                  src={image || defaultImage}
                   className="w-full h-full object-cover rounded-md"
                 />
               </AspectRatio>
@@ -104,16 +104,16 @@ const BoardList = () => {
               </div>
             </div>
             {approvalStatus === "대기" ? (
-              <div>
+              <div className="flex gap-x-1">
                 <BaseButton
                   onClick={() => handleUpdateBoardStatus(_id, "승인")}
-                  className="px-3 py-1 text-sm bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+                  className="hover:bg-violet-600"
                 >
                   승인
                 </BaseButton>
                 <BaseButton
                   onClick={() => handleUpdateBoardStatus(_id, "미승인")}
-                  className="px-3 py-1 text-sm bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+                  className="bg-gray-500 text-white rounded-lg hover:bg-gray-600"
                 >
                   미승인
                 </BaseButton>
@@ -121,7 +121,7 @@ const BoardList = () => {
             ) : (
               <BaseButton
                 onClick={() => handleDeleteBoard(_id)}
-                className="px-3 py-1 text-sm bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+                className="bg-red-500 text-white rounded-lg hover:bg-red-600"
               >
                 게시판 폐쇄
               </BaseButton>
@@ -130,18 +130,25 @@ const BoardList = () => {
         ))}
       </ul>
       {pageInfo && (
-        <div className="py-4">
+        <div className="flex justify-center">
           <Pagination
             onPageChange={handleChangePage}
             total={pageInfo?.totalBoardCount}
             value={pageInfo?.currentPage - 1}
           >
-            <Pagination.Navigator className="flex justify-center items-center gap-x-2">
-              <Pagination.Buttons className="px-3 py-1 bg-gray-200 rounded-md hover:bg-violet-300 active:bg-violet-400" />
+            <Pagination.Navigator className="flex gap-4">
+              <Pagination.Buttons className="PaginationButtons flex gap-4 font-bold text-slate-300" />
             </Pagination.Navigator>
           </Pagination>
         </div>
       )}
+      <style>
+        {`
+            .PaginationButtons button:disabled {
+              color: #5B21B6;
+            }
+          `}
+      </style>
     </div>
   );
 };
