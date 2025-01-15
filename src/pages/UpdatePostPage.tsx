@@ -73,7 +73,7 @@ const UpdatePostPage = () => {
       }
     } catch (err) {
       console.error(`[handleGetPost]`, err);
-      navigator(`/board/${url}`);
+      navigator(`/board/${url}`, { replace: true });
     }
   };
 

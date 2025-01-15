@@ -42,7 +42,7 @@ const CreatePostPage = () => {
       navigator(`/post/view/${post._id}`);
     } catch (err) {
       console.error(`[handlePostCreate] :`, err);
-      navigator(`/board/${url}`);
+      navigator(`/board/${url}`, { replace: true });
     }
   };
 
@@ -56,7 +56,7 @@ const CreatePostPage = () => {
       await getBoard(url);
     } catch (err) {
       console.error(`[handleGetBoard] :`, err);
-      navigator('/');
+      navigator(`/`, { replace: true });
     }
   };
 
