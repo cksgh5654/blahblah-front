@@ -59,8 +59,6 @@ const blockSize = 15;
 
 const BoardPage = () => {
   const { url } = useParams();
-  const { user } = useUserContext();
-  const userId = user._id;
   const [currentPage, setCurrentPage] = useState(0);
   const [currentNoticePage, setCurrentNoticePage] = useState(0);
   const [isNotice, setIsNotice] = useState(false);
@@ -70,7 +68,7 @@ const BoardPage = () => {
     basic: 0,
     notification: 0,
   });
-  const [currentUserId, setCurrentUserId] = useState<string>(userId);
+  const [currentUserId, setCurrentUserId] = useState<string>("");
   const [boardData, setBoardData] = useState<Board>({
     category: "",
     createdAt: "",
@@ -94,28 +92,25 @@ const BoardPage = () => {
   const [isJoin, setIsJoin] = useState(false);
   const navigate = useNavigate();
 
-  console.log(user); //이부분 질문
-  console.log(currentUserId);
-
   useEffect(() => {
-    if (userId) setCurrentUserId(userId);
     if (!url) return;
     const fetchData = async () => {
       try {
-        const data = await getBoardAndPostsByUrlAndId(url, userId, 0, pageSize);
+        const data = await getBoardAndPostsByUrlAndId(url, 0, pageSize);
         setBoardData(data.board);
         setBasicPostData(data.basicPosts);
         setNotificationPostData(data.notificationPosts);
         setIsJoin(data.isJoin);
         setIsApply(data.isApply);
         setTotalPostCount(data.totalPostCount);
+        setCurrentUserId(data.userId);
       } catch (error) {
         console.error("게시글을 가져오는 데 실패했습니다.", error);
       }
     };
 
     fetchData();
-  }, [user, url]);
+  }, []);
 
   const handlePageChange = async (index: number) => {
     setCurrentPage(index);
@@ -124,12 +119,7 @@ const BoardPage = () => {
   useEffect(() => {
     const pageMove = async () => {
       if (!url) return;
-      const data = await getBoardAndPostsByUrlAndId(
-        url,
-        userId,
-        currentPage,
-        pageSize
-      );
+      const data = await getBoardAndPostsByUrlAndId(url, currentPage, pageSize);
       setBasicPostData(data.basicPosts);
     };
     pageMove();
@@ -144,7 +134,6 @@ const BoardPage = () => {
       if (!url) return;
       const data = await getBoardAndPostsByUrlAndId(
         url,
-        userId,
         currentNoticePage,
         pageSize
       );

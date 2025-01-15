@@ -14,7 +14,7 @@ const UserContext = createContext<UserContextProps | null>(null);
 
 export const useUserContext = () => {
   const context = useContext(UserContext);
-
+  console.log(context);
   if (!context) {
     throw new Error(
       "useUserContext should be used within UserContext.Provider"

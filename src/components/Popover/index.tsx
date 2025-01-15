@@ -21,7 +21,6 @@ interface PopoverContextProps extends HTMLAttributes<HTMLDivElement> {
   setTriggerRect: Dispatch<SetStateAction<DOMRect>>;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  position: "bottom-left" | "bottom-center" | "bottom-right" | "bottom";
 }
 
 export const PopoverContext = createContext<PopoverContextProps>({
@@ -29,24 +28,16 @@ export const PopoverContext = createContext<PopoverContextProps>({
   triggerRect: new DOMRect(),
   isOpen: false,
   setIsOpen: () => {},
-  position: "bottom-right",
 });
 
 interface PopoverProps {
   children: ReactNode;
   className?: string;
-  position?: "bottom-left" | "bottom-center" | "bottom-right" | "bottom";
   isOpen?: boolean;
   onToggle?: (isOpen: boolean) => void;
 }
 const Popover: FC<PopoverProps> & PopoverCompoundProps = (props) => {
-  const {
-    children,
-    position = "bottom",
-    isOpen: externalIsOpen,
-    onToggle,
-    className,
-  } = props;
+  const { children, isOpen: externalIsOpen, onToggle, className } = props;
   const [triggerRect, setTriggerRect] = useState(new DOMRect());
   const [internalIsOpen, setInternalIsOpen] = useState(false);
 
@@ -71,7 +62,6 @@ const Popover: FC<PopoverProps> & PopoverCompoundProps = (props) => {
     setTriggerRect,
     isOpen: internalIsOpen,
     setIsOpen,
-    position,
   };
 
   return (

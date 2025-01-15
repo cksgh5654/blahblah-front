@@ -37,6 +37,7 @@ const PopoverTrigger = (props: PopoverTriggerProps) => {
   }, [isOpen]);
 
   const handleClick = () => {
+    calculateTriggerRect();
     setIsOpen((prev) => !prev);
   };
 

@@ -27,8 +27,9 @@ import {
 } from "../apis/board.api";
 import BaseButton from "@components/Button/BaseButton";
 import ChevronIcon from "@components/Icons/ChevronIcon";
-import { Pagination, Popover, useInfinite } from "blahblah-front-common-ui-kit";
+import { Pagination, useInfinite } from "blahblah-front-common-ui-kit";
 import WriteIcon from "@components/Icons/WriteIcon";
+import Popover from "@components/Popover";
 
 const categoryData = [
   { id: 0, img: entertainments, name: "연예" },
@@ -244,7 +245,7 @@ const MainPage = () => {
 
   return (
     <>
-      <main className="bg-slate-50">
+      <main className="bg-slate-50 h-screen">
         <section className="flex items-end flex-wrap pt-20 pb-20 px-4 md:px-16 lg:px-24 xl:px-32">
           <div ref={baseDivRef}>
             <h1 className="text-5xl text-slate-800 leading-tight pr-8">
@@ -322,7 +323,6 @@ const MainPage = () => {
             <Popover
               isOpen={isOpen}
               onToggle={setIsOpen}
-              position="bottom"
               className={`${currentCategory.boardCount === 0 && "hidden"}`}
             >
               <Popover.Trigger className="flex items-center text-slate-800 text-lg">
@@ -333,39 +333,37 @@ const MainPage = () => {
                   transform={isOpen ? "rotate(45)" : ""}
                 />
               </Popover.Trigger>
-              <Popover.Content>
-                <div className="flex justify-center w-screen h-96 mt-8 px-4 md:px-16 lg:px-24 xl:px-32">
-                  <div className="flex flex-col justify-between w-full bg-white border rounded-lg overflow-y-scroll">
-                    <div
-                      className="grid gap-2 w-full py-4 px-2"
-                      style={{
-                        gridTemplateColumns:
-                          "repeat(auto-fill, minmax(164px, 1fr))",
-                      }}
-                    >
-                      {popoverBoardsData.map((board) => (
-                        <button
-                          key={board.name}
-                          onClick={() => navigate(`/board/${board.url}`)}
-                          className="text-start text-slate-500 hover:text-slate-800 duration-300"
-                        >
-                          {board.name}
-                        </button>
-                      ))}
-                    </div>
-                    <Pagination
-                      total={totalBoardCount}
-                      value={currentPage}
-                      onPageChange={handlePageChange}
-                      className="flex justify-center py-8"
-                      blockSize={blockSize}
-                      pageSize={pageSize}
-                    >
-                      <Pagination.Navigator className="flex gap-4">
-                        <Pagination.Buttons className="PaginationButtons flex gap-4 font-bold text-slate-300" />
-                      </Pagination.Navigator>
-                    </Pagination>
+              <Popover.Content className="flex justify-center w-screen h-96 mt-8 px-4 md:px-16 lg:px-24 xl:px-32">
+                <div className="flex flex-col justify-between w-full h-full bg-white border rounded-lg overflow-y-scroll">
+                  <div
+                    className="grid gap-2 w-full py-4 px-2"
+                    style={{
+                      gridTemplateColumns:
+                        "repeat(auto-fill, minmax(164px, 1fr))",
+                    }}
+                  >
+                    {popoverBoardsData.map((board) => (
+                      <button
+                        key={board.name}
+                        onClick={() => navigate(`/board/${board.url}`)}
+                        className="text-start text-slate-500 hover:text-slate-800 duration-300"
+                      >
+                        {board.name}
+                      </button>
+                    ))}
                   </div>
+                  <Pagination
+                    total={totalBoardCount}
+                    value={currentPage}
+                    onPageChange={handlePageChange}
+                    className="flex justify-center py-8"
+                    blockSize={blockSize}
+                    pageSize={pageSize}
+                  >
+                    <Pagination.Navigator className="flex gap-4">
+                      <Pagination.Buttons className="PaginationButtons flex gap-4 font-bold text-slate-300" />
+                    </Pagination.Navigator>
+                  </Pagination>
                 </div>
               </Popover.Content>
             </Popover>

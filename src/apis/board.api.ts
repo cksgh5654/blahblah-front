@@ -70,13 +70,12 @@ export const getBoardPosts = async (
 
 export const getBoardAndPostsByUrlAndId = async (
   boardUrl: string,
-  userId: string | null,
   page: number,
   limit: number
 ) => {
   try {
     const response = await baseInstance.get(`/board/board-post`, {
-      params: { boardUrl, userId, page, limit },
+      params: { boardUrl, page, limit },
     });
     if (response.data.isError) {
       throw new Error(response.data.message);

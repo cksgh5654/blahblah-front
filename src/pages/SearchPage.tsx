@@ -54,21 +54,23 @@ const SearchPage = () => {
     setCurrentPage(index);
   };
 
-  const fetchBoards = async () => {
+  useEffect(() => {
     if (!boardname) return;
-    if (page === 0 && cardData.length === 0) {
+
+    setCardData([]);
+    setPage(0);
+
+    const fetchBoards = async () => {
       try {
         const boards = await getAllBoardsByName(boardname, 0, limit);
         setCardData(boards.data);
       } catch (error) {
         console.error("게시글을 가져오는 데 실패했습니다.", error);
       }
-    }
-  };
+    };
 
-  useEffect(() => {
     fetchBoards();
-  }, [page, cardData.length, boardname]);
+  }, [boardname]);
 
   const trigger = async () => {
     if (isLoading || cardData.length >= totalBoardCount) return;
@@ -119,7 +121,7 @@ const SearchPage = () => {
 
   return (
     <>
-      <main className="flex flex-col pt-20 items-start px-4 md:px-16 lg:px-24 xl:px-32 bg-slate-50">
+      <main className="flex flex-col h-screen pt-20 items-start px-4 md:px-16 lg:px-24 xl:px-32 bg-slate-50">
         <div className="flex w-full justify-between">
           <h2 className=" text-violet-800 text-3xl">
             검색결과 &#40;{totalBoardCount}&#41;
