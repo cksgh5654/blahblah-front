@@ -10,4 +10,5 @@ export interface Board {
   memberCount: number;
   _id: string;
   manager: User;
+  approvalStatus: "대기" | "승인";
 }

@@ -1,9 +1,10 @@
-import { deleteBoard, getBoards } from "@apis/board.api";
+import { deleteBoard, getBoards, updateBoardStatus } from "@apis/board.api";
 import Avatar from "@components/Avatar";
 import BaseButton from "@components/Button/BaseButton";
 import { AspectRatio, Pagination } from "blahblah-front-common-ui-kit";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { Board } from "~types/board.type";
 
 type PageInfo = {
@@ -24,6 +25,29 @@ const BoardList = () => {
     setSearchParams({ selectedTab: "BOARD", page: String(index + 1) });
   };
 
+  const handleUpdateBoardStatus = (
+    boardId: string,
+    status: "승인" | "미승인"
+  ) => {
+    updateBoardStatus(boardId, status) //
+      .then((response) => {
+        toast.success(response.message);
+        if (status === "승인") {
+          const updated = board?.map((board) => {
+            if (board._id === boardId) {
+              return { ...board, approvalStatus: status };
+            }
+            return board;
+          });
+          setBoard(updated);
+        } else {
+          const updated = board?.filter((board) => board._id !== boardId);
+          setBoard(updated);
+        }
+      })
+      .catch((error) => toast.error(error.message));
+  };
+
   const handleDeleteBoard = (boardId: string) => {
     deleteBoard(boardId) //
       .then(() => {
@@ -42,11 +66,11 @@ const BoardList = () => {
         setPageInfo(pageInfo);
       });
   }, [searchParams]);
-
+  console.log(board);
   return (
     <div className="flex flex-col h-full bg-gray-50 p-4 rounded-md shadow-lg">
       <ul className="space-y-4 flex-grow">
-        {board?.map(({ _id, name, image, manager, url }: Board) => (
+        {board?.map(({ _id, name, image, manager, url, approvalStatus }) => (
           <li
             key={`board-item-${_id}`}
             className="flex items-center bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200"
@@ -69,20 +93,39 @@ const BoardList = () => {
               >
                 {name}
               </p>
-              <p
-                className="text-sm text-gray-500 flex items-center gap-x-2 cursor-pointer hover:underline"
-                onClick={() => navigate(`/${manager.email}`)}
-              >
+              <div className="flex items-center gap-x-2">
                 <Avatar url={manager.image} size="small" />
-                {manager.email}
-              </p>
+                <p
+                  className="text-sm text-gray-500 flex self-end gap-x-2 cursor-pointer hover:underline"
+                  onClick={() => navigate(`/${manager.email}`)}
+                >
+                  {manager.email}
+                </p>
+              </div>
             </div>
-            <BaseButton
-              onClick={() => handleDeleteBoard(_id)}
-              className="px-3 py-1 text-sm bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
-            >
-              게시판 폐쇄
-            </BaseButton>
+            {approvalStatus === "대기" ? (
+              <div>
+                <BaseButton
+                  onClick={() => handleUpdateBoardStatus(_id, "승인")}
+                  className="px-3 py-1 text-sm bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+                >
+                  승인
+                </BaseButton>
+                <BaseButton
+                  onClick={() => handleUpdateBoardStatus(_id, "미승인")}
+                  className="px-3 py-1 text-sm bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+                >
+                  미승인
+                </BaseButton>
+              </div>
+            ) : (
+              <BaseButton
+                onClick={() => handleDeleteBoard(_id)}
+                className="px-3 py-1 text-sm bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+              >
+                게시판 폐쇄
+              </BaseButton>
+            )}
           </li>
         ))}
       </ul>

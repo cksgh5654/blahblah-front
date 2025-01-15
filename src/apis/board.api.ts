@@ -1,6 +1,6 @@
-import { toast } from 'react-toastify';
-import { baseInstance } from './axios.config';
-import { AxiosError } from 'axios';
+import { toast } from "react-toastify";
+import { baseInstance } from "./axios.config";
+import { AxiosError } from "axios";
 
 export const fetchBoardInCategories = async (
   name: string,
@@ -129,7 +129,7 @@ export const getBoard = async (url: string) => {
 
 export const getBoardsByHeader = async (boardName: string) => {
   try {
-    const response = await baseInstance.get('/board/board-name', {
+    const response = await baseInstance.get("/board/board-name", {
       params: { boardName },
     });
     if (response.data.isError) {
@@ -149,7 +149,7 @@ export const getAllBoardsByCatogory = async (
   limit: number
 ) => {
   try {
-    const response = await baseInstance.get('/board/boards/category-name', {
+    const response = await baseInstance.get("/board/boards/category-name", {
       params: { categoryName, page, limit },
     });
     if (response.data.isError) {
@@ -175,6 +175,19 @@ export const getAllBoardsByName = async (
     if (response.data.isError) {
       throw new Error(response.data.message);
     }
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+  }
+};
+
+export const updateBoardStatus = async (boardId: string, status: string) => {
+  try {
+    const response = await baseInstance.put(`/admin/board/${boardId}`, {
+      status,
+    });
     return response.data;
   } catch (error) {
     if (error instanceof Error) {
