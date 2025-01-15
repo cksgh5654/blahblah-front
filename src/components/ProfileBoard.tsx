@@ -26,7 +26,7 @@ const ProfileBoard = () => {
     );
   return (
     <>
-      <ul className="w-full py-4 flex flex-wrap">
+      <ul className="w-full py-4 flex flex-wrap  h-full">
         <div className="flex flex-wrap flex-grow">
           {board?.length === 0 ? (
             <div className="flex-1 flex justify-center items-center h-full text-gray-500 font-bold text-xl">
@@ -37,7 +37,7 @@ const ProfileBoard = () => {
               {board?.map(({ _id, image, name, approvalStatus }) => (
                 <li
                   key={`board-item-${_id}`}
-                  className="relative cursor-pointer w-1/4 shadow-md group"
+                  className="relative cursor-pointer w-1/4 shadow-md group h-fit"
                   onClick={() =>
                     approvalStatus === "승인" &&
                     navigate(`/board/dashboard/${_id}`)
