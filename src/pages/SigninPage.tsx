@@ -1,13 +1,15 @@
-import { useNavigate } from "react-router-dom";
-import { useMemo } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useMemo } from "react";
 import EmailAuthForm, { EmailFormDataType } from "@components/EmailAuthForm";
 import Logo from "@components/Icons/Logo";
 import BaseButton from "@components/Button/BaseButton";
 import GoogleOauthButton from "@components/Button/GoogleOauthButton";
 import { useUserContext } from "@context/userContext";
 import { signinWithEmail } from "@apis/auth.api";
+import { toast } from "react-toastify";
 
 const SigninPage = () => {
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { updateUser } = useUserContext();
   const handleEmailSignin = (formData: EmailFormDataType) => {
@@ -19,6 +21,13 @@ const SigninPage = () => {
       });
   };
   const method = useMemo(() => window.location.hash, [window.location.hash]);
+
+  useEffect(() => {
+    const errorMessage = searchParams.get("errorMessage");
+    if (errorMessage) {
+      toast.error(errorMessage);
+    }
+  }, [searchParams]);
   return (
     <div
       className="w-screen flex justify-center items-center"
