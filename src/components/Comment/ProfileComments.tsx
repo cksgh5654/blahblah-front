@@ -111,6 +111,13 @@ const ProfileComments = ({ profileUser }: ProfileCommentsProps) => {
           </div>
         </>
       )}
+      <style>
+        {`
+            .PaginationButtons button:disabled {
+              color: #5B21B6;
+            }
+          `}
+      </style>
     </div>
   );
 };
