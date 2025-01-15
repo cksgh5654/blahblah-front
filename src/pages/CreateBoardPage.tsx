@@ -25,6 +25,7 @@ interface Category {
 
 const CreateBoardPage = () => {
   const navigate = useNavigate();
+  const [nameCount, setNameCount] = useState(0);
   const [descriptionCount, setDescriptionCount] = useState(0);
   const [urlCount, setUrlCount] = useState(0);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -70,6 +71,7 @@ const CreateBoardPage = () => {
   }, []);
 
   const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
+    setNameCount(e.target.value.length);
     setBoardInfo((prev) => ({
       ...prev,
       name: e.target.value,
@@ -166,16 +168,21 @@ const CreateBoardPage = () => {
   return (
     <div className="flex justify-center">
       <main className="w-[1280px] px-8 py-16 flex gap-6 flex-col">
-        <input
-          onChange={handleChangeName}
-          type="text"
-          placeholder="게시판 이름을 입력해주세요."
-          name="name"
-          id="name"
-          maxLength={20}
-          required
-          className="border-b-2 w-full h-10 border-slate-300 text-2xl focus:outline-none focus:border-violet-800 placeholder:text-2xl placeholder:text-slate-300"
-        />
+        <div>
+          <div className="flex justify-end items-center">
+            <p className=" text-sm text-slate-500">{nameCount}/20</p>
+          </div>
+          <input
+            onChange={handleChangeName}
+            type="text"
+            placeholder="게시판 이름을 입력해주세요."
+            name="name"
+            id="name"
+            maxLength={20}
+            required
+            className="border-b-2 w-full h-10 border-slate-300 text-2xl focus:outline-none focus:border-violet-800 placeholder:text-2xl placeholder:text-slate-300"
+          />
+        </div>
         <section className="grid grid-cols-[1fr_2fr] gap-6">
           {img ? (
             <div onClick={handleDelete} className="relative">
@@ -191,10 +198,12 @@ const CreateBoardPage = () => {
             <div className="flex h-52 justify-center items-center rounded-md bg-slate-100">
               <label
                 htmlFor="img"
-                className=" py-2 px-4 mb-2 rounded-md cursor-pointer text-slate-500 duration-300 hover:text-indigo-700"
+                className=" py-2 px-4 mb-2 rounded-md cursor-pointer text-slate-500 group"
               >
-                <CameraIcon />
-                대표 사진 추가
+                <CameraIcon className="group-hover:fill-violet-800 duration-300" />
+                <span className="group-hover:text-violet-800 duration-300">
+                  대표 사진 추가
+                </span>
               </label>
               <input
                 onChange={handleChangeImg}
