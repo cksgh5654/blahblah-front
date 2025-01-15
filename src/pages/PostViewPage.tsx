@@ -7,7 +7,7 @@ import DOMPurify from 'dompurify';
 import BaseButton from '../components/Button/BaseButton';
 import { createComment, getComments } from '../apis/comment.api';
 import PostComment from '../components/Comment/PostComment';
-import '../quill.snow.css';
+import '../styles/quill.snow.css';
 
 type defaultPostType = {
   _id: string;
