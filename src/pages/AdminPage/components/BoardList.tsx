@@ -97,7 +97,7 @@ const BoardList = () => {
                 <Avatar url={manager.image} size="small" />
                 <p
                   className="text-sm text-gray-500 flex self-end gap-x-2 cursor-pointer hover:underline"
-                  onClick={() => navigate(`/${manager.email}`)}
+                  onClick={() => navigate(`/profile/${manager.email}`)}
                 >
                   {manager.email}
                 </p>
