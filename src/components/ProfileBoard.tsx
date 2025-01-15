@@ -34,11 +34,11 @@ const ProfileBoard = () => {
             </div>
           ) : (
             <>
-              {board?.map(({ _id, image, name, url }) => (
+              {board?.map(({ _id, image, name }) => (
                 <li
                   key={`board-item-${_id}`}
                   className="relative cursor-pointer w-1/4 shadow-md group"
-                  onClick={() => navigate(`/board/${url}`)}
+                  onClick={() => navigate(`/board/dashboard/${_id}`)}
                 >
                   <AspectRatio ratio={1 / 1}>
                     <AspectRatio.Image

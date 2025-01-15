@@ -28,9 +28,9 @@ const ProfilePage = () => {
       className="flex flex-col items-center"
       style={{ height: "calc(-68.5px + 100vh)" }}
     >
-      <div className="w-[768px] py-10 flex-grow">
+      <div className="md:w-[768px] py-10 flex-grow">
         <div className="flex flex-col gap-y-8 h-full">
-          <div className="flex gap-x-8">
+          <div className="flex flex-col items-center md:flex-row gap-x-8">
             <Avatar size="large" url={profileUser?.image} />
             <div className="flex-1 flex flex-col py-4">
               <h1>{profileUser?.email}</h1>
@@ -41,7 +41,7 @@ const ProfilePage = () => {
               </p>
             </div>
             {isSigninedUser && (
-              <div className="flex flex-col self-center">
+              <div className="flex flex-col items-center self-center">
                 <BaseButton
                   className="w-fit mb-2"
                   onClick={() => navigate(`/${profileUser?.email}/profile`)}
