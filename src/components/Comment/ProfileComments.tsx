@@ -69,7 +69,7 @@ const ProfileComments = ({ profileUser }: ProfileCommentsProps) => {
                 <div>
                   <AspectRatio className="w-14 self-start" ratio={1 / 1}>
                     <AspectRatio.Image
-                      src={post.board.image || defaultImage}
+                      src={post.board?.image || defaultImage}
                       alt="board-image"
                       className="w-full h-full object-cover rounded-md"
                     />

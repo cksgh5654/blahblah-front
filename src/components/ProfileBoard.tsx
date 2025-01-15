@@ -34,11 +34,14 @@ const ProfileBoard = () => {
             </div>
           ) : (
             <>
-              {board?.map(({ _id, image, name }) => (
+              {board?.map(({ _id, image, name, approvalStatus }) => (
                 <li
                   key={`board-item-${_id}`}
                   className="relative cursor-pointer w-1/4 shadow-md group"
-                  onClick={() => navigate(`/board/dashboard/${_id}`)}
+                  onClick={() =>
+                    approvalStatus === "승인" &&
+                    navigate(`/board/dashboard/${_id}`)
+                  }
                 >
                   <AspectRatio ratio={1 / 1}>
                     <AspectRatio.Image
@@ -46,7 +49,13 @@ const ProfileBoard = () => {
                       src={image || defaultImage}
                     />
                     <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                      <p className="text-lg font-bold">{name}</p>
+                      {approvalStatus === "대기" ? (
+                        <p className="text-xl font-bold text-violet-800">
+                          승인 대기중
+                        </p>
+                      ) : (
+                        <p className="text-lg font-bold">{name}</p>
+                      )}
                     </div>
                   </AspectRatio>
                 </li>

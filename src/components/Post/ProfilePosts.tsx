@@ -72,7 +72,7 @@ const ProfilePosts = ({ profileUser }: ProfilePostsProps) => {
                   <div className="flex items-start gap-4">
                     <AspectRatio className="w-14 h-14 shrink-0" ratio={1 / 1}>
                       <AspectRatio.Image
-                        src={board.image || defaultImage}
+                        src={board?.image || defaultImage}
                         alt="board-image"
                         className="w-full h-full object-cover rounded-md shadow-md"
                       />
@@ -82,7 +82,7 @@ const ProfilePosts = ({ profileUser }: ProfilePostsProps) => {
                         className="text-2xl font-bold text-violet-800 hover:underline cursor-pointer"
                         onClick={() => navigate(`/board/${board.url}`)}
                       >
-                        {board.name}
+                        {board?.name}
                       </span>
                       <span className="text-sm text-gray-600">
                         게시판에 작성한 게시글
