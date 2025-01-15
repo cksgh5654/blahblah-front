@@ -7,6 +7,7 @@ import DOMPurify from 'dompurify';
 import BaseButton from '../components/Button/BaseButton';
 import { createComment, getComments } from '../apis/comment.api';
 import PostComment from '../components/Comment/PostComment';
+import '../styles/quill.snow.css';
 
 type defaultPostType = {
   _id: string;
@@ -86,6 +87,10 @@ const PostViewPage = () => {
       handleGetComments(postId);
     } catch (err) {
       console.error(`[handleGetPost] : ${err}`);
+      if (!url) {
+        navigator(`/`);
+        return;
+      }
       navigator(`/board/${url}`);
     }
   };
@@ -153,27 +158,27 @@ const PostViewPage = () => {
 
   return (
     <div className="min-w-[360px] max-w-[1280px] mx-auto py-20 bg-gray-100">
-      <h1 className="text-center text-xl font-bold">게시글 보기</h1>
+      <h1 className="text-center text-2xl font-bold py-5">게시글 보기</h1>
 
-      <div className="p-5">
+      <div className="p-5 ql-editor">
         <div className="bg-white px-10 py-5">
-          <div className="flex justify-between">
+          <div className="flex justify-between gap-5">
             <p
               ref={(el) => (overflowTextRef.current[0] = el)}
-              className="max-768:text-xl max-768:overflow-hidden max-768:text-ellipsis md:overflow-x-scroll md:text-2xl text-nowrap font-bold"
+              className="max-768:text-2xl max-768:overflow-hidden max-768:text-ellipsis md:overflow-x-scroll md:text-3xl text-nowrap font-bold"
             >
               {postData ? postData.title : '제목'}
             </p>
             {isOwner ? (
               <div className="flex gap-2">
                 <button
-                  className="text-sm text-green-500 text-nowrap"
+                  className="text-lg text-green-500 text-nowrap"
                   onClick={() => handlePostUpdate(postId)}
                 >
                   수정
                 </button>
                 <button
-                  className="text-sm text-green-500 text-nowrap"
+                  className="text-lg text-green-500 text-nowrap"
                   onClick={() => handlePostDelete(postId)}
                 >
                   삭제
@@ -182,7 +187,7 @@ const PostViewPage = () => {
             ) : null}
           </div>
           <div className="pt-5">
-            <div className="w-10 bg-gray-100 p-2 rounded-[15px]">
+            <div className="w-14 bg-gray-100 p-2 rounded-[15px]">
               <AspectRatio ratio={1 / 1}>
                 <AspectRatio.Image
                   className="w-full h-full rounded-md"
@@ -192,16 +197,16 @@ const PostViewPage = () => {
               </AspectRatio>
             </div>
 
-            <div className="flex gap-5">
+            <div className="flex gap-5 py-2">
               <p
                 ref={(el) => (overflowTextRef.current[1] = el)}
-                className="basis-[120px] shrink-0 max-768:text-sm max-768:overflow-hidden max-768:text-ellipsis md:overflow-x-scroll md:text-lg text-nowrap"
+                className="basis-[120px] shrink-0 max-768:text-lg max-768:overflow-hidden max-768:text-ellipsis md:overflow-x-scroll md:text-lg text-nowrap"
               >
                 {postData ? postData.nickname : '닉네임'}
               </p>
               <p
                 ref={(el) => (overflowTextRef.current[2] = el)}
-                className="basis-[120px] shrink-0 max-768:text-sm max-768:overflow-hidden max-768:text-ellipsis md:overflow-x-scroll md:text-lg text-nowrap text-slate-300"
+                className="basis-[120px] shrink-0 max-768:text-lg max-768:overflow-hidden max-768:text-ellipsis md:overflow-x-scroll md:text-lg text-nowrap text-slate-300"
               >
                 {postData ? postData.createdAt.split('T')[0] : '2024-12-31'}
               </p>
@@ -241,10 +246,13 @@ const PostViewPage = () => {
               value={comment}
               onChange={handleCommentInput}
             />
-            <div className="flex justify-end">
+            <div className="flex justify-end py-2">
               <BaseButton
-                className="text-sm "
-                onClick={() => handleCommentCreate(postId)}
+                className="text-sm"
+                onClick={() => {
+                  handleCommentCreate(postId);
+                  setComment('');
+                }}
               >
                 댓글 등록
               </BaseButton>

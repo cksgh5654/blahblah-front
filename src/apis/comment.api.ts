@@ -52,7 +52,7 @@ export const checkAuthor = async (commentId: string) => {
     // if (err instanceof AxiosError && err.response) {
     //   toast.error(err.response.data.message);
     // }
-    // throw err;
+    throw err;
   }
 };
 
