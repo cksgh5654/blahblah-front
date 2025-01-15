@@ -9,10 +9,10 @@ import { PostTitleValidation } from "@utils/validation";
 import { toast } from "react-toastify";
 
 interface WriteBoardNotificationProps {
-  boardId?: string;
+  boardUrl?: string;
 }
 
-const WriteBoardNotification = ({ boardId }: WriteBoardNotificationProps) => {
+const WriteBoardNotification = ({ boardUrl }: WriteBoardNotificationProps) => {
   const [_, setSearchParams] = useSearchParams();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -27,10 +27,9 @@ const WriteBoardNotification = ({ boardId }: WriteBoardNotificationProps) => {
   };
 
   const handleSubmit = () => {
-    if (!boardId || !isValidForm) return;
-    createPost(boardId, title, content, "notification") //
+    if (!boardUrl || !isValidForm) return;
+    createPost(boardUrl, title, content, "notification") //
       .then(() => {
-        toast.success("공지를 올렸습니다.");
         setSearchParams({ selectedTab: "USERS" });
       })
       .catch(() => toast.error("게시물 작성에 실패하였습니다."));
