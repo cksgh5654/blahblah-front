@@ -7,6 +7,7 @@ import DOMPurify from 'dompurify';
 import BaseButton from '../components/Button/BaseButton';
 import { createComment, getComments } from '../apis/comment.api';
 import PostComment from '../components/Comment/PostComment';
+import '../quill.snow.css';
 
 type defaultPostType = {
   _id: string;
@@ -86,6 +87,10 @@ const PostViewPage = () => {
       handleGetComments(postId);
     } catch (err) {
       console.error(`[handleGetPost] : ${err}`);
+      if (!url) {
+        navigator(`/`);
+        return;
+      }
       navigator(`/board/${url}`);
     }
   };
