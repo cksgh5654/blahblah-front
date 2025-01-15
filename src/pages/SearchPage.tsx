@@ -54,6 +54,22 @@ const SearchPage = () => {
     setCurrentPage(index);
   };
 
+  const fetchBoards = async () => {
+    if (!boardname) return;
+    if (page === 0 && cardData.length === 0) {
+      try {
+        const boards = await getAllBoardsByName(boardname, 0, limit);
+        setCardData(boards.data);
+      } catch (error) {
+        console.error("게시글을 가져오는 데 실패했습니다.", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchBoards();
+  }, [page, cardData.length, boardname]);
+
   const trigger = async () => {
     if (isLoading || cardData.length >= totalBoardCount) return;
     if (isLoading) return;
@@ -82,17 +98,6 @@ const SearchPage = () => {
       console.error("게시글을 가져오는 데 실패했습니다.", error);
     }
   };
-
-  useEffect(() => {
-    if (!boardname) return;
-    if (page === 0 && cardData.length === 0) {
-      const fetchBoards = async () => {
-        const boards = await getAllBoardsByName(boardname, 0, limit);
-        setCardData(boards.data);
-      };
-      fetchBoards();
-    }
-  }, [page, cardData.length]);
 
   useEffect(() => {
     borderOneGlance();
