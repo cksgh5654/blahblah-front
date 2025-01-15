@@ -36,9 +36,10 @@ const PopoverContent = (props: PopoverContentProps) => {
   }, [isOpen, setIsOpen]);
 
   const contentPosition = (): CSSProperties => {
+    const scrollY = window.scrollY;
     return {
       position: "absolute",
-      top: `${triggerRect.bottom}px`,
+      top: `${triggerRect.bottom + scrollY}px`,
       left: `0px`,
     };
   };

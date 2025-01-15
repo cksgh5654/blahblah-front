@@ -105,6 +105,7 @@ const Header = () => {
               className="w-full h-full border rounded-md border-slate-300 pl-2"
             />
             <button
+              disabled={!searchTerm}
               onClick={() => {
                 navigate(`/search/${searchTerm}`);
                 setSearchTerm("");

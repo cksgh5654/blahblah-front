@@ -27,9 +27,8 @@ import {
 } from "../apis/board.api";
 import BaseButton from "@components/Button/BaseButton";
 import ChevronIcon from "@components/Icons/ChevronIcon";
-import { Pagination, useInfinite } from "blahblah-front-common-ui-kit";
+import { Pagination, Popover, useInfinite } from "blahblah-front-common-ui-kit";
 import WriteIcon from "@components/Icons/WriteIcon";
-import Popover from "@components/Popover";
 
 const categoryData = [
   { id: 0, img: entertainments, name: "연예" },
@@ -81,7 +80,7 @@ interface Board {
 
 const pageSize = 60;
 const blockSize = 15;
-const limit = 10;
+const limit = 4;
 
 const MainPage = () => {
   const { categoryname } = useParams();
@@ -94,7 +93,6 @@ const MainPage = () => {
   const [baseDivRect, setBaseDivRect] = useState(new DOMRect());
   const [popoverBoardsData, setPopoverBoardsData] = useState<Board[]>([]);
   const [scrollPosition, setScrollPosition] = useState(0);
-  const [isOpen, setIsOpen] = useState(false);
   const [cardData, setCardData] = useState<CardData[]>([]);
   const [currentCategory, setCurrentCategory] = useState({
     name: categoryname || "연예",
@@ -136,11 +134,6 @@ const MainPage = () => {
     }
   };
 
-  const calculateBaseDivRect = () => {
-    if (!baseDivRef.current) return;
-    setBaseDivRect(baseDivRef.current.getBoundingClientRect());
-  };
-
   const isAtEnd = () => {
     if (!divRef.current) return false;
     const scrollEnd = divRef.current.scrollWidth - divRef.current.clientWidth;
@@ -150,6 +143,29 @@ const MainPage = () => {
   const isAtStart = () => {
     return scrollPosition === 0;
   };
+
+  const calculateBaseDivRect = () => {
+    if (!baseDivRef.current) return;
+    setBaseDivRect(baseDivRef.current.getBoundingClientRect());
+  };
+
+  useEffect(() => {
+    if (page === 0 && cardData.length === 0) {
+      const fetchBoards = async () => {
+        const boards = await fetchBoardInCategories(
+          currentCategory.name,
+          0,
+          limit
+        );
+        setCurrentCategory({
+          name: currentCategory.name,
+          boardCount: boards.totalCount,
+        });
+        setCardData(boards.data);
+      };
+      fetchBoards();
+    }
+  }, [page, cardData.length, currentCategory.name]);
 
   const trigger = async () => {
     if (isLoading || cardData.length >= totalBoardCount) return;
@@ -184,24 +200,6 @@ const MainPage = () => {
       console.error("게시글을 가져오는 데 실패했습니다.", error);
     }
   };
-
-  useEffect(() => {
-    if (page === 0 && cardData.length === 0) {
-      const fetchBoards = async () => {
-        const boards = await fetchBoardInCategories(
-          currentCategory.name,
-          0,
-          limit
-        );
-        setCurrentCategory({
-          name: currentCategory.name,
-          boardCount: boards.totalCount,
-        });
-        setCardData(boards.data);
-      };
-      fetchBoards();
-    }
-  }, [page, cardData.length, currentCategory.name]);
 
   useEffect(() => {
     borderOneGlance();
@@ -244,7 +242,7 @@ const MainPage = () => {
 
   return (
     <>
-      <main className="bg-slate-50 h-screen">
+      <main className="bg-slate-50 min-h-[calc(100vh-73px)]">
         <section className="flex items-end flex-wrap pt-20 pb-20 px-4 md:px-16 lg:px-24 xl:px-32">
           <div ref={baseDivRef}>
             <h1 className="text-5xl text-slate-800 leading-tight pr-8">
@@ -320,17 +318,11 @@ const MainPage = () => {
             </h2>
 
             <Popover
-              isOpen={isOpen}
-              onToggle={setIsOpen}
               className={`${currentCategory.boardCount === 0 && "hidden"}`}
             >
               <Popover.Trigger className="flex items-center text-slate-800 text-lg">
                 게시판 한눈에 보기
-                <PlusIcon
-                  height="24px"
-                  className="duration-300"
-                  transform={isOpen ? "rotate(45)" : ""}
-                />
+                <PlusIcon height="24px" />
               </Popover.Trigger>
               <Popover.Content className="flex justify-center w-screen h-96 mt-8 px-4 md:px-16 lg:px-24 xl:px-32">
                 <div className="flex flex-col justify-between w-full h-full bg-white border rounded-lg overflow-y-scroll">

@@ -299,7 +299,7 @@ const BoardPage = () => {
                   >
                     {post.title}
                   </button>
-                  <p>{post.creator.nickname}</p>
+                  <p>{post.creator?.nickname}</p>
                   <p>
                     {new Date(post.createdAt)
                       .toLocaleDateString("ko-KR", {
@@ -349,7 +349,7 @@ const BoardPage = () => {
                   >
                     {post.title}
                   </button>
-                  <p>{post.creator.nickname}</p>
+                  <p>{post.creator?.nickname}</p>
                   <p>
                     {new Date(post.createdAt)
                       .toLocaleDateString("ko-KR", {

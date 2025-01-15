@@ -6,7 +6,6 @@ import {
   ReactNode,
   SetStateAction,
   useState,
-  useEffect,
 } from "react";
 import PopoverTrigger from "./PopoverTrigger";
 import PopoverContent from "./PopoverContent";
@@ -37,30 +36,14 @@ interface PopoverProps {
   onToggle?: (isOpen: boolean) => void;
 }
 const Popover: FC<PopoverProps> & PopoverCompoundProps = (props) => {
-  const { children, isOpen: externalIsOpen, onToggle, className } = props;
+  const { children, className } = props;
   const [triggerRect, setTriggerRect] = useState(new DOMRect());
-  const [internalIsOpen, setInternalIsOpen] = useState(false);
-
-  useEffect(() => {
-    if (externalIsOpen !== undefined) {
-      setInternalIsOpen(externalIsOpen);
-    }
-  }, [externalIsOpen]);
-
-  const setIsOpen = (value: SetStateAction<boolean>) => {
-    setInternalIsOpen((prevState) => {
-      const newValue = typeof value === "function" ? value(prevState) : value;
-      if (onToggle) {
-        onToggle(newValue);
-      }
-      return newValue;
-    });
-  };
+  const [isOpen, setIsOpen] = useState(false);
 
   const contextValue = {
     triggerRect,
     setTriggerRect,
-    isOpen: internalIsOpen,
+    isOpen,
     setIsOpen,
   };
 

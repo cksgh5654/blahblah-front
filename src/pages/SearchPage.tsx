@@ -1,8 +1,7 @@
 import { getAllBoardsByName } from "@apis/board.api";
 import Card from "@components/Card/Card";
 import PlusIcon from "@components/Icons/PlusIcon";
-import Popover from "@components/Popover";
-import { Pagination, useInfinite } from "blahblah-front-common-ui-kit";
+import { Pagination, Popover, useInfinite } from "blahblah-front-common-ui-kit";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -35,13 +34,12 @@ interface Board {
 
 const pageSize = 60;
 const blockSize = 15;
-const limit = 10;
+const limit = 4;
 
 const SearchPage = () => {
   const navigate = useNavigate();
 
   const [currentPage, setCurrentPage] = useState(0);
-  const [isOpen, setIsOpen] = useState(false);
   const [totalBoardCount, setTotalBoardCount] = useState(0);
   const [cardData, setCardData] = useState<CardData[]>([]);
   const [popoverBoardsData, setPopoverBoardsData] = useState<Board[]>([]);
@@ -121,24 +119,16 @@ const SearchPage = () => {
 
   return (
     <>
-      <main className="flex flex-col h-screen pt-20 items-start px-4 md:px-16 lg:px-24 xl:px-32 bg-slate-50">
+      <main className="flex flex-col min-h-[calc(100vh-73px)] pt-20 items-start px-4 md:px-16 lg:px-24 xl:px-32 bg-slate-50">
         <div className="flex w-full justify-between">
           <h2 className=" text-violet-800 text-3xl">
             검색결과 &#40;{totalBoardCount}&#41;
           </h2>
 
-          <Popover
-            isOpen={isOpen}
-            onToggle={setIsOpen}
-            className={`${totalBoardCount === 0 && "hidden"}`}
-          >
+          <Popover className={`${totalBoardCount === 0 && "hidden"}`}>
             <Popover.Trigger className="flex items-center text-slate-800 text-lg">
               게시판 한눈에 보기
-              <PlusIcon
-                height="24px"
-                className="duration-300"
-                transform={isOpen ? "rotate(45)" : ""}
-              />
+              <PlusIcon height="24px" />
             </Popover.Trigger>
             <Popover.Content className="flex justify-center w-screen h-96 mt-8 px-4 md:px-16 lg:px-24 xl:px-32">
               <div className="flex flex-col justify-between w-full h-full bg-white border rounded-lg overflow-y-scroll">
