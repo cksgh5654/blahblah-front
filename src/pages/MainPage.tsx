@@ -178,7 +178,6 @@ const MainPage = () => {
         currentPage,
         pageSize
       );
-      console.log(data);
       setPopoverBoardsData(data.boards);
       setTotalBoardCount(data.totalBoardCount);
     } catch (error) {

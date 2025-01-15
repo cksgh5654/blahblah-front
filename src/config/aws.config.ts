@@ -7,7 +7,6 @@ export const imageUpload = async (file: File) => {
       fileName: `${file.name}-${Date.now()}`,
       fileType: file.type,
     });
-    console.log({ presignedUrl });
     await axios.put(presignedUrl, file, {
       headers: { "Content-Type": file.type },
     });
