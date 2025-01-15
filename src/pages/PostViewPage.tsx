@@ -160,7 +160,7 @@ const PostViewPage = () => {
     <div className="min-w-[360px] max-w-[1280px] mx-auto py-20 bg-gray-100">
       <h1 className="text-center text-xl font-bold">게시글 보기</h1>
 
-      <div className="p-5">
+      <div className="p-5 ql-editor">
         <div className="bg-white px-10 py-5">
           <div className="flex justify-between">
             <p
