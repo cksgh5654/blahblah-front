@@ -81,8 +81,8 @@ const PostComment = ({
     <div className="py-5">
       <div className="bg-white p-5">
         <div className="flex justify-between">
-          <div>
-            <div className="w-10 bg-gray-100 p-2 rounded-[15px]">
+          <div className="w-60">
+            <div className="w-12 bg-gray-100 p-2 rounded-[15px]">
               <AspectRatio ratio={1 / 1}>
                 <AspectRatio.Image
                   className="w-full h-full rounded-md"
@@ -96,16 +96,16 @@ const PostComment = ({
               </AspectRatio>
             </div>
 
-            <div className="flex gap-5">
+            <div className="flex gap-5 py-2">
               <p
                 ref={(el) => (overflowTextRef.current[0] = el)}
-                className="basis-[100px] shrink-0 max-768:text-sm max-768:overflow-hidden max-768:text-ellipsis md:overflow-x-scroll md:text-lg text-nowrap"
+                className="basis-[100px] shrink-0 max-768:text-lg max-768:overflow-hidden max-768:text-ellipsis md:overflow-x-scroll md:text-lg text-nowrap"
               >
                 {comment ? comment.creator.nickname : '닉네임'}
               </p>
               <p
                 ref={(el) => (overflowTextRef.current[1] = el)}
-                className="basis-[100px] shrink-0 max-768:text-sm max-768:overflow-hidden max-768:text-ellipsis md:overflow-x-scroll md:text-lg text-nowrap text-slate-300"
+                className="basis-[100px] shrink-0 max-768:text-lg max-768:overflow-hidden max-768:text-ellipsis md:overflow-x-scroll md:text-lg text-nowrap text-slate-300"
               >
                 {comment ? comment.createdAt.split('T')[0] : '2024-12-31'}
               </p>
@@ -114,7 +114,7 @@ const PostComment = ({
           {isOwner ? (
             <div className="flex gap-2 basis-[100px] justify-end">
               <button
-                className="text-sm text-green-500 text-nowrap"
+                className="text-lg text-green-500 text-nowrap"
                 onClick={() => {
                   setIsEdit(true);
                   setContent(comment.content);
@@ -123,7 +123,7 @@ const PostComment = ({
                 수정
               </button>
               <button
-                className="text-sm text-green-500 text-nowrap"
+                className="text-lg text-green-500 text-nowrap"
                 onClick={() => handleCommentDelete(comment._id)}
               >
                 삭제
@@ -145,7 +145,7 @@ const PostComment = ({
             />
             <div className="flex justify-end gap-2">
               <BaseButton
-                className="text-sm "
+                className="text-sm"
                 onClick={() => {
                   setContent('');
                   setIsEdit(false);
@@ -155,7 +155,7 @@ const PostComment = ({
               </BaseButton>
 
               <BaseButton
-                className="text-sm "
+                className="text-sm"
                 onClick={() => handleCommentUpdate(comment._id)}
               >
                 댓글 수정
@@ -164,7 +164,7 @@ const PostComment = ({
           </div>
         ) : (
           <div
-            className="py-5"
+            className="py-5 text-lg"
             style={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}
           >
             {comment ? comment.content : '댓글 내용'}
