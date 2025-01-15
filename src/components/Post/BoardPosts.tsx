@@ -79,7 +79,7 @@ const BoardPosts = ({ boardId, selectedTab }: BoardPostsProps) => {
                   <Avatar
                     url={post.creator.image}
                     size="small"
-                    onClick={() => navigate(`/${post.creator.email}`)}
+                    onClick={() => navigate(`/profile/${post.creator.email}`)}
                   />
                   <div className="flex-1">
                     <h3 className="text-lg font-medium text-gray-800">
