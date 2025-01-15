@@ -58,6 +58,9 @@ const pageSize = 15;
 const blockSize = 15;
 
 const BoardPage = () => {
+  const { url } = useParams();
+  const { user } = useUserContext();
+  const userId = user._id;
   const [currentPage, setCurrentPage] = useState(0);
   const [currentNoticePage, setCurrentNoticePage] = useState(0);
   const [isNotice, setIsNotice] = useState(false);
@@ -67,7 +70,7 @@ const BoardPage = () => {
     basic: 0,
     notification: 0,
   });
-  const [currentUserId, setCurrentUserId] = useState<string>("");
+  const [currentUserId, setCurrentUserId] = useState<string>(userId);
   const [boardData, setBoardData] = useState<Board>({
     category: "",
     createdAt: "",
@@ -90,10 +93,9 @@ const BoardPage = () => {
   const [notificationPostData, setNotificationPostData] = useState<Post[]>([]);
   const [isJoin, setIsJoin] = useState(false);
   const navigate = useNavigate();
-  const { user } = useUserContext();
-  const { url } = useParams();
 
-  const userId = user._id || null;
+  console.log(user); //이부분 질문
+  console.log(currentUserId);
 
   useEffect(() => {
     if (userId) setCurrentUserId(userId);
@@ -184,7 +186,7 @@ const BoardPage = () => {
             ) : (
               <BaseButton
                 onClick={
-                  currentUserId === ""
+                  currentUserId === undefined
                     ? () => navigate("/signin")
                     : handleClickJoin
                 }
@@ -280,19 +282,18 @@ const BoardPage = () => {
             </BaseButton>
           </div>
           <div>
-            <div className="grid grid-cols-[1fr_1fr_10fr_2fr_2fr_1fr] border-y-2 py-3 border-violet-800 text-center">
+            <div className="grid grid-cols-[1fr_1fr_10fr_2fr_2fr] border-y-2 py-3 border-violet-800 text-center">
               <p>번호</p>
               <p>말머리</p>
               <p>제목</p>
               <p>글쓴이</p>
               <p>작성일</p>
-              <p>조회</p>
             </div>
             <Tabs.Content value="all">
               {basicPostData.map((post, index) => (
                 <div
                   key={post._id}
-                  className="grid grid-cols-[1fr_1fr_10fr_2fr_2fr_1fr] border-b py-3 border-slate-300 text-center text-sm text-slate-500"
+                  className="grid grid-cols-[1fr_1fr_10fr_2fr_2fr] border-b py-3 border-slate-300 text-center text-sm text-slate-500"
                 >
                   <p>{index + 1}</p>
                   <p className="flex justify-center items-center">
@@ -321,15 +322,15 @@ const BoardPage = () => {
                       .replace(/\.\s?/g, ".")
                       .replace(/(\d{2})\.(\d{2})\.(\d{2})/, "$1.$2.$3")}{" "}
                   </p>
-
-                  <p>조회수</p>
                 </div>
               ))}
               <Pagination
                 total={totalPostCount.basic}
                 value={currentPage}
                 onPageChange={handlePageChange}
-                className="flex justify-center pt-8"
+                className={`${
+                  totalPostCount.basic === 0 && "hidden"
+                } flex justify-center pt-8`}
                 blockSize={blockSize}
                 pageSize={pageSize}
               >
@@ -379,7 +380,9 @@ const BoardPage = () => {
                 total={totalPostCount.notification}
                 value={currentNoticePage}
                 onPageChange={handleNoticePageChange}
-                className="flex justify-center pt-8"
+                className={`${
+                  totalPostCount.notification === 0 && "hidden"
+                } flex justify-center pt-8`}
                 blockSize={blockSize}
                 pageSize={pageSize}
               >

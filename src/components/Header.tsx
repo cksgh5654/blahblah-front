@@ -70,6 +70,14 @@ const Header = () => {
     }
   }, [searchTerm]);
 
+  const handleEnterPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      navigate(`/search/${searchTerm}`);
+      setSearchTerm("");
+      setBoardsData([]);
+    }
+  };
+
   return (
     <>
       <header
@@ -90,6 +98,7 @@ const Header = () => {
             <input
               value={searchTerm}
               onChange={handleInputChange}
+              onKeyDown={handleEnterPress}
               type="search"
               placeholder="게시판 검색"
               className="w-full h-full border rounded-md border-slate-300 pl-2"

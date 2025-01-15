@@ -77,7 +77,7 @@ const router = createBrowserRouter([
         element: <BoardPage />,
       },
       {
-        path: "/search/:board-name",
+        path: "/search/:boardname",
         element: <SearchPage />,
       },
       {

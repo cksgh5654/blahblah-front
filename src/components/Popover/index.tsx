@@ -45,7 +45,7 @@ const Popover: FC<PopoverProps> & PopoverCompoundProps = (props) => {
     position = "bottom",
     isOpen: externalIsOpen,
     onToggle,
-    ...rest
+    className,
   } = props;
   const [triggerRect, setTriggerRect] = useState(new DOMRect());
   const [internalIsOpen, setInternalIsOpen] = useState(false);
@@ -76,7 +76,7 @@ const Popover: FC<PopoverProps> & PopoverCompoundProps = (props) => {
 
   return (
     <PopoverContext.Provider value={contextValue}>
-      <div {...rest}>{children}</div>
+      <div className={className}>{children}</div>
     </PopoverContext.Provider>
   );
 };

@@ -27,9 +27,7 @@ import {
 } from "../apis/board.api";
 import BaseButton from "@components/Button/BaseButton";
 import ChevronIcon from "@components/Icons/ChevronIcon";
-import { useInfinite } from "blahblah-front-common-ui-kit";
-import Popover from "@components/Popover";
-import Pagination from "@components/Pagination";
+import { Pagination, Popover, useInfinite } from "blahblah-front-common-ui-kit";
 import WriteIcon from "@components/Icons/WriteIcon";
 
 const categoryData = [
@@ -153,9 +151,9 @@ const MainPage = () => {
   };
 
   const trigger = async () => {
+    if (isLoading || cardData.length >= totalBoardCount) return;
     if (isLoading) return;
     setIsLoading(true);
-
     const nextPage = page + 1;
     const newBoards = await fetchBoardInCategories(
       currentCategory.name,
@@ -179,6 +177,7 @@ const MainPage = () => {
         currentPage,
         pageSize
       );
+      console.log(data);
       setPopoverBoardsData(data.boards);
       setTotalBoardCount(data.totalBoardCount);
     } catch (error) {
@@ -315,12 +314,17 @@ const MainPage = () => {
           </div>
         </section>
         <section className="flex flex-col pt-20 items-start px-4 md:px-16 lg:px-24 xl:px-32">
-          <div className="flex w-full justify-between">
+          <div className="flex w-full justify-between items-center">
             <h2 className=" text-violet-800 text-3xl">
               {currentCategory.name} &#40;{currentCategory.boardCount}&#41;
             </h2>
 
-            <Popover isOpen={isOpen} onToggle={setIsOpen} position="bottom">
+            <Popover
+              isOpen={isOpen}
+              onToggle={setIsOpen}
+              position="bottom"
+              className={`${currentCategory.boardCount === 0 && "hidden"}`}
+            >
               <Popover.Trigger className="flex items-center text-slate-800 text-lg">
                 게시판 한눈에 보기
                 <PlusIcon
@@ -342,7 +346,7 @@ const MainPage = () => {
                       {popoverBoardsData.map((board) => (
                         <button
                           key={board.name}
-                          onClick={() => navigate(`board/${board.url}`)}
+                          onClick={() => navigate(`/board/${board.url}`)}
                           className="text-start text-slate-500 hover:text-slate-800 duration-300"
                         >
                           {board.name}
