@@ -49,7 +49,7 @@ const PostViewPage = () => {
       const response = await deletePost(postId);
 
       if (!response.isError) {
-        navigator(`/board/${url}`);
+        navigator(`/board/${url}`, { replace: true });
       }
     } catch (err) {
       console.error(`[handlePostDelete] : ${err}`);
@@ -88,10 +88,10 @@ const PostViewPage = () => {
     } catch (err) {
       console.error(`[handleGetPost] : ${err}`);
       if (!url) {
-        navigator(`/`);
+        navigator(`/`, { replace: true });
         return;
       }
-      navigator(`/board/${url}`);
+      navigator(`/board/${url}`, { replace: true });
     }
   };
 

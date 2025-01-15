@@ -51,7 +51,7 @@ const UpdatePostPage = () => {
       const data = await deletePost(postId);
 
       if (!data.isError) {
-        navigator(`/board/${url}`);
+        navigator(`/board/${url}`, { replace: true });
       }
     } catch (err) {
       console.error(`[handlePostDelete]`, err);
@@ -73,7 +73,11 @@ const UpdatePostPage = () => {
       }
     } catch (err) {
       console.error(`[handleGetPost]`, err);
-      navigator(`/board/${url}`);
+      if (!url) {
+        navigator(`/`, { replace: true });
+        return;
+      }
+      navigator(`/board/${url}`, { replace: true });
     }
   };
 
