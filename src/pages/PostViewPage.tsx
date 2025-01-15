@@ -1,6 +1,6 @@
 import { AspectRatio, Textarea } from 'blahblah-front-common-ui-kit';
 import userIcon from '../../public/default-user-icon.svg';
-import { ChangeEvent, useEffect, useState, useRef } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { checkAuthor, deletePost, getPostData } from '../apis/post.api';
 import { useNavigate, useParams } from 'react-router-dom';
 import DOMPurify from 'dompurify';
@@ -37,7 +37,6 @@ const PostViewPage = () => {
   const [commentData, setCommentData] = useState([]);
   const [comment, setComment] = useState<string>('');
   const [url, setUrl] = useState<string>('');
-  const overflowTextRef = useRef<HTMLParagraphElement[] | null[]>([]);
 
   const handleCommentInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setComment(e.target.value);
@@ -125,14 +124,6 @@ const PostViewPage = () => {
     }
   };
 
-  const handleOverflowText = () => {
-    overflowTextRef.current.map((element) => {
-      if (element) {
-        element.scrollLeft = 0;
-      }
-    });
-  };
-
   const handleCheck = async (postId: string) => {
     const { IsAuthor } = await checkAuthor(postId);
     setIsOwner(IsAuthor);
@@ -144,16 +135,6 @@ const PostViewPage = () => {
       handleCheck(postId);
       return;
     }
-
-    if (!overflowTextRef.current) {
-      return;
-    }
-
-    window.addEventListener('resize', handleOverflowText);
-
-    return () => {
-      window.removeEventListener('resize', handleOverflowText);
-    };
   }, []);
 
   return (
@@ -163,10 +144,7 @@ const PostViewPage = () => {
       <div className="p-5 ql-editor">
         <div className="bg-white px-10 py-5">
           <div className="flex justify-between gap-5">
-            <p
-              ref={(el) => (overflowTextRef.current[0] = el)}
-              className="max-768:text-2xl max-768:overflow-hidden max-768:text-ellipsis md:overflow-x-scroll md:text-3xl text-nowrap font-bold"
-            >
+            <p className="max-768:text-2xl max-768:text-nowrap overflow-hidden text-ellipsis md:text-3xl font-bold">
               {postData ? postData.title : '제목'}
             </p>
             {isOwner ? (
@@ -198,16 +176,10 @@ const PostViewPage = () => {
             </div>
 
             <div className="flex gap-5 py-2">
-              <p
-                ref={(el) => (overflowTextRef.current[1] = el)}
-                className="basis-[120px] shrink-0 max-768:text-lg max-768:overflow-hidden max-768:text-ellipsis md:overflow-x-scroll md:text-lg text-nowrap"
-              >
+              <p className="max-768:text-lg max-768:text-nowrap overflow-hidden text-ellipsis md:text-lg">
                 {postData ? postData.nickname : '닉네임'}
               </p>
-              <p
-                ref={(el) => (overflowTextRef.current[2] = el)}
-                className="basis-[120px] shrink-0 max-768:text-lg max-768:overflow-hidden max-768:text-ellipsis md:overflow-x-scroll md:text-lg text-nowrap text-slate-300"
-              >
+              <p className="max-768:text-lg max-768:text-nowrap overflow-hidden text-ellipsis md:text-lg text-slate-300">
                 {postData ? postData.createdAt.split('T')[0] : '2024-12-31'}
               </p>
             </div>

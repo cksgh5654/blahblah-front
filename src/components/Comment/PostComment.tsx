@@ -1,5 +1,5 @@
 import { AspectRatio, Textarea } from 'blahblah-front-common-ui-kit';
-import { ChangeEvent, useEffect, useState, useRef } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { defaultCommentType } from '../../pages/PostViewPage';
 import userIcon from '../../../public/default-user-icon.svg';
 import {
@@ -21,7 +21,6 @@ const PostComment = ({
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [content, setContent] = useState<string>('');
-  const overflowTextRef = useRef<HTMLParagraphElement[] | null[]>([]);
 
   const handleCommentInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
@@ -57,24 +56,8 @@ const PostComment = ({
     setIsOwner(IsAuthor);
   };
 
-  const handleOverflowText = () => {
-    overflowTextRef.current.map((element) => {
-      if (element) {
-        element.scrollLeft = 0;
-      }
-    });
-  };
-
   useEffect(() => {
-    if (!overflowTextRef.current) {
-      return;
-    }
     handleCheck(comment._id);
-    window.addEventListener('resize', handleOverflowText);
-
-    return () => {
-      window.removeEventListener('resize', handleOverflowText);
-    };
   }, []);
 
   return (
@@ -97,22 +80,16 @@ const PostComment = ({
             </div>
 
             <div className="flex gap-5 py-2">
-              <p
-                ref={(el) => (overflowTextRef.current[0] = el)}
-                className="basis-[100px] shrink-0 max-768:text-lg max-768:overflow-hidden max-768:text-ellipsis md:overflow-x-scroll md:text-lg text-nowrap"
-              >
+              <p className="basis-[180px] max-768:text-lg max-768:text-nowrap overflow-hidden text-ellipsis md:text-lg">
                 {comment ? comment.creator.nickname : '닉네임'}
               </p>
-              <p
-                ref={(el) => (overflowTextRef.current[1] = el)}
-                className="basis-[100px] shrink-0 max-768:text-lg max-768:overflow-hidden max-768:text-ellipsis md:overflow-x-scroll md:text-lg text-nowrap text-slate-300"
-              >
+              <p className="basis-[180px] max-768:text-lg max-768:text-nowrap overflow-hidden text-ellipsis md:text-lg text-slate-300">
                 {comment ? comment.createdAt.split('T')[0] : '2024-12-31'}
               </p>
             </div>
           </div>
           {isOwner ? (
-            <div className="flex gap-2 basis-[100px] justify-end">
+            <div className="flex gap-2 justify-end">
               <button
                 className="text-lg text-green-500 text-nowrap"
                 onClick={() => {
