@@ -120,6 +120,13 @@ const ProfilePosts = ({ profileUser }: ProfilePostsProps) => {
           )}
         </>
       )}
+      <style>
+        {`
+            .PaginationButtons button:disabled {
+              color: #5B21B6;
+            }
+          `}
+      </style>
     </div>
   );
 };
