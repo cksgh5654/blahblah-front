@@ -120,7 +120,7 @@ const Header = () => {
                   onClick={() => {
                     setSearchTerm("");
                     setBoardsData([]);
-                    navigate(`/${user.email}`);
+                    navigate(`/profile/${user.email}`);
                   }}
                 />
               </>

@@ -44,7 +44,9 @@ const ProfilePage = () => {
               <div className="flex flex-col items-center self-center">
                 <BaseButton
                   className="w-fit mb-2"
-                  onClick={() => navigate(`/${profileUser?.email}/profile`)}
+                  onClick={() =>
+                    navigate(`/profile/${profileUser?.email}/update`)
+                  }
                 >
                   프로필 수정
                 </BaseButton>

@@ -81,13 +81,13 @@ const router = createBrowserRouter([
         element: <SearchPage />,
       },
       {
-        path: "/:email",
+        path: "/profile/:email",
         element: <ProfilePage />,
         loader: profileLoader,
         errorElement: <ErrorPage />,
       },
       {
-        path: "/:email/profile",
+        path: "/profile/:email/update",
         element: (
           <ProtectedRoute requiredRole={["ADMIN", "USER"]}>
             <ProfileUpdatePage />
