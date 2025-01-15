@@ -6,6 +6,7 @@ import BoardPosts from "@components/Post/BoardPosts";
 import BoardUsers from "@components/BoardUsers";
 import Avatar from "@components/Avatar";
 import { Board } from "~types/board.type";
+import defaultImage from "../assets/image/defaultImg.svg";
 
 const BoardDashBoardPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -19,29 +20,31 @@ const BoardDashBoardPage = () => {
       className="w-screen flex justify-center py-2"
       style={{ height: "calc(-68.5px + 100vh)" }}
     >
-      <div className="w-[1280px] flex gap-x-8">
-        <div className="flex flex-col items-center p-3 shadow-md rounded-md h-fit">
-          <div className="max-w-64">
+      <div className="w-[1280px] flex flex-col md:flex-row gap-x-8">
+        <div className="flex gap-x-8 p-3 shadow-sm rounded-md h-fit md:flex-col">
+          <div className="w-64">
             <AspectRatio ratio={1 / 1}>
               <AspectRatio.Image
-                src={board?.image}
+                src={board?.image || defaultImage}
                 alt="board-image"
                 className="w-full h-full rounded-md"
               />
             </AspectRatio>
           </div>
-          <div className="flex flex-col gap-y-4 pt-8 flex-1">
+          <div className="flex flex-col px-2 py-1 gap-y-4 flex-1">
             <div className="flex items-center gap-x-2">
               <Avatar url={board?.manager.image} size="small" />
               <p>{board?.manager.email}</p>
             </div>
             <div>
-              <p className="text-xl font-bold text-violet-800">{board?.name}</p>
-              <div className="flex justify-between items-baseline">
-                <p className="font-semibold text-violet-600">
+              <p className="text-xl font-bold text-violet-800">
+                {board?.name}{" "}
+                <span className="text-sm font-semibold text-violet-600">
                   #{board?.category}
-                </p>
-                <p className="text-sm font-semibold text-gray-500">
+                </span>
+              </p>
+              <div className="flex justify-between items-baseline">
+                <p className="text-sm font-semibold text-gray-600">
                   {board?.createdAt.split("T")[0]} <span>생성됨</span>
                 </p>
               </div>
@@ -49,7 +52,7 @@ const BoardDashBoardPage = () => {
             <p className="text-gray-700">{board?.description}</p>
           </div>
         </div>
-        <div className="w-full p-3">
+        <div className="w-full p-3 flex-grow flex flex-col">
           <Tabs.Root defaultValue={selectedTab}>
             <Tabs.List className="w-fit flex text-sm font-semibold cursor-pointer mb-8">
               <Tabs.Trigger
@@ -81,14 +84,20 @@ const BoardDashBoardPage = () => {
                 <p className="text-center">공지 작성</p>
               </Tabs.Trigger>
             </Tabs.List>
-            <Tabs.Content value="USERS">
+            <Tabs.Content
+              value="USERS"
+              className={`${selectedTab === "USERS" && "h-full"}`}
+            >
               <BoardUsers boardId={board._id} selectedTab={selectedTab} />
             </Tabs.Content>
-            <Tabs.Content value="POSTS">
+            <Tabs.Content
+              value="POSTS"
+              className={`${selectedTab === "POSTS" && "h-full"}`}
+            >
               <BoardPosts boardId={board._id} selectedTab={selectedTab} />
             </Tabs.Content>
             <Tabs.Content value="NOTIFICATION">
-              <WriteBoardNotification boardId={board._id} />
+              <WriteBoardNotification boardUrl={board.url} />
             </Tabs.Content>
           </Tabs.Root>
         </div>
