@@ -4,14 +4,14 @@ import { Tabs } from "blahblah-front-common-ui-kit";
 import Avatar from "@components/Avatar";
 import BaseButton from "@components/Button/BaseButton";
 import ProfileBoard from "@components/ProfileBoard";
-import ProfilePosts from "@components/Post/ProfilePosts";
 import ProfileComments from "@components/Comment/ProfileComments";
 import { User } from "~types/user.type";
 import { useUserContext } from "@context/userContext";
+import ProfilePosts from "@components/Post/ProfilePosts";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const profileUser = useLoaderData<User>();
   const { user: singinedUser } = useUserContext();
   const isSigninedUser = useMemo(
@@ -28,9 +28,9 @@ const ProfilePage = () => {
       className="flex flex-col items-center"
       style={{ height: "calc(-68.5px + 100vh)" }}
     >
-      <div className="w-[768px] py-10 flex-grow">
+      <div className="md:w-[768px] py-10 flex-grow">
         <div className="flex flex-col gap-y-8 h-full">
-          <div className="flex gap-x-8">
+          <div className="flex flex-col items-center md:flex-row gap-x-8">
             <Avatar size="large" url={profileUser?.image} />
             <div className="flex-1 flex flex-col py-4">
               <h1>{profileUser?.email}</h1>
@@ -41,12 +41,22 @@ const ProfilePage = () => {
               </p>
             </div>
             {isSigninedUser && (
-              <BaseButton
-                className="w-fit h-fit self-center"
-                onClick={() => navigate(`/${profileUser?.email}/profile`)}
-              >
-                프로필 수정
-              </BaseButton>
+              <div className="flex flex-col items-center self-center">
+                <BaseButton
+                  className="w-fit mb-2"
+                  onClick={() => navigate(`/${profileUser?.email}/profile`)}
+                >
+                  프로필 수정
+                </BaseButton>
+                {singinedUser.role === "ADMIN" && (
+                  <p
+                    className="font-xl font-bold hover:underline cursor-pointer"
+                    onClick={() => navigate("/admin")}
+                  >
+                    관리자 페이지로 가기
+                  </p>
+                )}
+              </div>
             )}
           </div>
           <div className="flex-grow">
@@ -54,7 +64,9 @@ const ProfilePage = () => {
               <Tabs.List className="w-fit flex text-sm font-semibold cursor-pointer">
                 <Tabs.Trigger
                   value="posts"
-                  onClick={() => setSearchParams({ selectedTab: "posts" })}
+                  onClick={() =>
+                    navigate(`?selectedTab=posts`, { replace: true })
+                  }
                   className={`${
                     TabsDefaultValue === "posts" &&
                     "border-b-2 border-violet-800 pb-2"
@@ -66,7 +78,9 @@ const ProfilePage = () => {
                 </Tabs.Trigger>
                 <Tabs.Trigger
                   value="comments"
-                  onClick={() => setSearchParams({ selectedTab: "comments" })}
+                  onClick={() =>
+                    navigate(`?selectedTab=comments`, { replace: true })
+                  }
                   className={`${
                     TabsDefaultValue === "comments" &&
                     "border-b-2 border-violet-800 pb-2"
@@ -77,7 +91,9 @@ const ProfilePage = () => {
                 {isSigninedUser && (
                   <Tabs.Trigger
                     value="board"
-                    onClick={() => setSearchParams({ selectedTab: "board" })}
+                    onClick={() =>
+                      navigate(`?selectedTab=board`, { replace: true })
+                    }
                     className={`${
                       TabsDefaultValue === "board" &&
                       "border-b-2 border-violet-800 pb-2"

@@ -13,6 +13,7 @@ baseInstance.interceptors.response.use(
     if (isAxiosError(error)) {
       if (error.status === HttpStatusCode.BadRequest) {
         console.error(error);
+        throw new Error(error.response?.data.message);
       }
       if (error.status === HttpStatusCode.Unauthorized) {
         console.error(error);

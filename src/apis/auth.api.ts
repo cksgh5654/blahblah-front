@@ -3,14 +3,11 @@ import { EmailFormDataType } from "../components/EmailAuthForm";
 import { baseInstance } from "./axios.config";
 
 export const requestSignupOtp = async (data: EmailFormDataType) => {
+  const toastId = toast("OTP 이메일 요청 중 입니다.", {
+    isLoading: true,
+  });
   try {
-    const toastId = toast("OTP 이메일 요청 중 입니다.", {
-      isLoading: true,
-    });
     const response = await baseInstance.post("/auth/signup/otp", data);
-    if (response.data.isError) {
-      throw new Error(response.data.message);
-    }
     toast.update(toastId, {
       render: response.data.message,
       type: "success",
@@ -20,7 +17,12 @@ export const requestSignupOtp = async (data: EmailFormDataType) => {
     return response.data;
   } catch (error) {
     if (error instanceof Error) {
-      toast.error(error.message);
+      toast.update(toastId, {
+        render: error.message,
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
       throw error;
     }
   }
@@ -47,12 +49,10 @@ export const sendOtp = async (otp: string) => {
 export const signinWithEmail = async (data: EmailFormDataType) => {
   try {
     const response = await baseInstance.post("/auth/signin/email", data);
-    if (response.data.isError) {
-      throw new Error(response.data.message);
-    }
     return response.data.user;
   } catch (error) {
     if (error instanceof Error) {
+      toast.error(error.message);
       throw error;
     }
   }
