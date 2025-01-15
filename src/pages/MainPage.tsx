@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 
 import entertainments from "../categoryImg/entertainments.svg";
@@ -26,11 +26,11 @@ import {
   getAllBoardsByCatogory,
 } from "../apis/board.api";
 import BaseButton from "@components/Button/BaseButton";
-import Write from "@components/Icons/Write";
 import ChevronIcon from "@components/Icons/ChevronIcon";
 import { useInfinite } from "blahblah-front-common-ui-kit";
 import Popover from "@components/Popover";
 import Pagination from "@components/Pagination";
+import WriteIcon from "@components/Icons/WriteIcon";
 
 const categoryData = [
   { id: 0, img: entertainments, name: "연예" },
@@ -82,8 +82,10 @@ interface Board {
 
 const pageSize = 60;
 const blockSize = 15;
+const limit = 10;
 
 const MainPage = () => {
+  const { categoryname } = useParams();
   const [currentPage, setCurrentPage] = useState(0);
   const [totalBoardCount, setTotalBoardCount] = useState(0);
   const navigate = useNavigate();
@@ -96,38 +98,20 @@ const MainPage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [cardData, setCardData] = useState<CardData[]>([]);
   const [currentCategory, setCurrentCategory] = useState({
-    name: "연예",
+    name: categoryname || "연예",
     boardCount: 0,
   });
   const [page, setPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-
-  const limit = 10;
+  const isLogin = localStorage.getItem("signinStatus");
 
   const handleClickCategory = (name: string) => {
     setPage(0);
     setCardData([]);
     setIsLoading(false);
     setCurrentCategory((prev) => ({ ...prev, name }));
+    navigate(`/${name}`);
   };
-
-  useEffect(() => {
-    if (page === 0 && cardData.length === 0) {
-      const fetchBoards = async () => {
-        const boards = await fetchBoardInCategories(
-          currentCategory.name,
-          0,
-          limit
-        );
-        setCurrentCategory({
-          name: currentCategory.name,
-          boardCount: boards.totalCount,
-        });
-        setCardData(boards.data);
-      };
-      fetchBoards();
-    }
-  }, [page, cardData.length, currentCategory.name]);
 
   const handleScroll = () => {
     if (divRef.current) {
@@ -203,6 +187,24 @@ const MainPage = () => {
   };
 
   useEffect(() => {
+    if (page === 0 && cardData.length === 0) {
+      const fetchBoards = async () => {
+        const boards = await fetchBoardInCategories(
+          currentCategory.name,
+          0,
+          limit
+        );
+        setCurrentCategory({
+          name: currentCategory.name,
+          boardCount: boards.totalCount,
+        });
+        setCardData(boards.data);
+      };
+      fetchBoards();
+    }
+  }, [page, cardData.length, currentCategory.name]);
+
+  useEffect(() => {
     borderOneGlance();
   }, [currentCategory]);
 
@@ -211,7 +213,6 @@ const MainPage = () => {
   }, []);
 
   useEffect(() => {
-    handleClickCategory("연예");
     calculateBaseDivRect();
 
     const handleResize = () => {
@@ -255,14 +256,18 @@ const MainPage = () => {
           <div>
             <BaseButton
               className="flex items-center justify-center mb-2 mt-4"
-              onClick={() => navigate("/create-board")}
+              onClick={() => {
+                isLogin === "true"
+                  ? navigate("/create-board")
+                  : navigate("/signin");
+              }}
             >
-              <Write height="32px" className="mr-2" />
+              <WriteIcon height="32px" className="mr-2" />
               게시판 만들기
             </BaseButton>
           </div>
         </section>
-        <section>
+        <section className="z-0">
           <div className="relative group">
             <div
               ref={divRef}

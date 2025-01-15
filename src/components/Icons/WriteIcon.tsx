@@ -1,9 +1,9 @@
-interface MagnifyingGlassProps {
+interface WriteIconProps {
   height?: string;
   className?: string;
 }
 
-const Write = (props: MagnifyingGlassProps) => {
+const WriteIcon = (props: WriteIconProps) => {
   const { height, className } = props;
   return (
     <svg
@@ -21,4 +21,4 @@ const Write = (props: MagnifyingGlassProps) => {
   );
 };
 
-export default Write;
+export default WriteIcon;

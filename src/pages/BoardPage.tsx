@@ -1,4 +1,4 @@
-import { Tabs } from "blahblah-front-common-ui-kit";
+import { Pagination, Tabs } from "blahblah-front-common-ui-kit";
 import BaseButton from "../components/Button/BaseButton";
 import CakeIcon from "../components/Icons/CakeIcon";
 import CrownIcon from "../components/Icons/CrownIcon";
@@ -12,7 +12,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { createBoardUser } from "@apis/boardUser.api";
 import axios from "axios";
 import { useUserContext } from "@context/userContext";
-import Pagination from "@components/Pagination";
 
 interface Manager {
   email: string;

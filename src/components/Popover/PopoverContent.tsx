@@ -60,12 +60,6 @@ const PopoverContent = (props: PopoverContentProps) => {
         top: `${triggerRect.bottom}px`,
         left: `0px`,
       };
-    if (position === "bottom-fixed")
-      return {
-        position: "fixed",
-        top: `${triggerRect.bottom}px`,
-        left: `0px`,
-      };
     return {
       position: "absolute",
       top: `${triggerRect.bottom}px`,

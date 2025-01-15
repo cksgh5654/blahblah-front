@@ -162,3 +162,23 @@ export const getAllBoardsByCatogory = async (
     }
   }
 };
+
+export const getAllBoardsByName = async (
+  boardName: string,
+  page: number,
+  limit: number
+) => {
+  try {
+    const response = await baseInstance.get("/board/boards/board-name", {
+      params: { boardName, page, limit },
+    });
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+  }
+};

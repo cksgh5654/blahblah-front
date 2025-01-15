@@ -5,10 +5,9 @@ import BaseButton from "./Button/BaseButton";
 import Avatar from "./Avatar";
 import { useUserContext } from "@context/userContext";
 import { signout } from "@apis/auth.api";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { getBoardsByHeader } from "@apis/board.api";
 import useDebounce from "@pages/useDebounce";
-import Popover from "./Popover";
 
 interface Board {
   name: string;
@@ -18,11 +17,27 @@ interface Board {
 const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [boardsData, setBoardsData] = useState<Board[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
+  const headerRef = useRef<HTMLElement>(null);
   const navigate = useNavigate();
   const isSignined = localStorage.getItem("signinStatus");
   const { user } = useUserContext();
+
+  const handleClickOutside = (e: MouseEvent) => {
+    if (headerRef.current && !headerRef.current.contains(e.target as Node)) {
+      setSearchTerm("");
+    }
+  };
+
+  useEffect(() => {
+    if (searchTerm) {
+      document.addEventListener("click", handleClickOutside, { capture: true });
+    }
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [searchTerm, setSearchTerm]);
+
   const handleClickSignout = () => {
     signout() //
       .then(() => {
@@ -49,17 +64,19 @@ const Header = () => {
     }
   }, [debouncedSearchTerm]);
 
-  console.log(boardsData);
+  useEffect(() => {
+    if (!searchTerm) {
+      setBoardsData([]);
+    }
+  }, [searchTerm]);
 
   return (
-    <header className="sticky top-0 bg-white  border-b border-slate-300">
-      <Popover
-        isOpen={isOpen}
-        onToggle={setIsOpen}
-        className="flex justify-center"
-        position="bottom-fixed"
+    <>
+      <header
+        ref={headerRef}
+        className="sticky flex justify-center z-10 top-0 bg-white  border-b border-slate-300"
       >
-        <div className="flex justify-between px-8 py-4 gap-6 w-[1280px]">
+        <div className="relative flex justify-between px-8 py-4 gap-6 w-[1280px]">
           <button
             onClick={() => {
               navigate("/");
@@ -68,20 +85,26 @@ const Header = () => {
           >
             <Logo height="28px" />
           </button>
-          <Popover.Trigger className="flex w-full h-10 relative">
+
+          <div className="flex w-full h-10 relative">
             <input
               value={searchTerm}
               onChange={handleInputChange}
-              onClick={() => setIsOpen((prev) => !prev)}
               type="search"
               placeholder="게시판 검색"
               className="w-full h-full border rounded-md border-slate-300 pl-2"
             />
-            <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+            <button
+              onClick={() => {
+                navigate(`/search/${searchTerm}`);
+                setSearchTerm("");
+                setBoardsData([]);
+              }}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2"
+            >
               <MagnifyingGlass height="30px" />
-            </div>
-          </Popover.Trigger>
-
+            </button>
+          </div>
           <div className="flex justify-center items-center gap-2">
             {isSignined && JSON.parse(isSignined) ? (
               <>
@@ -94,7 +117,11 @@ const Header = () => {
                 <Avatar
                   url={user.image}
                   size="small"
-                  onClick={() => navigate(`/${user.email}`)}
+                  onClick={() => {
+                    setSearchTerm("");
+                    setBoardsData([]);
+                    navigate(`/${user.email}`);
+                  }}
                 />
               </>
             ) : (
@@ -109,35 +136,44 @@ const Header = () => {
             )}
           </div>
         </div>
-        <Popover.Content
+        <nav
           className={`${
-            isOpen ? "block" : "hidden"
-          } flex justify-center overflow-y-scroll w-full h-80 mt-4 py-8 border-b bg-white`}
+            searchTerm || "hidden"
+          } absolute top-[73px] w-full flex justify-center bg-white shadow-md`}
         >
-          <div
-            className="grid w-[1280px] gap-2 px-8 items-start"
-            style={{
-              gridTemplateColumns: "repeat(auto-fit, minmax(164px, 1fr))",
-            }}
-          >
-            {boardsData.map((board) => (
-              <button
-                key={board.url}
-                className="text-start text-slate-400 hover:text-slate-800"
-                onClick={() => {
-                  navigate(`/board/${board.url}`);
-                  setBoardsData([]);
-                  setIsOpen((prev) => !prev);
-                  setSearchTerm("");
-                }}
-              >
-                {board.name}
-              </button>
-            ))}
+          <div className="w-[1280px] h-80 border-b ">
+            <div
+              className="grid w-[1280px] gap-2 p-8 items-start"
+              style={{
+                gridTemplateColumns: "repeat(auto-fit, minmax(164px, 1fr))",
+              }}
+            >
+              {boardsData.map((board) => (
+                <button
+                  key={board.url}
+                  className="text-start text-slate-400 hover:text-slate-800"
+                  onClick={() => {
+                    navigate(`/board/${board.url}`);
+                    setSearchTerm("");
+                    setBoardsData([]);
+                  }}
+                >
+                  {board.name}
+                </button>
+              ))}
+            </div>
           </div>
-        </Popover.Content>
-      </Popover>
-    </header>
+        </nav>
+      </header>
+      <style>{`
+    input::-ms-clear,
+    input::-ms-reveal{display:none;width:0;height:0;}
+    input::-webkit-search-decoration,
+    input::-webkit-search-cancel-button,
+    input::-webkit-search-results-button,
+    input::-webkit-search-results-decoration{display:none;}
+  `}</style>
+    </>
   );
 };
 

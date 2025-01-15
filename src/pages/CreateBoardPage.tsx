@@ -6,6 +6,7 @@ import BaseButton from "@components/Button/BaseButton";
 import { fetchCategories } from "@apis/category.api";
 import { imageUpload } from "@config/aws.config";
 import { urlRegex } from "../regex/regex";
+import { useNavigate } from "react-router-dom";
 
 interface boardInfo {
   name: string;
@@ -23,6 +24,7 @@ interface Category {
 }
 
 const CreateBoardPage = () => {
+  const navigate = useNavigate();
   const [descriptionCount, setDescriptionCount] = useState(0);
   const [urlCount, setUrlCount] = useState(0);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -40,6 +42,15 @@ const CreateBoardPage = () => {
     memberCount: 0,
     postCount: 0,
   });
+
+  const isLogin = localStorage.getItem("signinStatus");
+
+  useEffect(() => {
+    if (isLogin === "false") {
+      alert("로그인 후 이용해주세요");
+      navigate("/");
+    }
+  }, [isLogin, navigate]);
 
   const fetchCategoryOption = async () => {
     try {
@@ -141,6 +152,7 @@ const CreateBoardPage = () => {
       });
       if (response.status === 201) {
         alert(response.data.message);
+        navigate("/");
       }
     } catch (err) {
       console.log("handleClickSubmit 오류", err);
@@ -160,6 +172,7 @@ const CreateBoardPage = () => {
           placeholder="게시판 이름을 입력해주세요."
           name="name"
           id="name"
+          maxLength={20}
           required
           className="border-b-2 w-full h-10 border-slate-300 text-2xl focus:outline-none focus:border-violet-800 placeholder:text-2xl placeholder:text-slate-300"
         />
@@ -202,6 +215,7 @@ const CreateBoardPage = () => {
             </div>
             <textarea
               onChange={handleChangeDescription}
+              style={{ resize: "none" }}
               placeholder="게시판 설명을 입력해주세요."
               id=" description"
               maxLength={200}

@@ -1,4 +1,8 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from "react-router-dom";
 import BaseLayout from "@components/BaseLayout";
 import {
   MainPage,
@@ -20,6 +24,7 @@ import { boardDashBoardLoader, profileLoader } from "./routeLoader";
 import UnauthorizedErrorPage from "@pages/UnauthorizedErrorPage";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminPage from "@pages/AdminPage";
+import SearchPage from "@pages/SearchPage";
 
 const router = createBrowserRouter([
   {
@@ -28,7 +33,11 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        path: "/",
+        index: true,
+        element: <Navigate to="/연예" />,
+      },
+      {
+        path: "/:categoryname",
         element: <MainPage />,
       },
       {
@@ -66,6 +75,10 @@ const router = createBrowserRouter([
       {
         path: "/board/:url",
         element: <BoardPage />,
+      },
+      {
+        path: "/search/:board-name",
+        element: <SearchPage />,
       },
       {
         path: "/:email",
