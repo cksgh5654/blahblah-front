@@ -68,13 +68,27 @@ export const getBoardPosts = async (
   }
 };
 
+export const getBoardUserInfo = async (boardUrl: string) => {
+  try {
+    const response = await baseInstance.get("/board/user-info", {
+      params: { boardUrl },
+    });
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getBoardAndPostsByUrlAndId = async (
   boardUrl: string,
   page: number,
   limit: number
 ) => {
   try {
-    const response = await baseInstance.get(`/board/board-post`, {
+    const response = await baseInstance.get(`/board/board-user`, {
       params: { boardUrl, page, limit },
     });
     if (response.data.isError) {

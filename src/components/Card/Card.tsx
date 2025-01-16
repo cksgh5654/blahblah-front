@@ -53,10 +53,10 @@ const Card = ({ data }: CardProps) => {
           <div className="w-full">
             <hr className="border-slate-300 pb-2" />
             <div className="flex justify-between text-slate-500">
-              <p>
-                {data.manager.nickname} ({data.manager.email})
+              <p className="truncate">
+                {data.manager?.nickname} ({data.manager?.email})
               </p>
-              <p>{data.memberCount}명</p>
+              <p className="text-nowrap">{data.memberCount}명</p>
             </div>
           </div>
         </div>

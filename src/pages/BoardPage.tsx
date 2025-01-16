@@ -4,7 +4,10 @@ import CakeIcon from "../components/Icons/CakeIcon";
 import CrownIcon from "../components/Icons/CrownIcon";
 import MenIcon from "../components/Icons/MenIcon";
 import { useEffect, useState } from "react";
-import { getBoardAndPostsByUrlAndId } from "../apis/board.api";
+import {
+  getBoardAndPostsByUrlAndId,
+  getBoardUserInfo,
+} from "../apis/board.api";
 import SpeechBubbleIcon from "@components/Icons/SpeechBubbleIcon";
 import LoudSpeakerIcon from "@components/Icons/LoudSpeakerIcon";
 import defaultImg from "../components/Card/defaultImg.svg";
@@ -91,24 +94,45 @@ const BoardPage = () => {
   const [isJoin, setIsJoin] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const fetchUserData = async () => {
     if (!url) return;
-    const fetchData = async () => {
-      try {
-        const data = await getBoardAndPostsByUrlAndId(url, 0, pageSize);
-        setBoardData(data.board);
-        setBasicPostData(data.basicPosts);
-        setNotificationPostData(data.notificationPosts);
-        setIsJoin(data.isJoin);
-        setIsApply(data.isApply);
-        setTotalPostCount(data.totalPostCount);
-        setCurrentUserId(data.userId);
-      } catch (error) {
-        console.error("게시글을 가져오는 데 실패했습니다.", error);
+    try {
+      const data = await getBoardUserInfo(url);
+      setIsJoin(data.isJoin);
+      setIsApply(data.isApply);
+      setCurrentUserId(data.userId);
+    } catch (err) {
+      console.log("fetchUserData 오류", err);
+      if (axios.isAxiosError(err)) {
+        alert(err.response?.data.message);
       }
-    };
+    }
+  };
 
-    fetchData();
+  const fetchPostData = async () => {
+    if (!url) return;
+    try {
+      const data = await getBoardAndPostsByUrlAndId(url, 0, pageSize);
+      setBoardData(data.board);
+      setBasicPostData(data.basicPosts);
+      setNotificationPostData(data.notificationPosts);
+      setTotalPostCount(data.totalPostCount);
+    } catch (err) {
+      console.log("fetchPostData 오류", err);
+      if (axios.isAxiosError(err)) {
+        if (err.status === 404) {
+          navigate("/");
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (localStorage.getItem("signinStatus") === "true") {
+      fetchUserData();
+    }
+
+    fetchPostData();
   }, []);
 
   const handlePageChange = async (index: number) => {
@@ -174,7 +198,7 @@ const BoardPage = () => {
             ) : (
               <BaseButton
                 onClick={
-                  currentUserId === undefined
+                  currentUserId === ""
                     ? () => navigate("/signin")
                     : handleClickJoin
                 }
