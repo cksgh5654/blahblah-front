@@ -94,12 +94,12 @@ const BoardList = () => {
                 {name}
               </p>
               <div className="flex items-center gap-x-2">
-                <Avatar url={manager.image} size="small" />
+                <Avatar url={manager?.image} size="small" />
                 <p
                   className="text-sm text-gray-500 flex self-end gap-x-2 cursor-pointer hover:underline"
-                  onClick={() => navigate(`/profile/${manager.email}`)}
+                  onClick={() => navigate(`/profile/${manager?.email}`)}
                 >
-                  {manager.email}
+                  {manager?.email}
                 </p>
               </div>
             </div>
