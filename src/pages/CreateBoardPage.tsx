@@ -3,10 +3,11 @@ import axios from "axios";
 import CameraIcon from "@components/Icons/CameraIcon";
 import TrashIcon from "@components/Icons/TrashIcon";
 import BaseButton from "@components/Button/BaseButton";
-import { fetchCategories } from "@apis/category.api";
 import { imageUpload } from "@config/aws.config";
 import { urlRegex } from "../regex/regex";
 import { useNavigate } from "react-router-dom";
+import categoryData from "../const/categoryData";
+import { createBoard } from "@apis/board.api";
 
 interface boardInfo {
   name: string;
@@ -18,17 +19,11 @@ interface boardInfo {
   postCount: number;
 }
 
-interface Category {
-  _id: string;
-  name: string;
-}
-
 const CreateBoardPage = () => {
   const navigate = useNavigate();
   const [nameCount, setNameCount] = useState(0);
   const [descriptionCount, setDescriptionCount] = useState(0);
   const [urlCount, setUrlCount] = useState(0);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [img, setImg] = useState<File | null>(null);
   const [isCheckedPrivacyPolicy, setIsCheckedPrivacyPolicy] = useState(false);
   const [isCheckedOperatingPrinciples, setIsCheckedOperatingPrinciples] =
@@ -39,7 +34,7 @@ const CreateBoardPage = () => {
     description: "",
     image: "",
     url: "",
-    category: "",
+    category: "연예",
     memberCount: 0,
     postCount: 0,
   });
@@ -52,23 +47,6 @@ const CreateBoardPage = () => {
       navigate("/");
     }
   }, [isLogin, navigate]);
-
-  const fetchCategoryOption = async () => {
-    try {
-      const categorieOption = await fetchCategories();
-      setCategories(categorieOption);
-      setBoardInfo((prev) => ({
-        ...prev,
-        category: categorieOption[0]?.name || "",
-      }));
-    } catch (error) {
-      console.error("카테고리 가져오기 실패:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchCategoryOption();
-  }, []);
 
   const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
     setNameCount(e.target.value.length);
@@ -148,23 +126,24 @@ const CreateBoardPage = () => {
     }
 
     try {
-      const response = await axios.post("/api/board/submit", {
+      const response = await createBoard({
         ...boardInfo,
         image: imgUrl,
       });
-      if (response.status === 201) {
-        alert(response.data.message);
+      if (response) {
+        alert(response.message);
         navigate("/");
       }
     } catch (err) {
       console.log("handleClickSubmit 오류", err);
       if (axios.isAxiosError(err)) {
-        alert(err.response?.data.message);
+        alert(err.response?.data);
       }
     } finally {
       setIsLoading(false);
     }
   };
+
   return (
     <div className="flex justify-center">
       <main className="w-[1280px] px-8 py-16 flex gap-6 flex-col">
@@ -267,8 +246,8 @@ const CreateBoardPage = () => {
             onChange={handleChangeCategory}
             className="w-full px-2 py-3 text-sm border border-slate-300 rounded-lg outline-violet-800"
           >
-            {categories.map((item) => (
-              <option key={item._id} value={item.name}>
+            {categoryData.map((item) => (
+              <option key={item.id} value={item.name}>
                 {item.name}
               </option>
             ))}
@@ -590,12 +569,11 @@ const CreateBoardPage = () => {
         </section>
         <hr className="border-slate-300" />
         <ul className="list-disc text-sm text-gray-500">
-          <li>
+          <li className="list-inside">
             게시물의 관리 의무와 권리는 매니저(개설자)에게 있으며, 운영원칙을
             위반한 경우 폐쇄 또는 매니저 해임이 될 수 있습니다.(음란물, 불량
             게시물, 상업적 게시물, 댓글의 방치 등)
           </li>
-          <li>갤러리 개설은 총 6개까지 가능합니다.</li>
         </ul>
         <BaseButton onClick={handleClickSubmit} disabled={isLoading}>
           {isLoading ? "신청중입니다..." : "게시판 개설 신청"}

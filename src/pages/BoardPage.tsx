@@ -4,10 +4,7 @@ import CakeIcon from "../components/Icons/CakeIcon";
 import CrownIcon from "../components/Icons/CrownIcon";
 import MenIcon from "../components/Icons/MenIcon";
 import { useEffect, useState } from "react";
-import {
-  getBoardAndPostsByUrlAndId,
-  getBoardUserInfo,
-} from "../apis/board.api";
+import { getBoardAndPostsByUrlAndId, getBoardUserInfo } from "@apis/board.api";
 import SpeechBubbleIcon from "@components/Icons/SpeechBubbleIcon";
 import LoudSpeakerIcon from "@components/Icons/LoudSpeakerIcon";
 import defaultImg from "../components/Card/defaultImg.svg";
@@ -97,10 +94,10 @@ const BoardPage = () => {
   const fetchUserData = async () => {
     if (!url) return;
     try {
-      const data = await getBoardUserInfo(url);
-      setIsJoin(data.isJoin);
-      setIsApply(data.isApply);
-      setCurrentUserId(data.userId);
+      const { isJoin, isApply, userId } = await getBoardUserInfo(url);
+      setIsJoin(isJoin);
+      setIsApply(isApply);
+      setCurrentUserId(userId);
     } catch (err) {
       console.log("fetchUserData 오류", err);
       if (axios.isAxiosError(err)) {
@@ -112,16 +109,17 @@ const BoardPage = () => {
   const fetchPostData = async () => {
     if (!url) return;
     try {
-      const data = await getBoardAndPostsByUrlAndId(url, 0, pageSize);
-      setBoardData(data.board);
-      setBasicPostData(data.basicPosts);
-      setNotificationPostData(data.notificationPosts);
-      setTotalPostCount(data.totalPostCount);
+      const { board, basicPosts, notificationPosts, totalPostCount } =
+        await getBoardAndPostsByUrlAndId(url, 0, pageSize);
+      setBoardData(board);
+      setBasicPostData(basicPosts);
+      setNotificationPostData(notificationPosts);
+      setTotalPostCount(totalPostCount);
     } catch (err) {
       console.log("fetchPostData 오류", err);
       if (axios.isAxiosError(err)) {
         if (err.status === 404) {
-          navigate("/");
+          navigate("/error");
         }
       }
     }

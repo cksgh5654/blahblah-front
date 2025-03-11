@@ -2,6 +2,30 @@ import { toast } from "react-toastify";
 import { baseInstance } from "./axios.config";
 import { AxiosError } from "axios";
 
+interface boardInfo {
+  name: string;
+  description: string;
+  image: string | undefined;
+  url: string;
+  category: string;
+  memberCount: number;
+  postCount: number;
+}
+
+export const createBoard = async (data: boardInfo) => {
+  try {
+    const response = await baseInstance.post("/board/submit", data);
+    if (response.data.isError) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+  }
+};
+
 export const fetchBoardInCategories = async (
   name: string,
   page: number,
