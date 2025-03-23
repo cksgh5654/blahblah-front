@@ -7,9 +7,11 @@ import GoogleOauthButton from "@components/Button/GoogleOauthButton";
 import { useUserContext } from "@context/userContext";
 import { signinWithEmail } from "@apis/auth.api";
 import { toast } from "react-toastify";
+import { baseInstance } from "@apis/axios.config";
 
 const SigninPage = () => {
   const [searchParams] = useSearchParams();
+  const code = searchParams.get("code");
   const navigate = useNavigate();
   const { updateUser } = useUserContext();
   const handleEmailSignin = (formData: EmailFormDataType) => {
@@ -28,6 +30,17 @@ const SigninPage = () => {
       toast.error(errorMessage);
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    if (!code) {
+      return;
+    }
+    baseInstance //
+      .get(`/auth/google-oauth-redirect?code=${code}`)
+      .then(() => {
+        navigate("/", { replace: true });
+      });
+  }, [code]);
   return (
     <div
       className="w-screen flex justify-center items-center"
