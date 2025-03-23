@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://port-0-blahblah-back-m84jn4js1a33a574.sel4.cloudtype.app/api/:path*"
+      "destination": "https://port-0-blahblah-backend-m84jn4js1a33a574.sel4.cloudtype.app/api/:path*"
     },
     {
       "source": "/(.*)",
