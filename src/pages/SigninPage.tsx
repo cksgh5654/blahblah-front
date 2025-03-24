@@ -5,7 +5,7 @@ import Logo from "@components/Icons/Logo";
 import BaseButton from "@components/Button/BaseButton";
 import GoogleOauthButton from "@components/Button/GoogleOauthButton";
 import { useUserContext } from "@context/userContext";
-import { signinWithEmail } from "@apis/auth.api";
+import { getSigninStatus, signinWithEmail } from "@apis/auth.api";
 import { toast } from "react-toastify";
 import { baseInstance } from "@apis/axios.config";
 
@@ -38,8 +38,12 @@ const SigninPage = () => {
     baseInstance //
       .get(`/auth/google-oauth-redirect?code=${code}`)
       .then(() => {
-        localStorage.signinStatus = true;
-        navigate("/", { replace: true });
+        getSigninStatus() //
+          .then(({ user, signinStatus }) => {
+            updateUser(user);
+            localStorage.signinStatus = signinStatus;
+            navigate("/", { replace: true });
+          });
       });
   }, [code]);
   return (
