@@ -38,6 +38,7 @@ const SigninPage = () => {
     baseInstance //
       .get(`/auth/google-oauth-redirect?code=${code}`)
       .then(() => {
+        localStorage.loginStatus = true;
         navigate("/", { replace: true });
       });
   }, [code]);
