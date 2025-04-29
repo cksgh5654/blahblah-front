@@ -12,6 +12,7 @@ import ChevronIcon from "@components/Icons/ChevronIcon";
 import { Pagination, Popover, useInfinite } from "blahblah-front-common-ui-kit";
 import WriteIcon from "@components/Icons/WriteIcon";
 import categoryData from "../const/categoryData";
+import CarouselXscroll from "@components/CarouselXscroll";
 
 interface Manager {
   email: string;
@@ -63,6 +64,7 @@ const MainPage = () => {
   const [page, setPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const isLogin = localStorage.getItem("signinStatus");
+  const categoryRef = useRef<HTMLDivElement>(null);
 
   const handleClickCategory = (name: string) => {
     setPage(0);
@@ -227,51 +229,54 @@ const MainPage = () => {
           </div>
         </section>
         <section className="z-0">
-          <div className="relative group">
-            <div
-              ref={divRef}
-              onScroll={handleScroll}
-              className="relative h-[144px] overflow-scroll scrollbar-hide flex items-center"
-            >
-              <div
-                className="flex gap-2 overflow-x-visible absolute"
-                style={{
-                  left: `${baseDivRect.left}px`,
-                }}
-              >
-                {categoryData.map((item) => (
+          <CarouselXscroll
+            baseRect={baseDivRect}
+            pixelMove={window.outerWidth}
+            itemListRef={categoryRef}
+            className="group"
+          >
+            <CarouselXscroll.ItemContainer className="h-full">
+              <CarouselXscroll.Items className="flex gap-4">
+                {categoryData.map((item) => {
+                  return (
+                    <button
+                      onClick={() => handleClickCategory(item.name)}
+                      key={item.id}
+                      className="w-[120px] text-center relative"
+                    >
+                      <img
+                        src={item.img}
+                        alt={`Item ${item.id}`}
+                        className="w-[120px] h-[120px] object-cover"
+                        onDragStart={(e) => e.preventDefault()}
+                      />
+                      <p>{item.name}</p>
+                    </button>
+                  );
+                })}
+              </CarouselXscroll.Items>
+            </CarouselXscroll.ItemContainer>
+            <CarouselXscroll.Navigator>
+              {(prev, next, leftStyle, rightStyle) => (
+                <>
                   <button
-                    onClick={() => handleClickCategory(item.name)}
-                    key={item.id}
-                    className="w-[120px] text-center relative"
+                    className="bg-[rgba(255,255,255,0.5)] rounded-full opacity-0 group-hover:opacity-100 hover:cursor-pointer duration-300 ease-in-out b backdrop-blur-sm"
+                    style={leftStyle}
+                    onClick={prev}
                   >
-                    <img
-                      src={item.img}
-                      alt={`Item ${item.id}`}
-                      className="w-[120px] h-[120px] object-cover"
-                    />
-                    <p>{item.name}</p>
+                    <ChevronIcon height="56px" />
                   </button>
-                ))}
-              </div>
-            </div>
-            <button
-              onClick={handleLeft}
-              className={`${
-                isAtStart() && "hidden"
-              } bg-white rounded-full absolute left-8 top-[60px] transform opacity-0 group-hover:opacity-100 duration-300 ease-in-out bg-opacity-75 backdrop-blur-sm`}
-            >
-              <ChevronIcon height="56px" />
-            </button>
-            <button
-              onClick={handleRight}
-              className={`${
-                isAtEnd() && "hidden"
-              } rotate-180 bg-white rounded-full absolute right-8 top-[60px] transform opacity-0 group-hover:opacity-100 duration-300 ease-in-out bg-opacity-75 backdrop-blur-sm`}
-            >
-              <ChevronIcon height="56px" />
-            </button>
-          </div>
+                  <button
+                    className="bg-[rgba(255,255,255,0.5)] rounded-full opacity-0 group-hover:opacity-100 duration-300 ease-in-out backdrop-blur-sm"
+                    style={rightStyle}
+                    onClick={next}
+                  >
+                    <ChevronIcon height="56px" className="rotate-180" />
+                  </button>
+                </>
+              )}
+            </CarouselXscroll.Navigator>
+          </CarouselXscroll>
         </section>
         <section className="flex flex-col pt-20 items-start px-4 md:px-16 lg:px-24 xl:px-32">
           <div className="flex w-full justify-between items-center">

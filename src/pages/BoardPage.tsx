@@ -280,16 +280,18 @@ const BoardPage = () => {
                 </button>
               </Tabs.Trigger>
             </Tabs.List>
-            <BaseButton
-              onClick={() => navigate(`/post/create/${url}`)}
-              className={
-                isJoin || boardData.manager._id === currentUserId
-                  ? "block"
-                  : "hidden"
-              }
-            >
-              글쓰기
-            </BaseButton>
+            {!isNotice && (
+              <BaseButton
+                onClick={() => navigate(`/post/create/${url}`)}
+                className={
+                  isJoin || boardData.manager._id === currentUserId
+                    ? "block"
+                    : "hidden"
+                }
+              >
+                글쓰기
+              </BaseButton>
+            )}
           </div>
           <div>
             <div className="grid grid-cols-[1fr_1fr_10fr_2fr_2fr] border-y-2 py-3 border-violet-800 text-center">
