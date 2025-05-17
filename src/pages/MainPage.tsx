@@ -51,11 +51,9 @@ const MainPage = () => {
   const [totalBoardCount, setTotalBoardCount] = useState(0);
   const navigate = useNavigate();
   const baseDivRef = useRef<HTMLDivElement>(null);
-  const divRef = useRef<HTMLDivElement>(null);
   const infiniteDivRef = useRef<HTMLDivElement>(null);
   const [baseDivRect, setBaseDivRect] = useState(new DOMRect());
   const [popoverBoardsData, setPopoverBoardsData] = useState<Board[]>([]);
-  const [scrollPosition, setScrollPosition] = useState(0);
   const [cardData, setCardData] = useState<CardData[]>([]);
   const [currentCategory, setCurrentCategory] = useState({
     name: categoryname || "연예",
@@ -72,40 +70,6 @@ const MainPage = () => {
     setIsLoading(false);
     setCurrentCategory((prev) => ({ ...prev, name }));
     navigate(`/${name}`);
-  };
-
-  const handleScroll = () => {
-    if (divRef.current) {
-      setScrollPosition(divRef.current.scrollLeft);
-    }
-  };
-
-  const handleLeft = () => {
-    if (divRef.current) {
-      divRef.current.scrollTo({
-        left: divRef.current.scrollLeft - 128,
-        behavior: "smooth",
-      });
-    }
-  };
-
-  const handleRight = () => {
-    if (divRef.current) {
-      divRef.current.scrollTo({
-        left: divRef.current.scrollLeft + 128,
-        behavior: "smooth",
-      });
-    }
-  };
-
-  const isAtEnd = () => {
-    if (!divRef.current) return false;
-    const scrollEnd = divRef.current.scrollWidth - divRef.current.clientWidth;
-    return scrollPosition === scrollEnd;
-  };
-
-  const isAtStart = () => {
-    return scrollPosition === 0;
   };
 
   const calculateBaseDivRect = () => {
@@ -165,6 +129,10 @@ const MainPage = () => {
     }
   };
 
+  const handlePageChange = async (index: number) => {
+    setCurrentPage(index);
+  };
+
   useEffect(() => {
     borderOneGlance();
   }, [currentCategory]);
@@ -186,10 +154,6 @@ const MainPage = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
-  const handlePageChange = async (index: number) => {
-    setCurrentPage(index);
-  };
 
   useEffect(() => {
     const pageMove = async () => {
